@@ -4,29 +4,16 @@
       <div v-if="show" class="modal-overlay" @click="closeModal">
         <div class="modal-container" @click.stop>
           <div class="modal-header">
-            <h2>Únete a <span class="gradient-text">FilmSage</span></h2>
+            <h2>Bienvenido a <span class="gradient-text">FilmSage</span></h2>
             <button class="close-btn" @click="closeModal">&times;</button>
           </div>
 
           <div class="modal-body">
             <form @submit.prevent="submitForm">
               <div class="form-group">
-                <label for="username">Nombre de usuario</label>
+                <label for="loginEmail">Correo electrónico</label>
                 <input
-                  id="username"
-                  v-model="form.username"
-                  type="text"
-                  :class="{ 'error': errors.username }"
-                  placeholder="Ingresa tu nombre de usuario"
-                  required
-                />
-                <span v-if="errors.username" class="error-message">{{ errors.username }}</span>
-              </div>
-
-              <div class="form-group">
-                <label for="email">Correo electrónico</label>
-                <input
-                  id="email"
+                  id="loginEmail"
                   v-model="form.email"
                   type="email"
                   :class="{ 'error': errors.email }"
@@ -37,42 +24,27 @@
               </div>
 
               <div class="form-group">
-                <label for="password">Contraseña</label>
+                <label for="loginPassword">Contraseña</label>
                 <input
-                  id="password"
+                  id="loginPassword"
                   v-model="form.password"
                   type="password"
                   :class="{ 'error': errors.password }"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Ingresa tu contraseña"
                   required
                 />
                 <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
               </div>
 
-              <div class="form-group">
-                <label for="confirmPassword">Confirmar contraseña</label>
-                <input
-                  id="confirmPassword"
-                  v-model="form.confirmPassword"
-                  type="password"
-                  :class="{ 'error': errors.confirmPassword }"
-                  placeholder="Repite tu contraseña"
-                  required
-                />
-                <span v-if="errors.confirmPassword" class="error-message">{{ errors.confirmPassword }}</span>
-              </div>
-
               <div class="form-group checkbox-group">
                 <label class="checkbox-label">
                   <input
-                    v-model="form.terms"
+                    v-model="form.rememberMe"
                     type="checkbox"
-                    required
                   />
                   <span class="checkmark"></span>
-                  Acepto los <a href="#" @click.prevent>términos y condiciones</a>
+                  Recordarme
                 </label>
-                <span v-if="errors.terms" class="error-message">{{ errors.terms }}</span>
               </div>
 
               <div v-if="generalError" class="general-error">
@@ -85,12 +57,16 @@
                 :disabled="loading"
               >
                 <span v-if="loading" class="spinner"></span>
-                {{ loading ? 'Creando cuenta...' : 'Comenzar mi aventura' }}
+                {{ loading ? 'Iniciando sesión...' : 'Iniciar sesión' }}
               </button>
             </form>
 
-            <div class="login-link">
-              ¿Ya tienes cuenta? <a href="#" @click.prevent="switchToLogin">Inicia sesión</a>
+            <div class="forgot-password">
+              <a href="#" @click.prevent="forgotPassword">¿Olvidaste tu contraseña?</a>
+            </div>
+
+            <div class="register-link">
+              ¿No tienes cuenta? <a href="#" @click.prevent="switchToRegister">Crear cuenta</a>
             </div>
           </div>
         </div>
@@ -101,22 +77,20 @@
 
 <script>
 export default {
-  name: 'RegisterModal',
+  name: 'LoginModal',
   props: {
     show: {
       type: Boolean,
       default: false
     }
   },
-  emits: ['close', 'success', 'switch-to-login'],
+  emits: ['close', 'success', 'switch-to-register'],
   data() {
     return {
       form: {
-        username: '',
         email: '',
         password: '',
-        confirmPassword: '',
-        terms: false
+        rememberMe: false
       },
       errors: {},
       generalError: '',
@@ -134,16 +108,15 @@ export default {
       this.loading = true;
 
       try {
-        const response = await fetch('http://localhost:3000/users/register', {
+        const response = await fetch('http://localhost:3000/users/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            username: this.form.username,
             email: this.form.email,
             password: this.form.password,
-            role: 'user'
+            rememberMe: this.form.rememberMe
           })
         });
 
@@ -153,18 +126,20 @@ export default {
           this.$emit('success', data);
           this.resetForm();
           this.closeModal();
-          alert('¡Cuenta creada exitosamente! Bienvenido a FilmSage.');
+          alert('¡Bienvenido de nuevo a FilmSage!');
         } else {
-          if (response.status === 409) {
-            this.generalError = 'Ya existe un usuario con este email o nombre de usuario';
+          if (response.status === 401) {
+            this.generalError = 'Email o contraseña incorrectos';
+          } else if (response.status === 404) {
+            this.generalError = 'Usuario no encontrado';
           } else if (data.errors) {
             this.handleValidationErrors(data.errors);
           } else {
-            this.generalError = data.message || 'Error al crear la cuenta';
+            this.generalError = data.message || 'Error al iniciar sesión';
           }
         }
       } catch (error) {
-        console.error('Error de registro:', error);
+        console.error('Error de login:', error);
         this.generalError = 'Error de conexión. Por favor, inténtalo de nuevo.';
       } finally {
         this.loading = false;
@@ -173,14 +148,6 @@ export default {
 
     validateForm() {
       let isValid = true;
-
-      if (!this.form.username.trim()) {
-        this.errors.username = 'El nombre de usuario es requerido';
-        isValid = false;
-      } else if (this.form.username.length < 3) {
-        this.errors.username = 'El nombre de usuario debe tener al menos 3 caracteres';
-        isValid = false;
-      }
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!this.form.email.trim()) {
@@ -193,19 +160,6 @@ export default {
 
       if (!this.form.password) {
         this.errors.password = 'La contraseña es requerida';
-        isValid = false;
-      } else if (this.form.password.length < 6) {
-        this.errors.password = 'La contraseña debe tener al menos 6 caracteres';
-        isValid = false;
-      }
-
-      if (this.form.password !== this.form.confirmPassword) {
-        this.errors.confirmPassword = 'Las contraseñas no coinciden';
-        isValid = false;
-      }
-
-      if (!this.form.terms) {
-        this.errors.terms = 'Debes aceptar los términos y condiciones';
         isValid = false;
       }
 
@@ -227,11 +181,9 @@ export default {
 
     resetForm() {
       this.form = {
-        username: '',
         email: '',
         password: '',
-        confirmPassword: '',
-        terms: false
+        rememberMe: false
       };
       this.clearErrors();
     },
@@ -241,9 +193,13 @@ export default {
       this.$emit('close');
     },
 
-    switchToLogin() {
-      this.closeModal();
-      this.$emit('switch-to-login');
+    switchToRegister() {
+      this.$emit('switch-to-register');
+    },
+
+    forgotPassword() {
+      // Implementar funcionalidad de recuperar contraseña
+      alert('Funcionalidad de recuperar contraseña próximamente');
     }
   },
   watch: {
@@ -282,7 +238,7 @@ export default {
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 24px;
   width: 90%;
-  max-width: 480px;
+  max-width: 450px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
@@ -348,7 +304,6 @@ export default {
   color: rgba(255, 255, 255, 0.9);
 }
 
-.form-group input[type="text"],
 .form-group input[type="email"],
 .form-group input[type="password"] {
   width: 100%;
@@ -396,27 +351,15 @@ export default {
 
 .checkbox-label {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   cursor: pointer;
   font-size: 0.9rem;
-  line-height: 1.4;
   color: rgba(255, 255, 255, 0.9);
 }
 
 .checkbox-label input[type="checkbox"] {
   margin-right: 12px;
-  margin-top: 2px;
   accent-color: #ff6b6b;
-}
-
-.checkbox-label a {
-  color: #feca57;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.checkbox-label a:hover {
-  text-decoration: underline;
 }
 
 .general-error {
@@ -468,26 +411,42 @@ export default {
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.forgot-password {
+  text-align: center;
+  margin: 20px 0;
 }
 
-.login-link {
+.forgot-password a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.forgot-password a:hover {
+  color: #feca57;
+  text-decoration: underline;
+}
+
+.register-link {
   text-align: center;
   margin-top: 25px;
   color: rgba(255, 255, 255, 0.8);
   font-size: 0.9rem;
 }
 
-.login-link a {
+.register-link a {
   color: #feca57;
   text-decoration: none;
   font-weight: 600;
 }
 
-.login-link a:hover {
+.register-link a:hover {
   text-decoration: underline;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .modal-enter-active, .modal-leave-active {
@@ -524,7 +483,6 @@ export default {
     font-size: 1.5rem;
   }
 
-  .form-group input[type="text"],
   .form-group input[type="email"],
   .form-group input[type="password"] {
     padding: 14px;

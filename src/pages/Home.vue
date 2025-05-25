@@ -52,44 +52,6 @@
       </div>
     </section>
 
-    <!-- AI Showcase -->
-    <section class="ai-showcase">
-      <div class="container">
-        <div class="showcase-content">
-          <div class="showcase-text">
-            <h2>Inteligencia artificial que te entiende</h2>
-            <p>
-              Nuestro motor de recomendación aprende de tus gustos, preferencias
-              y comportamiento para sugerirte contenido que realmente disfrutarás.
-              Cada interacción mejora tu experiencia.
-            </p>
-            <ul class="ai-features">
-              <li>
-                <i class="icon-brain"></i>
-                Filtrado colaborativo avanzado
-              </li>
-              <li>
-                <i class="icon-target"></i>
-                Recomendaciones ultra-personalizadas
-              </li>
-              <li>
-                <i class="icon-trending"></i>
-                Análisis de tendencias en tiempo real
-              </li>
-            </ul>
-          </div>
-          <div class="showcase-visual">
-            <div class="ai-animation">
-              <div class="neural-network">
-                <div class="node" v-for="i in 12" :key="i"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA Section -->
     <section class="cta">
       <div class="container">
         <div class="cta-content">
@@ -102,114 +64,38 @@
       </div>
     </section>
 
-    <!-- Modal de Registro -->
-    <teleport to="body">
-      <transition name="modal" appear>
-        <div v-if="showRegisterModal" class="modal-overlay" @click="closeRegisterModal">
-          <div class="modal-container" @click.stop>
-            <div class="modal-header">
-              <h2>Únete a <span class="gradient-text">FilmSage</span></h2>
-              <button class="close-btn" @click="closeRegisterModal">&times;</button>
-            </div>
+    <!-- Register modal -->
+    <RegisterModal
+      :show="showRegisterModal"
+      @close="closeRegisterModal"
+      @success="handleRegistrationSuccess"
+      @switch-to-login="switchToLogin"
+    />
 
-            <div class="modal-body">
-              <form @submit.prevent="submitForm">
-                <div class="form-group">
-                  <label for="username">Nombre de usuario</label>
-                  <input
-                    id="username"
-                    v-model="form.username"
-                    type="text"
-                    :class="{ 'error': errors.username }"
-                    placeholder="Ingresa tu nombre de usuario"
-                    required
-                  />
-                  <span v-if="errors.username" class="error-message">{{ errors.username }}</span>
-                </div>
-
-                <div class="form-group">
-                  <label for="email">Correo electrónico</label>
-                  <input
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    :class="{ 'error': errors.email }"
-                    placeholder="tu@email.com"
-                    required
-                  />
-                  <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
-                </div>
-
-                <div class="form-group">
-                  <label for="password">Contraseña</label>
-                  <input
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    :class="{ 'error': errors.password }"
-                    placeholder="Mínimo 6 caracteres"
-                    required
-                  />
-                  <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
-                </div>
-
-                <div class="form-group">
-                  <label for="confirmPassword">Confirmar contraseña</label>
-                  <input
-                    id="confirmPassword"
-                    v-model="form.confirmPassword"
-                    type="password"
-                    :class="{ 'error': errors.confirmPassword }"
-                    placeholder="Repite tu contraseña"
-                    required
-                  />
-                  <span v-if="errors.confirmPassword" class="error-message">{{ errors.confirmPassword }}</span>
-                </div>
-
-                <div class="form-group checkbox-group">
-                  <label class="checkbox-label">
-                    <input
-                      v-model="form.terms"
-                      type="checkbox"
-                      required
-                    />
-                    <span class="checkmark"></span>
-                    Acepto los <a href="#" @click.prevent>términos y condiciones</a>
-                  </label>
-                  <span v-if="errors.terms" class="error-message">{{ errors.terms }}</span>
-                </div>
-
-                <div v-if="generalError" class="general-error">
-                  {{ generalError }}
-                </div>
-
-                <button
-                  type="submit"
-                  class="submit-btn"
-                  :disabled="loading"
-                >
-                  <span v-if="loading" class="spinner"></span>
-                  {{ loading ? 'Creando cuenta...' : 'Comenzar mi aventura' }}
-                </button>
-              </form>
-
-              <div class="login-link">
-                ¿Ya tienes cuenta? <a href="#" @click.prevent="switchToLogin">Inicia sesión</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </transition>
-    </teleport>
+    <!-- Login modal -->
+    <LoginModal
+      :show="showLoginModal"
+      @close="closeLoginModal"
+      @success="handleLoginSuccess"
+      @switch-to-register="switchToRegister"
+    />
   </div>
 </template>
 
 <script>
+import RegisterModal from "@/components/RegisterModal.vue";
+import LoginModal from "@/components/LoginModal.vue";
+
 export default {
   name: 'HomePage',
+  components: {
+    RegisterModal,
+    LoginModal
+  },
   data() {
     return {
       showRegisterModal: false,
+      showLoginModal: false,
       form: {
         username: '',
         email: '',
@@ -221,7 +107,6 @@ export default {
       generalError: '',
       loading: false,
       featuredMovies: [],
-      // IDs de películas populares de TMDb
       popularMovieIds: [
         278, 238, 240, 424, 389, 129, 155, 497, 680, 13,
         122, 12, 11, 769, 19, 637, 423, 98, 429, 510,
@@ -262,7 +147,6 @@ export default {
     this.initAnimations();
   },
   methods: {
-    // Métodos del modal
     async submitForm() {
       this.clearErrors();
 
@@ -392,9 +276,28 @@ export default {
 
     switchToLogin() {
       this.closeRegisterModal();
+      this.showLoginModal = true;
     },
 
-    // Métodos existentes de películas
+    openLoginModal() {
+      this.showLoginModal = true;
+      document.body.style.overflow = 'hidden';
+    },
+
+    closeLoginModal() {
+      this.showLoginModal = false;
+      document.body.style.overflow = '';
+    },
+
+    handleLoginSuccess(userData) {
+      console.log('Usuario logueado exitosamente:', userData);
+    },
+
+    switchToRegister() {
+      this.closeLoginModal();
+      this.showRegisterModal = true;
+    },
+
     async loadRandomMovies() {
       this.loading = true;
       try {
