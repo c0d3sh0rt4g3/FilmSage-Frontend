@@ -5,6 +5,7 @@
 
 import Home from "@/pages/Home.vue";
 import {createRouter, createWebHistory} from "vue-router";
+import Search from "@/pages/Search.vue";
 
 /**
  * Application routes configuration array
@@ -19,6 +20,10 @@ const routes = [
     {
         path: '/',
         component: Home
+    },
+    {
+        path: '/search',
+        component: Search
     }
 ]
 
