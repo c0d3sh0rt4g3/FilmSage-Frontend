@@ -1,0 +1,103 @@
+// Primary gradient colors
+$primary-purple: #667eea;
+$primary-blue: #764ba2;
+
+// Secondary Gradient colors
+$accent-orange: #ff6b6b;
+$accent-yellow: #feca57;
+
+// Base colors
+$white: #ffffff;
+$black: #000000;
+
+// Transparent colors white
+$white-05: rgba(255, 255, 255, 0.05);
+$white-10: rgba(255, 255, 255, 0.1);
+$white-15: rgba(255, 255, 255, 0.15);
+$white-20: rgba(255, 255, 255, 0.2);
+$white-30: rgba(255, 255, 255, 0.3);
+$white-60: rgba(255, 255, 255, 0.6);
+$white-80: rgba(255, 255, 255, 0.8);
+$white-90: rgba(255, 255, 255, 0.9);
+
+// Transparent colors black
+$black-20: rgba(0, 0, 0, 0.2);
+$black-30: rgba(0, 0, 0, 0.3);
+$black-40: rgba(0, 0, 0, 0.4);
+$black-80: rgba(0, 0, 0, 0.8);
+$black-90: rgba(0, 0, 0, 0.9);
+
+// Error colors
+$error-red: #ff4757;
+$error-light: #ff6b6b;
+
+// Transparent error messages
+$error-bg-10: rgba(255, 107, 107, 0.1);
+$error-bg-20: rgba(255, 107, 107, 0.2);
+$error-border-20: rgba(255, 107, 107, 0.2);
+$error-border-30: rgba(255, 107, 107, 0.3);
+$error-border-40: rgba(255, 107, 107, 0.4);
+$error-focus: rgba(255, 71, 87, 0.2);
+
+// Transparent accents on hover
+$accent-orange-60: rgba(255, 107, 107, 0.6);
+$accent-orange-30: rgba(255, 107, 107, 0.3);
+$accent-orange-40: rgba(255, 107, 107, 0.4);
+
+// Gradients
+$primary-gradient: linear-gradient(135deg, $primary-purple 0%, $primary-blue 100%);
+$accent-gradient: linear-gradient(45deg, $accent-orange, $accent-yellow);
+
+// Shadows
+$shadow-light: 0 8px 25px $accent-orange-30;
+$shadow-medium: 0 10px 25px $black-20;
+$shadow-strong: 0 12px 30px $accent-orange-40;
+$shadow-card: 0 20px 40px $black-30;
+$shadow-modal: 0 25px 50px $black-40;
+$shadow-focus: 0 0 0 3px $error-border-20;
+$shadow-focus-error: 0 0 0 3px $error-focus;
+
+// Blur effects
+$blur-light: blur(10px);
+$blur-medium: blur(15px);
+$blur-strong: blur(20px);
+
+// Transitions
+$transition-base: all 0.3s ease;
+$transition-modal: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+// Spacing and radius
+$border-radius-small: 8px;
+$border-radius-medium: 12px;
+$border-radius-large: 16px;
+$border-radius-xl: 20px;
+$border-radius-xxl: 24px;
+$border-radius-round: 50px;
+
+// Z-index
+$z-modal: 1000;
+
+// Modal sizes
+$modal-max-width: 480px;
+$modal-max-width-small: 450px;
+$modal-max-height: 90vh;
+$modal-padding: 30px;
+$modal-padding-mobile: 20px;
+$modal-header-padding: 30px 30px 20px;
+$modal-header-padding-mobile: 20px;
+
+// Font sizes
+$modal-title-size: 1.8rem;
+$modal-title-size-mobile: 1.5rem;
+$modal-label-size: 0.95rem;
+$modal-input-size: 1rem;
+$modal-error-size: 0.85rem;
+$modal-link-size: 0.9rem;
+$modal-button-size: 1.1rem;
+
+// Interactive elements sizes
+$close-btn-size: 36px;
+$spinner-size: 20px;
+$input-padding: 16px;
+$input-padding-mobile: 14px;
+$button-padding: 18px;

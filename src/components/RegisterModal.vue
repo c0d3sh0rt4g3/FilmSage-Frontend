@@ -5,91 +5,91 @@
         <div class="modal-container" @click.stop>
           <div class="modal-header">
             <h2>Únete a <span class="gradient-text">FilmSage</span></h2>
-            <button class="close-btn" @click="closeModal">&times;</button>
+            <button class="modal-close-btn" @click="closeModal">&times;</button>
           </div>
 
           <div class="modal-body">
-            <form @submit.prevent="submitForm">
-              <div class="form-group">
-                <label for="username">Nombre de usuario</label>
+            <form @submit.prevent="registerUser">
+              <div class="modal-form-group">
+                <label for="username" class="modal-form-label">Nombre de usuario</label>
                 <input
                   id="username"
-                  v-model="form.username"
+                  v-model="username"
                   type="text"
-                  :class="{ 'error': errors.username }"
+                  class="modal-form-input"
+                  :class="{ 'error': usernameError }"
                   placeholder="Ingresa tu nombre de usuario"
+                  @blur="validateUsername"
                   required
                 />
-                <span v-if="errors.username" class="error-message">{{ errors.username }}</span>
+                <span v-if="usernameError" class="modal-error-message">{{ usernameError }}</span>
               </div>
 
-              <div class="form-group">
-                <label for="email">Correo electrónico</label>
+              <div class="modal-form-group">
+                <label for="email" class="modal-form-label">Correo electrónico</label>
                 <input
                   id="email"
-                  v-model="form.email"
+                  v-model="email"
                   type="email"
-                  :class="{ 'error': errors.email }"
+                  class="modal-form-input"
+                  :class="{ 'error': emailError }"
                   placeholder="tu@email.com"
+                  @blur="validateEmail"
                   required
                 />
-                <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
+                <span v-if="emailError" class="modal-error-message">{{ emailError }}</span>
               </div>
 
-              <div class="form-group">
-                <label for="password">Contraseña</label>
+              <div class="modal-form-group">
+                <label for="password" class="modal-form-label">Contraseña</label>
                 <input
                   id="password"
-                  v-model="form.password"
+                  v-model="password"
                   type="password"
-                  :class="{ 'error': errors.password }"
+                  class="modal-form-input"
+                  :class="{ 'error': passwordError }"
                   placeholder="Mínimo 6 caracteres"
+                  @blur="validatePassword"
                   required
                 />
-                <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
+                <span v-if="passwordError" class="modal-error-message">{{ passwordError }}</span>
               </div>
 
-              <div class="form-group">
-                <label for="confirmPassword">Confirmar contraseña</label>
+              <div class="modal-form-group">
+                <label for="confirmPassword" class="modal-form-label">Confirmar contraseña</label>
                 <input
                   id="confirmPassword"
-                  v-model="form.confirmPassword"
+                  v-model="confirmPassword"
                   type="password"
-                  :class="{ 'error': errors.confirmPassword }"
+                  class="modal-form-input"
+                  :class="{ 'error': confirmPasswordError }"
                   placeholder="Repite tu contraseña"
+                  @blur="validateConfirmPassword"
                   required
                 />
-                <span v-if="errors.confirmPassword" class="error-message">{{ errors.confirmPassword }}</span>
+                <span v-if="confirmPasswordError" class="modal-error-message">{{ confirmPasswordError }}</span>
               </div>
 
-              <div class="form-group checkbox-group">
-                <label class="checkbox-label">
-                  <input
-                    v-model="form.terms"
-                    type="checkbox"
-                    required
-                  />
+              <div class="modal-checkbox-group">
+                <label class="modal-checkbox-label">
+                  <input v-model="terms" type="checkbox" required />
                   <span class="checkmark"></span>
                   Acepto los <a href="#" @click.prevent>términos y condiciones</a>
                 </label>
-                <span v-if="errors.terms" class="error-message">{{ errors.terms }}</span>
+                <span v-if="termsError" class="modal-error-message">{{ termsError }}</span>
               </div>
 
-              <div v-if="generalError" class="general-error">
-                {{ generalError }}
+              <div v-if="registerError" class="modal-general-error">
+                {{ registerError }}
               </div>
 
-              <button
-                type="submit"
-                class="submit-btn"
-                :disabled="loading"
-              >
-                <span v-if="loading" class="spinner"></span>
+              <button type="submit" class="modal-submit-btn" :disabled="loading">
+                <span v-if="loading" class="modal-spinner"></span>
                 {{ loading ? 'Creando cuenta...' : 'Comenzar mi aventura' }}
               </button>
             </form>
 
-            <div class="login-link">
+            <div class="modal-link-section">
               ¿Ya tienes cuenta? <a href="#" @click.prevent="switchToLogin">Inicia sesión</a>
             </div>
           </div>
@@ -100,6 +100,9 @@
 </template>
 
 <script>
+import { useAuthStore } from '@/stores/authStore.js';
+import { validateName, validateMail, validatePassword, validateRepeatPassword } from '@/utils/validation.js';
+
 export default {
   name: 'RegisterModal',
   props: {
@@ -111,129 +114,111 @@ export default {
   emits: ['close', 'success', 'switch-to-login'],
   data() {
     return {
-      form: {
-        username: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        terms: false
-      },
-      errors: {},
-      generalError: '',
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      terms: false,
+      usernameError: '',
+      emailError: '',
+      passwordError: '',
+      confirmPasswordError: '',
+      termsError: '',
+      registerError: '',
       loading: false
     }
   },
   methods: {
-    async submitForm() {
-      this.clearErrors();
+    validateUsername() {
+      this.usernameError = '';
+      const validName = validateName(this.username);
+      if (!validName) {
+        this.usernameError = 'El nombre de usuario debe tener al menos 3 caracteres.';
+      }
+    },
 
-      if (!this.validateForm()) {
+    validateEmail() {
+      this.emailError = '';
+      const validMail = validateMail(this.email);
+      if (!validMail) {
+        this.emailError = 'Por favor ingresa un email válido.';
+      }
+    },
+
+    validatePassword() {
+      this.passwordError = '';
+      const validPassword = validatePassword(this.password);
+      if (!validPassword) {
+        this.passwordError = 'La contraseña debe tener al menos 6 caracteres.';
+      }
+    },
+
+    validateConfirmPassword() {
+      this.confirmPasswordError = '';
+      const validRepeatPassword = validateRepeatPassword(this.password, this.confirmPassword);
+      if (!validRepeatPassword) {
+        this.confirmPasswordError = 'Las contraseñas no coinciden.';
+      }
+    },
+
+    validateTerms() {
+      this.termsError = '';
+      if (!this.terms) {
+        this.termsError = 'Debes aceptar los términos y condiciones.';
+      }
+    },
+
+    async registerUser() {
+      this.registerError = '';
+
+      this.validateUsername();
+      this.validateEmail();
+      this.validatePassword();
+      this.validateConfirmPassword();
+      this.validateTerms();
+
+      if (this.usernameError || this.emailError || this.passwordError || this.confirmPasswordError || this.termsError) {
         return;
       }
 
       this.loading = true;
 
-      try {
-        const response = await fetch('http://localhost:3000/users/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            username: this.form.username,
-            email: this.form.email,
-            password: this.form.password,
-            role: 'user'
-          })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          this.$emit('success', data);
-          this.resetForm();
-          this.closeModal();
-          alert('¡Cuenta creada exitosamente! Bienvenido a FilmSage.');
-        } else {
-          if (response.status === 409) {
-            this.generalError = 'Ya existe un usuario con este email o nombre de usuario';
-          } else if (data.errors) {
-            this.handleValidationErrors(data.errors);
-          } else {
-            this.generalError = data.message || 'Error al crear la cuenta';
-          }
-        }
-      } catch (error) {
-        console.error('Error de registro:', error);
-        this.generalError = 'Error de conexión. Por favor, inténtalo de nuevo.';
-      } finally {
-        this.loading = false;
-      }
-    },
-
-    validateForm() {
-      let isValid = true;
-
-      if (!this.form.username.trim()) {
-        this.errors.username = 'El nombre de usuario es requerido';
-        isValid = false;
-      } else if (this.form.username.length < 3) {
-        this.errors.username = 'El nombre de usuario debe tener al menos 3 caracteres';
-        isValid = false;
-      }
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!this.form.email.trim()) {
-        this.errors.email = 'El email es requerido';
-        isValid = false;
-      } else if (!emailRegex.test(this.form.email)) {
-        this.errors.email = 'Ingresa un email válido';
-        isValid = false;
-      }
-
-      if (!this.form.password) {
-        this.errors.password = 'La contraseña es requerida';
-        isValid = false;
-      } else if (this.form.password.length < 6) {
-        this.errors.password = 'La contraseña debe tener al menos 6 caracteres';
-        isValid = false;
-      }
-
-      if (this.form.password !== this.form.confirmPassword) {
-        this.errors.confirmPassword = 'Las contraseñas no coinciden';
-        isValid = false;
-      }
-
-      if (!this.form.terms) {
-        this.errors.terms = 'Debes aceptar los términos y condiciones';
-        isValid = false;
-      }
-
-      return isValid;
-    },
-
-    handleValidationErrors(errors) {
-      errors.forEach(error => {
-        if (error.param) {
-          this.errors[error.param] = error.msg;
-        }
+      const authStore = useAuthStore();
+      const [error, data] = await authStore.register({
+        username: this.username,
+        email: this.email,
+        password: this.password,
+        role: 'user'
       });
-    },
 
-    clearErrors() {
-      this.errors = {};
-      this.generalError = '';
+      if (error) {
+        this.registerError = authStore.getErrors.message;
+        this.loading = false;
+        return;
+      }
+
+      this.$emit('success', data);
+      this.resetForm();
+      this.closeModal();
+      this.loading = false;
     },
 
     resetForm() {
-      this.form = {
-        username: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        terms: false
-      };
+      this.username = '';
+      this.email = '';
+      this.password = '';
+      this.confirmPassword = '';
+      this.terms = false;
       this.clearErrors();
+    },
+
+    clearErrors() {
+      this.usernameError = '';
+      this.emailError = '';
+      this.passwordError = '';
+      this.confirmPasswordError = '';
+      this.termsError = '';
+      this.registerError = '';
     },
 
     closeModal() {
@@ -242,7 +227,6 @@ export default {
     },
 
     switchToLogin() {
-      this.closeModal();
       this.$emit('switch-to-login');
     }
   },
@@ -261,273 +245,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-container {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 24px;
-  width: 90%;
-  max-width: 480px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-  color: white;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 30px 30px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.modal-header h2 {
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: 700;
-}
-
-.gradient-text {
-  background: linear-gradient(45deg, #ff6b6b, #feca57);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.close-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 8px;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-}
-
-.close-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
-}
-
-.modal-body {
-  padding: 30px;
-}
-
-.form-group {
-  margin-bottom: 25px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="password"] {
-  width: 100%;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  font-size: 1rem;
-  color: white;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-}
-
-.form-group input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: rgba(255, 107, 107, 0.6);
-  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.form-group input.error {
-  border-color: #ff4757;
-  box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.2);
-}
-
-.error-message {
-  color: #ff6b6b;
-  font-size: 0.85rem;
-  margin-top: 5px;
-  display: block;
-  background: rgba(255, 107, 107, 0.1);
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 107, 107, 0.3);
-}
-
-.checkbox-group {
-  margin-bottom: 20px;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: flex-start;
-  cursor: pointer;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.checkbox-label input[type="checkbox"] {
-  margin-right: 12px;
-  margin-top: 2px;
-  accent-color: #ff6b6b;
-}
-
-.checkbox-label a {
-  color: #feca57;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.checkbox-label a:hover {
-  text-decoration: underline;
-}
-
-.general-error {
-  background: rgba(255, 107, 107, 0.2);
-  color: #ff6b6b;
-  padding: 16px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
-  border: 1px solid rgba(255, 107, 107, 0.4);
-  backdrop-filter: blur(10px);
-}
-
-.submit-btn {
-  width: 100%;
-  padding: 18px;
-  background: linear-gradient(45deg, #ff6b6b, #feca57);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
-}
-
-.submit-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(255, 107, 107, 0.4);
-}
-
-.submit-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid transparent;
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.login-link {
-  text-align: center;
-  margin-top: 25px;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.9rem;
-}
-
-.login-link a {
-  color: #feca57;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.login-link a:hover {
-  text-decoration: underline;
-}
-
-.modal-enter-active, .modal-leave-active {
-  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.modal-enter-from, .modal-leave-to {
-  opacity: 0;
-  transform: scale(0.8) translateY(50px);
-}
-
-.modal-enter-active .modal-container,
-.modal-leave-active .modal-container {
-  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.modal-enter-from .modal-container,
-.modal-leave-to .modal-container {
-  transform: scale(0.8) translateY(50px);
-}
-
-@media (max-width: 480px) {
-  .modal-container {
-    width: 95%;
-    margin: 20px;
-  }
-
-  .modal-header,
-  .modal-body {
-    padding: 20px;
-  }
-
-  .modal-header h2 {
-    font-size: 1.5rem;
-  }
-
-  .form-group input[type="text"],
-  .form-group input[type="email"],
-  .form-group input[type="password"] {
-    padding: 14px;
-  }
-}
-</style>
+<style src="@/styles/login-register.scss" scoped></style>
