@@ -335,7 +335,7 @@ export default {
 
     async fetchMovieDetails(movieId) {
       try {
-        const apiKey = '01eab7cf7274849e56bf6b0969c6627d';
+        const apiKey = process.env.VUE_APP_API_KEY;
         const baseUrl = 'https://api.themoviedb.org/3';
         const imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
 

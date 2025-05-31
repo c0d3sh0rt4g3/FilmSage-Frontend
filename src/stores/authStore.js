@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 
+const BACKEND_URL = process.env.BACKEND_URL
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     userData: null,
@@ -16,7 +18,7 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(credentials) {
       try {
-        const response = await fetch('http://localhost:3000/users/login', {
+        const response = await fetch('${BACKEND_URL}/users/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -50,7 +52,7 @@ export const useAuthStore = defineStore('auth', {
 
     async register(userData) {
       try {
-        const response = await fetch('http://localhost:3000/users/register', {
+        const response = await fetch('${BACKEND_URL}/users/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

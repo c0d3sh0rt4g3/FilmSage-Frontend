@@ -223,7 +223,7 @@ export default {
     },
 
     async fetchMovies(query, page = 1) {
-      const apiKey = '01eab7cf7274849e56bf6b0969c6627d'; // Replace with your API key
+      const apiKey = process.env.VUE_APP_API_KEY;
       const baseUrl = 'https://api.themoviedb.org/3';
 
       const url = `${baseUrl}/search/movie?api_key=${apiKey}&language=es-ES&query=${encodeURIComponent(query)}&page=${page}`;
