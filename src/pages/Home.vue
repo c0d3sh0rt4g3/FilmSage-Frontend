@@ -5,17 +5,16 @@
       <div class="hero-content">
         <div class="hero-text">
           <h1 class="hero-title">
-            Descubre tu próxima
-            <span class="gradient-text">obsesión cinematográfica</span>
+            Discover your next
+            <span class="gradient-text">cinematic obsession</span>
           </h1>
           <p class="hero-subtitle">
-            FilmSage utiliza inteligencia artificial para ofrecerte recomendaciones
-            personalizadas que realmente conectan contigo. Olvídate de perder horas
-            buscando qué ver.
+            FilmSage uses artificial intelligence to offer you personalized recommendations 
+            that truly connect with you. Forget about spending hours looking for what to watch.
           </p>
           <div class="hero-buttons">
             <button class="btn-primary" @click="startDiscovery">
-              Comenzar mi viaje
+              Start my journey
             </button>
           </div>
         </div>
@@ -38,7 +37,7 @@
     <!-- Features Section -->
     <section class="features">
       <div class="container">
-        <h2 class="section-title">La revolución del entretenimiento personalizado</h2>
+        <h2 class="section-title">The revolution of personalized entertainment</h2>
         <div class="features-grid">
           <div class="feature-card" v-for="feature in features" :key="feature.id">
             <div class="feature-icon">
@@ -54,10 +53,10 @@
     <section class="cta">
       <div class="container">
         <div class="cta-content">
-          <h2>¿Listo para descubrir tu nuevo mundo cinematográfico?</h2>
-          <p>Únete a miles de usuarios que ya han transformado su forma de descubrir entretenimiento</p>
+          <h2>Ready to discover your new cinematic world?</h2>
+          <p>Join thousands of users who have already transformed their way of discovering entertainment</p>
           <button class="btn-cta" @click="openRegisterModal">
-            Crear cuenta gratuita
+            Create free account
           </button>
         </div>
       </div>
@@ -118,32 +117,31 @@ export default {
         675353, 370172, 524047, 581389, 476669, 460465, 399566, 539681, 718930, 760104,
         675278, 862, 103, 73, 423, 599, 1726, 1891, 1892, 1893,
         1894, 1895, 1896, 1897, 1898, 1899, 1900, 1901, 1902, 1903
-      ]
-      ,
+      ],
       features: [
         {
           id: 1,
           icon: 'icon-ai',
-          title: 'IA Personalizada',
-          description: 'Algoritmos avanzados que aprenden de tus gustos para ofrecerte recomendaciones únicas.'
+          title: 'Personalized AI',
+          description: 'Advanced algorithms that learn from your preferences to offer unique recommendations.'
         },
         {
           id: 2,
           icon: 'icon-search',
-          title: 'Búsqueda Inteligente',
-          description: 'Encuentra exactamente lo que buscas con autocompletado y filtros avanzados.'
+          title: 'Smart Search',
+          description: 'Find exactly what you\'re looking for with autocomplete and advanced filters.'
         },
         {
           id: 3,
           icon: 'icon-social',
-          title: 'Experiencia Social',
-          description: 'Comparte tus descubrimientos y conecta con otros amantes del cine y las series.'
+          title: 'Social Experience',
+          description: 'Share your discoveries and connect with other movie and series enthusiasts.'
         },
         {
           id: 4,
           icon: 'icon-trending',
-          title: 'Tendencias Actuales',
-          description: 'Mantente al día con lo más popular y las últimas novedades del mundo audiovisual.'
+          title: 'Current Trends',
+          description: 'Stay up to date with what\'s popular and the latest news in the audiovisual world.'
         }
       ]
     }
@@ -184,19 +182,19 @@ export default {
           this.handleRegistrationSuccess(data);
           this.resetForm();
           this.closeRegisterModal();
-          alert('¡Cuenta creada exitosamente! Bienvenido a FilmSage.');
+          alert('Account created successfully! Welcome to FilmSage.');
         } else {
           if (response.status === 409) {
-            this.generalError = 'Ya existe un usuario con este email o nombre de usuario';
+            this.generalError = 'A user with this email or username already exists';
           } else if (data.errors) {
             this.handleValidationErrors(data.errors);
           } else {
-            this.generalError = data.message || 'Error al crear la cuenta';
+            this.generalError = data.message || 'Error creating account';
           }
         }
       } catch (error) {
-        console.error('Error de registro:', error);
-        this.generalError = 'Error de conexión. Por favor, inténtalo de nuevo.';
+        console.error('Registration error:', error);
+        this.generalError = 'Connection error. Please try again.';
       } finally {
         this.loading = false;
       }
@@ -206,37 +204,37 @@ export default {
       let isValid = true;
 
       if (!this.form.username.trim()) {
-        this.errors.username = 'El nombre de usuario es requerido';
+        this.errors.username = 'Username is required';
         isValid = false;
       } else if (this.form.username.length < 3) {
-        this.errors.username = 'El nombre de usuario debe tener al menos 3 caracteres';
+        this.errors.username = 'Username must be at least 3 characters long';
         isValid = false;
       }
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!this.form.email.trim()) {
-        this.errors.email = 'El email es requerido';
+        this.errors.email = 'Email is required';
         isValid = false;
       } else if (!emailRegex.test(this.form.email)) {
-        this.errors.email = 'Ingresa un email válido';
+        this.errors.email = 'Please enter a valid email';
         isValid = false;
       }
 
       if (!this.form.password) {
-        this.errors.password = 'La contraseña es requerida';
+        this.errors.password = 'Password is required';
         isValid = false;
       } else if (this.form.password.length < 6) {
-        this.errors.password = 'La contraseña debe tener al menos 6 caracteres';
+        this.errors.password = 'Password must be at least 6 characters long';
         isValid = false;
       }
 
       if (this.form.password !== this.form.confirmPassword) {
-        this.errors.confirmPassword = 'Las contraseñas no coinciden';
+        this.errors.confirmPassword = 'Passwords do not match';
         isValid = false;
       }
 
       if (!this.form.terms) {
-        this.errors.terms = 'Debes aceptar los términos y condiciones';
+        this.errors.terms = 'You must accept the terms and conditions';
         isValid = false;
       }
 
@@ -279,7 +277,7 @@ export default {
     },
 
     handleRegistrationSuccess(userData) {
-      console.log('Usuario registrado exitosamente:', userData);
+      this.closeRegisterModal();
     },
 
     switchToLogin() {
@@ -298,7 +296,7 @@ export default {
     },
 
     handleLoginSuccess(userData) {
-      console.log('Usuario logueado exitosamente:', userData);
+      console.log('User logged in successfully:', userData);
     },
 
     switchToRegister() {
@@ -321,7 +319,7 @@ export default {
           this.loadFallbackMovies();
         }
       } catch (error) {
-        console.error('Error cargando películas:', error);
+        console.error('Error loading movies:', error);
         this.loadFallbackMovies();
       } finally {
         this.loading = false;
@@ -335,11 +333,11 @@ export default {
 
     async fetchMovieDetails(movieId) {
       try {
-        const apiKey = process.env.VUE_APP_API_KEY;
+        const apiKey = import.meta.env.VITE_MOVIEDB_API_KEY;
         const baseUrl = 'https://api.themoviedb.org/3';
         const imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
 
-        const url = `${baseUrl}/movie/${movieId}?api_key=${apiKey}&language=es-ES`;
+        const url = `${baseUrl}/movie/${movieId}?api_key=${apiKey}&language=en-US`;
 
         console.log(`Fetching movie: ${url}`);
 
@@ -361,7 +359,7 @@ export default {
           Poster: data.poster_path ? `${imageBaseUrl}${data.poster_path}` : '/images/placeholder-movie.jpg',
           imdbRating: data.vote_average ? data.vote_average.toFixed(1) : 'N/A',
           Genre: data.genres ? data.genres.map(g => g.name).join(', ') : 'N/A',
-          Plot: data.overview || 'Sin descripción disponible',
+          Plot: data.overview || 'No description available',
           Director: 'N/A',
           Actors: 'N/A',
           Runtime: data.runtime ? `${data.runtime} min` : 'N/A',
@@ -377,30 +375,30 @@ export default {
       this.featuredMovies = [
         {
           id: 278,
-          Title: 'Cadena perpetua',
+          Title: 'The Shawshank Redemption',
           Year: '1994',
           Poster: 'https://image.tmdb.org/t/p/w500/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg',
           imdbRating: '8.7',
           Genre: 'Drama',
-          Plot: 'Dos hombres encarcelados se unen a lo largo de varios años...'
+          Plot: 'Two imprisoned men bond over a number of years...'
         },
         {
           id: 238,
-          Title: 'El Padrino',
+          Title: 'The Godfather',
           Year: '1972',
           Poster: 'https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg',
           imdbRating: '8.7',
-          Genre: 'Drama, Crimen',
-          Plot: 'El patriarca de una dinastía del crimen organizado...'
+          Genre: 'Drama, Crime',
+          Plot: 'The patriarch of an organized crime dynasty...'
         },
         {
           id: 424,
-          Title: 'El Caballero Oscuro',
+          Title: 'The Dark Knight',
           Year: '2008',
           Poster: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
           imdbRating: '8.5',
-          Genre: 'Acción, Crimen, Drama',
-          Plot: 'Cuando la amenaza conocida como el Joker...'
+          Genre: 'Action, Crime, Drama',
+          Plot: 'When the menace known as the Joker...'
         }
       ];
     },

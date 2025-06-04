@@ -4,21 +4,21 @@
       <div v-if="show" class="modal-overlay" @click="closeModal">
         <div class="modal-container" @click.stop>
           <div class="modal-header">
-            <h2>Únete a <span class="gradient-text">FilmSage</span></h2>
+            <h2>Join <span class="gradient-text">FilmSage</span></h2>
             <button class="modal-close-btn" @click="closeModal">&times;</button>
           </div>
 
           <div class="modal-body">
             <form @submit.prevent="registerUser">
               <div class="modal-form-group">
-                <label for="username" class="modal-form-label">Nombre de usuario</label>
+                <label for="username" class="modal-form-label">Username</label>
                 <input
                   id="username"
                   v-model="username"
                   type="text"
                   class="modal-form-input"
                   :class="{ 'error': usernameError }"
-                  placeholder="Ingresa tu nombre de usuario"
+                  placeholder="Enter your username"
                   @blur="validateUsername"
                   required
                 />
@@ -26,14 +26,14 @@
               </div>
 
               <div class="modal-form-group">
-                <label for="email" class="modal-form-label">Correo electrónico</label>
+                <label for="email" class="modal-form-label">Email</label>
                 <input
                   id="email"
                   v-model="email"
                   type="email"
                   class="modal-form-input"
                   :class="{ 'error': emailError }"
-                  placeholder="tu@email.com"
+                  placeholder="you@email.com"
                   @blur="validateEmail"
                   required
                 />
@@ -41,14 +41,14 @@
               </div>
 
               <div class="modal-form-group">
-                <label for="password" class="modal-form-label">Contraseña</label>
+                <label for="password" class="modal-form-label">Password</label>
                 <input
                   id="password"
                   v-model="password"
                   type="password"
                   class="modal-form-input"
                   :class="{ 'error': passwordError }"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Minimum 6 characters"
                   @blur="validatePassword"
                   required
                 />
@@ -56,14 +56,14 @@
               </div>
 
               <div class="modal-form-group">
-                <label for="confirmPassword" class="modal-form-label">Confirmar contraseña</label>
+                <label for="confirmPassword" class="modal-form-label">Confirm Password</label>
                 <input
                   id="confirmPassword"
                   v-model="confirmPassword"
                   type="password"
                   class="modal-form-input"
                   :class="{ 'error': confirmPasswordError }"
-                  placeholder="Repite tu contraseña"
+                  placeholder="Repeat your password"
                   @blur="validateConfirmPassword"
                   required
                 />
@@ -74,7 +74,7 @@
                 <label class="modal-checkbox-label">
                   <input v-model="terms" type="checkbox" required />
                   <span class="checkmark"></span>
-                  Acepto los <a href="#" @click.prevent>términos y condiciones</a>
+                  I accept the <a href="#" @click.prevent>terms and conditions</a>
                 </label>
                 <span v-if="termsError" class="modal-error-message">{{ termsError }}</span>
               </div>
@@ -85,12 +85,12 @@
 
               <button type="submit" class="modal-submit-btn" :disabled="loading">
                 <span v-if="loading" class="modal-spinner"></span>
-                {{ loading ? 'Creando cuenta...' : 'Comenzar mi aventura' }}
+                {{ loading ? 'Creating account...' : 'Start my journey' }}
               </button>
             </form>
 
             <div class="modal-link-section">
-              ¿Ya tienes cuenta? <a href="#" @click.prevent="switchToLogin">Inicia sesión</a>
+              Already have an account? <a href="#" @click.prevent="switchToLogin">Sign in</a>
             </div>
           </div>
         </div>
@@ -133,7 +133,7 @@ export default {
       this.usernameError = '';
       const validName = validateName(this.username);
       if (!validName) {
-        this.usernameError = 'El nombre de usuario debe tener al menos 3 caracteres.';
+        this.usernameError = 'Username must be at least 3 characters long.';
       }
     },
 
@@ -141,7 +141,7 @@ export default {
       this.emailError = '';
       const validMail = validateMail(this.email);
       if (!validMail) {
-        this.emailError = 'Por favor ingresa un email válido.';
+        this.emailError = 'Please enter a valid email.';
       }
     },
 
@@ -149,7 +149,7 @@ export default {
       this.passwordError = '';
       const validPassword = validatePassword(this.password);
       if (!validPassword) {
-        this.passwordError = 'La contraseña debe tener al menos 6 caracteres.';
+        this.passwordError = 'Password must be at least 6 characters long.';
       }
     },
 
@@ -157,14 +157,14 @@ export default {
       this.confirmPasswordError = '';
       const validRepeatPassword = validateRepeatPassword(this.password, this.confirmPassword);
       if (!validRepeatPassword) {
-        this.confirmPasswordError = 'Las contraseñas no coinciden.';
+        this.confirmPasswordError = 'Passwords do not match.';
       }
     },
 
     validateTerms() {
       this.termsError = '';
       if (!this.terms) {
-        this.termsError = 'Debes aceptar los términos y condiciones.';
+        this.termsError = 'You must accept the terms and conditions.';
       }
     },
 
@@ -201,6 +201,7 @@ export default {
       this.resetForm();
       this.closeModal();
       this.loading = false;
+      this.$router.push('/search');
     },
 
     resetForm() {

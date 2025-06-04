@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-const BACKEND_URL = process.env.BACKEND_URL
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -10,7 +10,7 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
-    isAuthenticated: (state) => state.logged,
+    isAuthenticated: (state) => state.logged,*
     getUser: (state) => state.userData,
     getErrors: (state) => state.errors
   },
@@ -18,7 +18,7 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(credentials) {
       try {
-        const response = await fetch('${BACKEND_URL}/users/login', {
+        const response = await fetch(`${BACKEND_URL}/users/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ export const useAuthStore = defineStore('auth', {
 
     async register(userData) {
       try {
-        const response = await fetch('${BACKEND_URL}/users/register', {
+        const response = await fetch(`${BACKEND_URL}/users/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

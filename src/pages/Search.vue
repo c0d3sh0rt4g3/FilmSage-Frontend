@@ -4,10 +4,10 @@
     <section class="search-hero">
       <div class="search-content">
         <h1 class="search-title">
-          Descubre <span class="gradient-text">películas increíbles</span>
+          Discover <span class="gradient-text">amazing movies</span>
         </h1>
         <p class="search-subtitle">
-          Explora miles de películas y encuentra tu próxima obsesión cinematográfica
+          Explore thousands of movies and find your next cinematic obsession
         </p>
 
         <div class="search-bar">
@@ -15,7 +15,7 @@
             type="text"
             v-model="searchQuery"
             @keyup.enter="searchMovies"
-            placeholder="Buscar películas..."
+            placeholder="Search movies..."
             class="search-input"
           />
           <button
@@ -23,7 +23,7 @@
             class="btn-search"
             :disabled="loading"
           >
-            {{ loading ? 'Buscando...' : 'Buscar' }}
+            {{ loading ? 'Searching...' : 'Search' }}
           </button>
         </div>
       </div>
@@ -35,26 +35,26 @@
         <!-- Loading State -->
         <div v-if="loading" class="loading-state">
           <div class="spinner"></div>
-          <p>Buscando películas...</p>
+          <p>Searching movies...</p>
         </div>
 
         <!-- Error State -->
         <div v-else-if="error" class="error-state">
-          <h3>Oops! Algo salió mal</h3>
+          <h3>Oops! Something went wrong</h3>
           <p>{{ error }}</p>
-          <button @click="retrySearch" class="btn-retry">Intentar de nuevo</button>
+          <button @click="retrySearch" class="btn-retry">Try again</button>
         </div>
 
         <!-- No Results -->
         <div v-else-if="movies.length === 0 && hasSearched" class="no-results">
-          <h3>No se encontraron resultados</h3>
-          <p>Intenta con otro término de búsqueda</p>
+          <h3>No results found</h3>
+          <p>Try another search term</p>
         </div>
 
         <!-- Movies Grid -->
         <div v-else-if="movies.length > 0" class="movies-container">
           <h2 class="results-title">
-            Resultados para "<span class="gradient-text">{{ lastSearchQuery }}</span>"
+            Results for "<span class="gradient-text">{{ lastSearchQuery }}</span>"
           </h2>
 
           <div class="movies-grid">
@@ -89,15 +89,15 @@
               class="btn-load-more"
               :disabled="loadingMore"
             >
-              {{ loadingMore ? 'Cargando...' : 'Cargar más películas' }}
+              {{ loadingMore ? 'Loading...' : 'Load more movies' }}
             </button>
           </div>
         </div>
 
         <!-- Welcome State -->
         <div v-else class="welcome-state">
-          <h2>¡Comienza tu búsqueda!</h2>
-          <p>Usa el buscador para encontrar tus películas favoritas</p>
+          <h2>Start your search!</h2>
+          <p>Use the search bar to find your favorite movies</p>
         </div>
       </div>
     </section>
@@ -122,7 +122,7 @@
               <span class="rating">⭐ {{ formatRating(selectedMovie.vote_average) }}</span>
             </div>
 
-            <p class="overview">{{ selectedMovie.overview || 'Sin descripción disponible' }}</p>
+            <p class="overview">{{ selectedMovie.overview || 'No description available' }}</p>
 
             <div class="genres" v-if="selectedMovie.genre_ids">
               <span
@@ -156,24 +156,24 @@ export default {
       currentPage: 1,
       totalPages: 1,
       genres: {
-        28: 'Acción',
-        12: 'Aventura',
-        16: 'Animación',
-        35: 'Comedia',
-        80: 'Crimen',
-        99: 'Documental',
+        28: 'Action',
+        12: 'Adventure',
+        16: 'Animation',
+        35: 'Comedy',
+        80: 'Crime',
+        99: 'Documentary',
         18: 'Drama',
-        10751: 'Familia',
-        14: 'Fantasía',
-        36: 'Historia',
-        27: 'Terror',
-        10402: 'Música',
-        9648: 'Misterio',
+        10751: 'Family',
+        14: 'Fantasy',
+        36: 'History',
+        27: 'Horror',
+        10402: 'Music',
+        9648: 'Mystery',
         10749: 'Romance',
-        878: 'Ciencia ficción',
-        10770: 'Película de TV',
+        878: 'Science Fiction',
+        10770: 'TV Movie',
         53: 'Thriller',
-        10752: 'Guerra',
+        10752: 'War',
         37: 'Western'
       }
     }
@@ -198,7 +198,7 @@ export default {
         this.movies = response.results || [];
         this.totalPages = response.total_pages || 1;
       } catch (error) {
-        this.error = 'Error al buscar películas. Por favor, inténtalo de nuevo.';
+        this.error = 'Error searching movies. Please try again.';
         console.error('Error searching movies:', error);
       } finally {
         this.loading = false;
@@ -215,7 +215,7 @@ export default {
         this.movies.push(...(response.results || []));
         this.currentPage++;
       } catch (error) {
-        this.error = 'Error al cargar más películas.';
+        this.error = 'Error loading more movies.';
         console.error('Error loading more movies:', error);
       } finally {
         this.loadingMore = false;
@@ -223,10 +223,10 @@ export default {
     },
 
     async fetchMovies(query, page = 1) {
-      const apiKey = process.env.VUE_APP_API_KEY;
+      const apiKey = import.meta.env.VITE_MOVIEDB_API_KEY;
       const baseUrl = 'https://api.themoviedb.org/3';
 
-      const url = `${baseUrl}/search/movie?api_key=${apiKey}&language=es-ES&query=${encodeURIComponent(query)}&page=${page}`;
+      const url = `${baseUrl}/search/movie?api_key=${apiKey}&language=en-US&query=${encodeURIComponent(query)}&page=${page}`;
 
       const response = await fetch(url);
 
@@ -274,7 +274,7 @@ export default {
     },
 
     getGenreName(genreId) {
-      return this.genres[genreId] || 'Desconocido';
+      return this.genres[genreId] || 'Unknown';
     }
   },
 

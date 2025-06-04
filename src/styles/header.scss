@@ -1,0 +1,137 @@
+@import 'variables';
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 1rem 0;
+  transition: $transition-base;
+  background: transparent;
+
+  &.scrolled {
+    background: $black-80;
+    backdrop-filter: $blur-medium;
+    box-shadow: $shadow-medium;
+  }
+}
+
+.header-content {
+  width: 95%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2.5%;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  text-decoration: none;
+  
+  .gradient-text {
+    background: $accent-gradient;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.main-nav {
+  display: flex;
+  gap: 2rem;
+
+  .nav-link {
+    color: $white;
+    text-decoration: none;
+    font-weight: 600;
+    transition: $transition-base;
+    padding: 0.5rem 1rem;
+    border-radius: $border-radius-round;
+
+    &:hover, &.router-link-active {
+      background: $white-15;
+    }
+  }
+}
+
+.auth-section {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.btn-login, .btn-register, .btn-logout {
+  padding: 0.8rem 1.5rem;
+  border-radius: $border-radius-round;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: $transition-base;
+}
+
+.btn-login {
+  background: transparent;
+  color: $white;
+  border: 2px solid $white-30;
+
+  &:hover {
+    background: $white-15;
+  }
+}
+
+.btn-register {
+  background: $accent-gradient;
+  color: $white;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-light;
+  }
+}
+
+.btn-logout {
+  background: $error-red;
+  color: $white;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-medium;
+  }
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .username {
+    color: $white;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .main-nav {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .auth-section {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-login, .btn-register, .btn-logout {
+    width: 100%;
+  }
+}

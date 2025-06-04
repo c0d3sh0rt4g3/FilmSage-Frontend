@@ -4,21 +4,21 @@
       <div v-if="show" class="modal-overlay" @click="closeModal">
         <div class="modal-container" @click.stop>
           <div class="modal-header">
-            <h2>Bienvenido a <span class="gradient-text">FilmSage</span></h2>
+            <h2>Welcome to <span class="gradient-text">FilmSage</span></h2>
             <button class="modal-close-btn" @click="closeModal">&times;</button>
           </div>
 
           <div class="modal-body">
             <form @submit.prevent="loginUser">
               <div class="modal-form-group">
-                <label for="loginEmail" class="modal-form-label">Correo electrónico</label>
+                <label for="loginEmail" class="modal-form-label">Email</label>
                 <input
                   id="loginEmail"
                   v-model="email"
                   type="email"
                   class="modal-form-input"
                   :class="{ 'error': emailError }"
-                  placeholder="tu@email.com"
+                  placeholder="you@email.com"
                   @blur="validateEmail"
                   required
                 />
@@ -26,14 +26,14 @@
               </div>
 
               <div class="modal-form-group">
-                <label for="loginPassword" class="modal-form-label">Contraseña</label>
+                <label for="loginPassword" class="modal-form-label">Password</label>
                 <input
                   id="loginPassword"
                   v-model="password"
                   type="password"
                   class="modal-form-input"
                   :class="{ 'error': passwordError }"
-                  placeholder="Ingresa tu contraseña"
+                  placeholder="Enter your password"
                   @blur="validatePassword"
                   required
                 />
@@ -44,7 +44,7 @@
                 <label class="modal-checkbox-label">
                   <input v-model="rememberMe" type="checkbox" />
                   <span class="checkmark"></span>
-                  Recordarme
+                  Remember me
                 </label>
               </div>
 
@@ -54,16 +54,16 @@
 
               <button type="submit" class="modal-submit-btn" :disabled="loading">
                 <span v-if="loading" class="modal-spinner"></span>
-                {{ loading ? 'Iniciando sesión...' : 'Iniciar sesión' }}
+                {{ loading ? 'Signing in...' : 'Sign in' }}
               </button>
             </form>
 
             <div class="modal-forgot-password">
-              <a href="#" @click.prevent="forgotPassword">¿Olvidaste tu contraseña?</a>
+              <a href="#" @click.prevent="forgotPassword">Forgot your password?</a>
             </div>
 
             <div class="modal-link-section">
-              ¿No tienes cuenta? <a href="#" @click.prevent="switchToRegister">Crear cuenta</a>
+              Don't have an account? <a href="#" @click.prevent="switchToRegister">Create account</a>
             </div>
           </div>
         </div>
@@ -101,7 +101,7 @@ export default {
       this.emailError = '';
       const validMail = validateMail(this.email);
       if (!validMail) {
-        this.emailError = 'Por favor ingresa un email válido.';
+        this.emailError = 'Please enter a valid email.';
       }
     },
 
@@ -109,7 +109,7 @@ export default {
       this.passwordError = '';
       const validPassword = validatePassword(this.password);
       if (!validPassword) {
-        this.passwordError = 'La contraseña debe tener al menos 6 caracteres.';
+        this.passwordError = 'Password must be at least 6 characters long.';
       }
     },
 
@@ -165,7 +165,7 @@ export default {
     },
 
     forgotPassword() {
-      alert('Funcionalidad de recuperar contraseña próximamente');
+      alert('Password recovery feature coming soon');
     }
   },
   watch: {
