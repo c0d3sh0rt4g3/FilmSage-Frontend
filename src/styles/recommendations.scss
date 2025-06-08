@@ -3,25 +3,30 @@
 .recommendations-page {
   min-height: 100vh;
   background: linear-gradient(to bottom, $black-90, $black);
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
 }
 
 .recommendations-hero {
-  padding: 60px 0;
+  width: 100vw;
+  padding: 8vh 0;
   background: $primary-gradient;
-  margin-bottom: 40px;
+  margin-bottom: 5vh;
 }
 
 .hero-content {
-  max-width: 1200px;
+  width: 90vw;
+  max-width: 80vw;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 4vw;
   text-align: center;
 }
 
 .hero-title {
-  font-size: 3rem;
+  font-size: clamp(2rem, 3vw, 4rem);
   color: $white;
-  margin-bottom: 20px;
+  margin-bottom: 2vh;
 
   .gradient-text {
     background: $accent-gradient;
@@ -31,37 +36,42 @@
 }
 
 .hero-subtitle {
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 1.2vw, 1.4rem);
   color: $white-80;
 }
 
 .recommendations-content {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  
   .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+    width: 90vw;
+    max-width: 80vw;
+    padding: 0 4vw;
   }
 }
 
 .recommendations-section {
-  margin-bottom: 60px;
+  margin-bottom: 8vh;
 
   h2 {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 2vw, 2.5rem);
     color: $white;
-    margin-bottom: 10px;
+    margin-bottom: 1vh;
   }
 
   .section-description {
     color: $white-60;
-    margin-bottom: 30px;
+    margin-bottom: 4vh;
+    font-size: clamp(0.9rem, 1.1vw, 1.3rem);
   }
 }
 
 .movies-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(20vw, 1fr));
+  gap: 3vw;
 }
 
 .movie-card {
@@ -69,36 +79,41 @@
   transition: $transition-base;
 
   &:hover {
-    transform: translateY(-5px);
+    transform: translateY(-0.5vh);
     box-shadow: $shadow-light;
   }
 
   .movie-poster {
     position: relative;
-    margin-bottom: 15px;
+    margin-bottom: 2vh;
+    aspect-ratio: 2/3;
 
     img {
-      width: 100%;
+      width: 100vw;
+      height: 100vh;
       border-radius: $border-radius-medium;
       box-shadow: $shadow-card;
+      object-fit: cover;
     }
 
     .card-overlay {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 1vh;
+      right: 1vw;
       background: $black-80;
-      padding: 5px 10px;
+      padding: 0.8vh 1.5vw;
       border-radius: $border-radius-small;
       
       .match-score {
         color: $accent-orange;
         font-weight: 600;
+        font-size: clamp(0.8rem, 0.9vw, 1.1rem);
       }
 
       .trending-score {
         color: $white;
         font-weight: 600;
+        font-size: clamp(0.8rem, 0.9vw, 1.1rem);
       }
     }
   }
@@ -106,29 +121,29 @@
   .movie-info {
     h3 {
       color: $white;
-      font-size: 1.1rem;
-      margin-bottom: 8px;
+      font-size: clamp(1rem, 1.2vw, 1.4rem);
+      margin-bottom: 1vh;
     }
 
     .meta-info {
       display: flex;
-      gap: 15px;
-      margin-bottom: 8px;
+      gap: 2vw;
+      margin-bottom: 1vh;
       color: $white-60;
-      font-size: 0.9rem;
+      font-size: clamp(0.8rem, 0.9vw, 1.1rem);
     }
 
     .genres {
       display: flex;
-      gap: 8px;
+      gap: 1vw;
       flex-wrap: wrap;
     }
 
     .genre-tag {
-      padding: 4px 8px;
+      padding: 0.6vh 1vw;
       background: $white-10;
       border-radius: $border-radius-round;
-      font-size: 0.8rem;
+      font-size: clamp(0.7rem, 0.8vw, 1rem);
       color: $white;
     }
   }
@@ -137,53 +152,54 @@
 .loading-state,
 .error-state,
 .no-recommendations {
-  min-height: 400px;
+  min-height: 50vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   color: $white;
-  padding: 40px;
+  padding: 5vh 4vw;
 
   h3 {
-    font-size: 1.8rem;
-    margin-bottom: 15px;
+    font-size: clamp(1.5rem, 2vw, 2.5rem);
+    margin-bottom: 2vh;
   }
 
   p {
     color: $white-80;
-    margin-bottom: 30px;
-    font-size: 1.1rem;
+    margin-bottom: 4vh;
+    font-size: clamp(1rem, 1.2vw, 1.4rem);
   }
 }
 
 .loading-state .spinner {
-  width: $spinner-size;
-  height: $spinner-size;
+  width: 3vw;
+  height: 3vw;
   border: 2px solid $white-20;
   border-top-color: $accent-orange;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 20px;
+  margin-bottom: 3vh;
 }
 
 .action-buttons {
   display: flex;
-  gap: 15px;
+  gap: 2vw;
 }
 
 .btn-action,
 .btn-retry {
-  padding: 12px 24px;
+  padding: 1.5vh 3vw;
   border-radius: $border-radius-small;
   font-weight: 600;
   cursor: pointer;
   transition: $transition-base;
   text-decoration: none;
+  font-size: clamp(0.9rem, 1vw, 1.2rem);
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-0.5vh);
     box-shadow: $shadow-light;
   }
 
@@ -209,26 +225,27 @@
 }
 
 @media (max-width: 768px) {
-  .hero-title {
-    font-size: 2rem;
-  }
-
-  .hero-subtitle {
-    font-size: 1rem;
-  }
-
-  .recommendations-section h2 {
-    font-size: 1.5rem;
+  .hero-content, 
+  .recommendations-content .container {
+    width: 95vw;
+    max-width: none;
+    padding: 0 5vw;
   }
 
   .movies-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(40vw, 1fr));
+    gap: 4vw;
   }
 
   .action-buttons {
     flex-direction: column;
-    width: 100%;
-    max-width: 300px;
+    gap: 2vh;
+    width: 100vw;
+  }
+
+  .btn-action,
+  .btn-retry {
+    width: 100vw;
+    text-align: center;
   }
 } 

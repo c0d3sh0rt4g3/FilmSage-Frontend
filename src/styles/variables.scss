@@ -49,55 +49,55 @@ $primary-gradient: linear-gradient(135deg, $primary-purple 0%, $primary-blue 100
 $accent-gradient: linear-gradient(45deg, $accent-orange, $accent-yellow);
 
 // Shadows
-$shadow-light: 0 8px 25px $accent-orange-30;
-$shadow-medium: 0 10px 25px $black-20;
-$shadow-strong: 0 12px 30px $accent-orange-40;
-$shadow-card: 0 20px 40px $black-30;
-$shadow-modal: 0 25px 50px $black-40;
-$shadow-focus: 0 0 0 3px $error-border-20;
-$shadow-focus-error: 0 0 0 3px $error-focus;
+$shadow-light: 0 0.4vw 1.3vw $accent-orange-30;
+$shadow-medium: 0 0.5vw 1.3vw $black-20;
+$shadow-strong: 0 0.6vw 1.6vw $accent-orange-40;
+$shadow-card: 0 1vw 2vw $black-30;
+$shadow-modal: 0 1.3vw 2.6vw $black-40;
+$shadow-focus: 0 0 0 0.15vw $error-border-20;
+$shadow-focus-error: 0 0 0 0.15vw $error-focus;
 
 // Blur effects
-$blur-light: blur(10px);
-$blur-medium: blur(15px);
-$blur-strong: blur(20px);
+$blur-light: blur(0.5vw);
+$blur-medium: blur(0.8vw);
+$blur-strong: blur(1vw);
 
 // Transitions
 $transition-base: all 0.3s ease;
 $transition-modal: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 
 // Spacing and radius
-$border-radius-small: 8px;
-$border-radius-medium: 12px;
-$border-radius-large: 16px;
-$border-radius-xl: 20px;
-$border-radius-xxl: 24px;
-$border-radius-round: 50px;
+$border-radius-small: 0.4vw;
+$border-radius-medium: 0.6vw;
+$border-radius-large: 0.8vw;
+$border-radius-xl: 1vw;
+$border-radius-xxl: 1.2vw;
+$border-radius-round: 2.5vw;
 
 // Z-index
 $z-modal: 1000;
 
 // Modal sizes
-$modal-max-width: 480px;
-$modal-max-width-small: 450px;
+$modal-max-width: 25vw;
+$modal-max-width-small: 23.4vw;
 $modal-max-height: 90vh;
-$modal-padding: 30px;
-$modal-padding-mobile: 20px;
-$modal-header-padding: 30px 30px 20px;
-$modal-header-padding-mobile: 20px;
+$modal-padding: 1.6vw;
+$modal-padding-mobile: 1vw;
+$modal-header-padding: 1.6vw 1.6vw 1vw;
+$modal-header-padding-mobile: 1vw;
 
 // Font sizes
-$modal-title-size: 1.8rem;
-$modal-title-size-mobile: 1.5rem;
-$modal-label-size: 0.95rem;
-$modal-input-size: 1rem;
-$modal-error-size: 0.85rem;
-$modal-link-size: 0.9rem;
-$modal-button-size: 1.1rem;
+$modal-title-size: 2vw;
+$modal-title-size-mobile: 1.6vw;
+$modal-label-size: 1vw;
+$modal-input-size: 1.1vw;
+$modal-error-size: 0.9vw;
+$modal-link-size: 1vw;
+$modal-button-size: 1.2vw;
 
 // Interactive elements sizes
-$close-btn-size: 36px;
-$spinner-size: 20px;
-$input-padding: 16px;
-$input-padding-mobile: 14px;
-$button-padding: 18px;
+$close-btn-size: 1.9vw;
+$spinner-size: 1vw;
+$input-padding: 0.8vw;
+$input-padding-mobile: 0.7vw;
+$button-padding: 0.9vw;
