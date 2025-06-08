@@ -2,17 +2,20 @@
 
 .recommendations-page {
   min-height: 100vh;
-  background: linear-gradient(to bottom, $black-90, $black);
-  display: flex;
-  flex-direction: column;
+  background: $primary-gradient;
+  color: $white;
   width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 .recommendations-hero {
   width: 100vw;
   padding: 8vh 0;
-  background: $primary-gradient;
+  background: $white-10;
   margin-bottom: 5vh;
+  backdrop-filter: $blur-medium;
 }
 
 .hero-content {

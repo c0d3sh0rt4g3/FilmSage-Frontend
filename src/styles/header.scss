@@ -8,10 +8,9 @@
   z-index: 1000;
   padding: 1rem 0;
   transition: $transition-base;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.1);
 
   &.scrolled {
-    background: $black-80;
     backdrop-filter: $blur-medium;
     box-shadow: $shadow-medium;
   }

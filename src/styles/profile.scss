@@ -2,13 +2,19 @@
 
 .profile-page {
   min-height: 100vh;
-  background: linear-gradient(to bottom, $black-90, $black);
+  background: $primary-gradient;
+  color: $white;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 .profile-hero {
   padding: 60px 0 40px;
-  background: $primary-gradient;
+  background: $white-10;
   margin-bottom: 40px;
+  backdrop-filter: $blur-medium;
 }
 
 .profile-content {

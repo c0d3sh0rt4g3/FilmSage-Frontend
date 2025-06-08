@@ -1,69 +1,88 @@
 <template>
-  <div class="search-page">
-    <div class="search-container">
-      <div class="search-box">
-        <input
-          v-model="searchQuery"
-          @keyup.enter="searchMovies"
-          type="text"
-          placeholder="Search for movies..."
-          :disabled="loading"
-        />
-        <button @click="searchMovies" :disabled="loading">
-          <span v-if="!loading">Search</span>
-          <span v-else>Searching...</span>
-        </button>
-      </div>
-
-      <div v-if="error" class="error-message">
-        {{ error }}
-        <button @click="retrySearch" class="retry-button">Retry</button>
-      </div>
-
-      <div v-if="hasSearched && !loading && movies.length === 0" class="no-results">
-        No movies found for "{{ lastSearchQuery }}"
-      </div>
-
-      <div v-if="loading" class="loading">
-        Loading...
-      </div>
-
-      <div v-else class="movies-grid">
-        <div
-          v-for="movie in movies"
-          :key="movie.id"
-          class="movie-card"
-          @click="selectMovie(movie)"
-        >
-          <div class="movie-poster">
-            <img
-              :src="getMoviePoster(movie.poster_path)"
-              :alt="movie.title"
-              @error="$event.target.src = '/images/placeholder-movie.jpg'"
-            />
-          </div>
-          <div class="movie-info">
-            <h3>{{ movie.title }}</h3>
-            <p>{{ movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A' }}</p>
-            <div class="movie-rating" v-if="movie.vote_average">
-              ⭐ {{ movie.vote_average.toFixed(1) }}
-            </div>
-          </div>
+  <div class="movies-page">
+    <section class="search-hero">
+      <div class="search-content">
+        <h1 class="search-title">
+          Find your next <span class="gradient-text">favorite movie</span>
+        </h1>
+        <p class="search-subtitle">
+          Search through thousands of movies and discover something new
+        </p>
+        <div class="search-bar">
+          <input
+            class="search-input"
+            v-model="searchQuery"
+            @keyup.enter="searchMovies"
+            type="text"
+            placeholder="Search for movies..."
+            :disabled="loading"
+          />
+          <button class="btn-search" @click="searchMovies" :disabled="loading">
+            <span v-if="!loading">Search</span>
+            <span v-else>Searching...</span>
+          </button>
         </div>
       </div>
+    </section>
 
-      <div v-if="canLoadMore && !loading" class="load-more">
-        <button @click="loadMoreMovies" :disabled="loadingMore">
-          {{ loadingMore ? 'Loading more...' : 'Load more' }}
-        </button>
+    <section class="results-section">
+      <div class="container">
+        <div v-if="error" class="error-state">
+          <h3>Oops! Something went wrong</h3>
+          <p>{{ error }}</p>
+          <button @click="retrySearch" class="btn-retry">Try again</button>
+        </div>
+
+        <div v-if="hasSearched && !loading && movies.length === 0" class="no-results">
+          <h3>No results found</h3>
+          <p>No movies found for "{{ lastSearchQuery }}"</p>
+        </div>
+
+        <div v-if="loading" class="loading-state">
+          <div class="spinner"></div>
+          <h3>Searching movies...</h3>
+        </div>
+
+        <template v-if="!loading && movies.length > 0">
+          <h2 class="results-title">Search Results</h2>
+          <div class="movies-grid">
+            <div
+              v-for="movie in movies"
+              :key="movie.id"
+              class="movie-card"
+              @click="selectMovie(movie)"
+            >
+              <div class="movie-poster">
+                <img
+                  :src="getMoviePoster(movie.poster_path)"
+                  :alt="movie.title"
+                  @error="$event.target.src = '/images/placeholder-movie.jpg'"
+                />
+                <div class="card-overlay">
+                  <span class="rating" v-if="movie.vote_average">⭐ {{ movie.vote_average.toFixed(1) }}</span>
+                </div>
+              </div>
+              <div class="movie-info">
+                <h4>{{ movie.title }}</h4>
+                <p>{{ movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="canLoadMore" class="load-more-container">
+            <button class="btn-load-more" @click="loadMoreMovies" :disabled="loadingMore">
+              {{ loadingMore ? 'Loading more...' : 'Load more' }}
+            </button>
+          </div>
+        </template>
       </div>
-    </div>
+    </section>
 
     <!-- Movie Details Modal -->
-    <div v-if="selectedMovie" class="modal" @click.self="closeModal">
+    <div v-if="selectedMovie" class="modal-overlay" @click.self="closeModal">
       <div class="modal-content">
-        <button class="close-button" @click="closeModal">&times;</button>
-        <div class="modal-grid">
+        <button class="modal-close" @click="closeModal">&times;</button>
+        <div class="modal-body">
           <div class="modal-poster">
             <img
               :src="getMoviePoster(selectedMovie.poster_path)"
@@ -73,11 +92,13 @@
           </div>
           <div class="modal-details">
             <h2>{{ selectedMovie.title }}</h2>
-            <p class="release-date">
-              {{ selectedMovie.release_date ? new Date(selectedMovie.release_date).getFullYear() : 'N/A' }}
-            </p>
-            <div class="rating" v-if="selectedMovie.vote_average">
-              ⭐ {{ selectedMovie.vote_average.toFixed(1) }}
+            <div class="movie-meta">
+              <span class="year">
+                {{ selectedMovie.release_date ? new Date(selectedMovie.release_date).getFullYear() : 'N/A' }}
+              </span>
+              <span class="rating" v-if="selectedMovie.vote_average">
+                ⭐ {{ selectedMovie.vote_average.toFixed(1) }}
+              </span>
             </div>
             <p class="overview">{{ selectedMovie.overview || 'No overview available.' }}</p>
             <div class="genres" v-if="selectedMovie.genre_ids">
@@ -85,6 +106,9 @@
                 {{ genres[genreId] || 'Unknown' }}
               </span>
             </div>
+            <button v-if="isAuthenticated" class="btn-review" @click="createReview">
+              Write a Review
+            </button>
           </div>
         </div>
       </div>
@@ -258,254 +282,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.search-page {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.search-container {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.search-box {
-  display: flex;
-  gap: 1rem;
-  max-width: 600px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.search-box input {
-  flex: 1;
-  padding: 0.75rem;
-  border: 2px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.search-box button {
-  padding: 0.75rem 1.5rem;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.search-box button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.movies-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 2rem;
-}
-
-.movie-card {
-  cursor: pointer;
-  transition: transform 0.2s;
-  border-radius: 8px;
-  overflow: hidden;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.movie-card:hover {
-  transform: translateY(-5px);
-}
-
-.movie-poster {
-  position: relative;
-  padding-top: 150%;
-}
-
-.movie-poster img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.movie-info {
-  padding: 1rem;
-}
-
-.movie-info h3 {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1.4;
-  margin-bottom: 0.5rem;
-}
-
-.movie-info p {
-  margin: 0;
-  color: #666;
-  font-size: 0.9rem;
-}
-
-.movie-rating {
-  margin-top: 0.5rem;
-  color: #f5c518;
-}
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  max-width: 800px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-}
-
-.close-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #666;
-}
-
-.modal-grid {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 2rem;
-}
-
-.modal-poster {
-  position: relative;
-  padding-top: 150%;
-}
-
-.modal-poster img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 4px;
-}
-
-.modal-details h2 {
-  margin: 0;
-  margin-bottom: 0.5rem;
-}
-
-.release-date {
-  color: #666;
-  margin-bottom: 1rem;
-}
-
-.rating {
-  color: #f5c518;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-}
-
-.overview {
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-}
-
-.genres {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.genre-tag {
-  background: #f0f0f0;
-  padding: 0.25rem 0.75rem;
-  border-radius: 16px;
-  font-size: 0.9rem;
-}
-
-.error-message {
-  text-align: center;
-  color: #dc3545;
-  padding: 1rem;
-  background: #f8d7da;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.retry-button {
-  background: #dc3545;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.no-results {
-  text-align: center;
-  color: #666;
-  font-style: italic;
-}
-
-.loading {
-  text-align: center;
-  color: #666;
-}
-
-.load-more {
-  text-align: center;
-  margin-top: 2rem;
-}
-
-.load-more button {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.load-more button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-@media (max-width: 768px) {
-  .modal-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .modal-poster {
-    padding-top: 0;
-    height: 300px;
-  }
-}
-</style>
+<style src="@/styles/search.scss" lang="scss"></style>

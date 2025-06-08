@@ -2,20 +2,22 @@
 
 .create-review-page {
   min-height: 100vh;
-  background: $black;
-  display: flex;
-  justify-content: center;
+  background: $primary-gradient;
+  color: $white;
   width: 100vw;
+  margin: 0;
   padding: 10vh 4vw 4vh 4vw;
+  overflow-x: hidden;
 }
 
 .review-container {
   width: 90vw;
   max-width: 60vw;
-  background: $black-90;
+  background: $white-10;
   border-radius: $border-radius-large;
   padding: 3vw;
   box-shadow: $shadow-medium;
+  backdrop-filter: $blur-medium;
 }
 
 .movie-info {

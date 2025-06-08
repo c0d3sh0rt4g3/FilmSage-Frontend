@@ -57,7 +57,7 @@
                 <img 
                   :src="getActorImage(actor.profile_path)" 
                   :alt="actor.name"
-                  @error="handleImageError"
+                  @error="$event.target.src = defaultAvatar"
                 />
                 <div class="cast-info">
                   <h4>{{ actor.name }}</h4>
@@ -77,7 +77,11 @@
               <div v-else class="reviews-grid">
                 <div v-for="review in reviews" :key="review.id" class="review-card">
                   <div class="review-header">
-                    <img :src="getUserAvatar(review.user.avatar)" :alt="review.user.username" />
+                    <img 
+                      :src="review.user.avatar" 
+                      :alt="review.user.username" 
+                      @error="$event.target.src = defaultAvatar"
+                    />
                     <div class="review-meta">
                       <h4>{{ review.user.username }}</h4>
                       <span class="review-date">{{ formatDate(review.created_at) }}</span>
@@ -128,6 +132,7 @@
 <script>
 import { useAuthStore } from '@/stores/authStore';
 import { reviewAPI, interactionAPI, userAPI } from '@/utils/api';
+import defaultAvatar from '@/assets/pfp.jpg';
 
 export default {
   name: 'MovieDetail',
@@ -145,7 +150,8 @@ export default {
       newReview: {
         content: '',
         rating: 0
-      }
+      },
+      defaultAvatar
     }
   },
   computed: {
@@ -211,7 +217,14 @@ export default {
         if (this.movie) {
           const [reviewsError, reviewsData] = await reviewAPI.getByContent(movieId, 'movie');
           if (!reviewsError && reviewsData?.reviews) {
-            this.reviews = reviewsData.reviews;
+            // Transform the reviews data to ensure consistent user data structure
+            this.reviews = reviewsData.reviews.map(review => ({
+              ...review,
+              user: {
+                username: review.user?.username || review.username || 'Anonymous User',
+                avatar: review.user?.avatar || review.avatar || this.defaultAvatar
+              }
+            }));
             // Find user's review using the correct id field
             const authStore = useAuthStore();
             this.userReview = this.reviews.find(review => review.user_id === authStore.userData?.id);
@@ -351,11 +364,9 @@ export default {
     getActorImage(path) {
       return path
         ? `https://image.tmdb.org/t/p/w185${path}`
-        : '/images/placeholder-avatar.jpg';
+        : defaultAvatar;
     },
-    getUserAvatar(avatar) {
-      return avatar || '/images/placeholder-avatar.jpg';
-    },
+
     formatYear(date) {
       return date ? date.split('-')[0] : 'N/A';
     },
