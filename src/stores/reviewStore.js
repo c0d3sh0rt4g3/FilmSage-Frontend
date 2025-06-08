@@ -16,12 +16,17 @@ export const useReviewStore = defineStore('review', {
 
       try {
         const authStore = useAuthStore();
-        if (!authStore.userData?._id) {
+        if (!authStore.isAuthenticated || !authStore.userData?.id) {
           throw new Error('User not authenticated');
         }
 
+        const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error('Authentication token not found');
+        }
+
         const payload = {
-          user_id: authStore.userData._id,
+          user_id: authStore.userData.id,
           tmdb_id: reviewData.movieId,
           content_type: 'movie',
           title: reviewData.title,
@@ -35,6 +40,7 @@ export const useReviewStore = defineStore('review', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify(payload)
         });

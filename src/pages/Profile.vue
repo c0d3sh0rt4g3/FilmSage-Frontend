@@ -159,7 +159,7 @@ export default {
         const [profileError, profileData] = await userAPI.getProfile();
         if (profileError) {
           console.error('Error loading user data:', profileError);
-          if (profileError.message.includes('token')) {
+          if (profileError.message?.includes('token')) {
             const authStore = useAuthStore();
             authStore.logout();
             this.$router.push({
@@ -173,19 +173,22 @@ export default {
         this.userData = {
           username: profileData.username,
           email: profileData.email,
-          role: profileData.role
+          role: profileData.role,
+          id: profileData.id // Ensure we store the user ID
         };
         this.selectedGenres = profileData.favorite_genres || [];
         this.originalUserData = { ...this.userData };
 
         // Load activity data
-        const [activityError, activityData] = await interactionAPI.getUserActivity(profileData.id);
-        if (!activityError) {
+        const [activityError, activityData] = await interactionAPI.getUserActivity(this.userData.id);
+        if (!activityError && activityData) {
           this.userStats = {
             reviews: activityData.reviews_count || 0,
             ratings: activityData.ratings_count || 0,
             favorites: activityData.favorites_count || 0,
-            ...activityData
+            watchlist: activityData.watchlist_count || 0,
+            followers: activityData.followers_count || 0,
+            following: activityData.following_count || 0
           };
         }
       } catch (error) {
@@ -199,17 +202,33 @@ export default {
     },
     async saveChanges() {
       this.isSaving = true;
+      this.error = null;
       
-      const success = await useAuthStore().updateProfile({
-        ...this.userData,
-        favorite_genres: this.selectedGenres
-      });
+      try {
+        const [error, data] = await userAPI.updateProfile({
+          username: this.userData.username,
+          email: this.userData.email,
+          favorite_genres: this.selectedGenres
+        });
 
-      if (success) {
+        if (error) {
+          this.error = error.message || 'Failed to update profile';
+          return;
+        }
+
+        // Update local data
+        this.userData = {
+          ...this.userData,
+          ...data.user
+        };
+        this.originalUserData = { ...this.userData };
         this.isEditing = false;
+      } catch (error) {
+        console.error('Error saving profile:', error);
+        this.error = 'An unexpected error occurred while saving your profile.';
+      } finally {
+        this.isSaving = false;
       }
-
-      this.isSaving = false;
     },
     cancelEditing() {
       this.userData = { ...this.originalUserData };

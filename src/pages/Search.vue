@@ -1,152 +1,100 @@
 <template>
-  <main class="movies-page">
-    <!-- Search Section -->
-    <section class="search-hero">
-      <div class="search-content">
-        <h1 class="search-title">
-          Discover <span class="gradient-text">amazing movies</span>
-        </h1>
-        <p class="search-subtitle">
-          Explore thousands of movies and find your next cinematic obsession
-        </p>
-
-        <div class="search-bar">
-          <input
-            type="text"
-            v-model="searchQuery"
-            @keyup.enter="searchMovies"
-            placeholder="Search movies..."
-            class="search-input"
-          />
-          <button
-            @click="searchMovies"
-            class="btn-search"
-            :disabled="loading"
-          >
-            {{ loading ? 'Searching...' : 'Search' }}
-          </button>
-        </div>
+  <div class="search-page">
+    <div class="search-container">
+      <div class="search-box">
+        <input
+          v-model="searchQuery"
+          @keyup.enter="searchMovies"
+          type="text"
+          placeholder="Search for movies..."
+          :disabled="loading"
+        />
+        <button @click="searchMovies" :disabled="loading">
+          <span v-if="!loading">Search</span>
+          <span v-else>Searching...</span>
+        </button>
       </div>
-    </section>
 
-    <!-- Results Section -->
-    <section class="results-section">
-      <div class="container">
-        <!-- Loading State -->
-        <div v-if="loading" class="loading-state">
-          <div class="spinner"></div>
-          <p>Searching movies...</p>
-        </div>
-
-        <!-- Error State -->
-        <div v-else-if="error" class="error-state">
-          <h3>Oops! Something went wrong</h3>
-          <p>{{ error }}</p>
-          <button @click="retrySearch" class="btn-retry">Try again</button>
-        </div>
-
-        <!-- No Results -->
-        <div v-else-if="movies.length === 0 && hasSearched" class="no-results">
-          <h3>No results found</h3>
-          <p>Try another search term</p>
-        </div>
-
-        <!-- Movies Grid -->
-        <div v-else-if="movies.length > 0" class="movies-container">
-          <h2 class="results-title">
-            Results for "<span class="gradient-text">{{ lastSearchQuery }}</span>"
-          </h2>
-
-          <div class="movies-grid">
-            <div
-              v-for="movie in movies"
-              :key="movie.id"
-              class="movie-card"
-              @click="selectMovie(movie)"
-            >
-              <div class="movie-poster">
-                <img
-                  :src="getMoviePoster(movie)"
-                  :alt="movie.title"
-                  @error="handleImageError"
-                />
-                <div class="card-overlay">
-                  <span class="rating">{{ formatRating(movie.vote_average) }}</span>
-                </div>
-              </div>
-
-              <div class="movie-info">
-                <h4>{{ movie.title }}</h4>
-                <p>{{ formatYear(movie.release_date) }}</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Load More Button -->
-          <div v-if="canLoadMore" class="load-more-container">
-            <button
-              @click="loadMoreMovies"
-              class="btn-load-more"
-              :disabled="loadingMore"
-            >
-              {{ loadingMore ? 'Loading...' : 'Load more movies' }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Welcome State -->
-        <div v-else class="welcome-state">
-          <h2>Start your search!</h2>
-          <p>Use the search bar to find your favorite movies</p>
-        </div>
+      <div v-if="error" class="error-message">
+        {{ error }}
+        <button @click="retrySearch" class="retry-button">Retry</button>
       </div>
-    </section>
 
-    <!-- Movie Detail Modal -->
-    <div v-if="selectedMovie" class="modal-overlay" @click="closeModal">
-      <div class="modal-content" @click.stop>
-        <button class="modal-close" @click="closeModal">&times;</button>
+      <div v-if="hasSearched && !loading && movies.length === 0" class="no-results">
+        No movies found for "{{ lastSearchQuery }}"
+      </div>
 
-        <div class="modal-body">
-          <div class="modal-poster">
+      <div v-if="loading" class="loading">
+        Loading...
+      </div>
+
+      <div v-else class="movies-grid">
+        <div
+          v-for="movie in movies"
+          :key="movie.id"
+          class="movie-card"
+          @click="selectMovie(movie)"
+        >
+          <div class="movie-poster">
             <img
-              :src="getMoviePoster(selectedMovie)"
-              :alt="selectedMovie.title"
+              :src="getMoviePoster(movie.poster_path)"
+              :alt="movie.title"
+              @error="$event.target.src = '/images/placeholder-movie.jpg'"
             />
           </div>
+          <div class="movie-info">
+            <h3>{{ movie.title }}</h3>
+            <p>{{ movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A' }}</p>
+            <div class="movie-rating" v-if="movie.vote_average">
+              ⭐ {{ movie.vote_average.toFixed(1) }}
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <div v-if="canLoadMore && !loading" class="load-more">
+        <button @click="loadMoreMovies" :disabled="loadingMore">
+          {{ loadingMore ? 'Loading more...' : 'Load more' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Movie Details Modal -->
+    <div v-if="selectedMovie" class="modal" @click.self="closeModal">
+      <div class="modal-content">
+        <button class="close-button" @click="closeModal">&times;</button>
+        <div class="modal-grid">
+          <div class="modal-poster">
+            <img
+              :src="getMoviePoster(selectedMovie.poster_path)"
+              :alt="selectedMovie.title"
+              @error="$event.target.src = '/images/placeholder-movie.jpg'"
+            />
+          </div>
           <div class="modal-details">
             <h2>{{ selectedMovie.title }}</h2>
-            <div class="movie-meta">
-              <span class="year">{{ formatYear(selectedMovie.release_date) }}</span>
-              <span class="rating">⭐ {{ formatRating(selectedMovie.vote_average) }}</span>
+            <p class="release-date">
+              {{ selectedMovie.release_date ? new Date(selectedMovie.release_date).getFullYear() : 'N/A' }}
+            </p>
+            <div class="rating" v-if="selectedMovie.vote_average">
+              ⭐ {{ selectedMovie.vote_average.toFixed(1) }}
             </div>
-
-            <p class="overview">{{ selectedMovie.overview || 'No description available' }}</p>
-
+            <p class="overview">{{ selectedMovie.overview || 'No overview available.' }}</p>
             <div class="genres" v-if="selectedMovie.genre_ids">
-              <span
-                v-for="genreId in selectedMovie.genre_ids.slice(0, 3)"
-                :key="genreId"
-                class="genre-tag"
-              >
-                {{ getGenreName(genreId) }}
+              <span v-for="genreId in selectedMovie.genre_ids" :key="genreId" class="genre-tag">
+                {{ genres[genreId] || 'Unknown' }}
               </span>
             </div>
-
-            <button v-if="selectedMovie" @click="createReview" class="btn-review">
-              Write Review
-            </button>
           </div>
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </template>
 
 <script>
 import { useAuthStore } from '@/stores/authStore';
-import { apiRequest } from '@/utils/api';
+import { tmdbAPI } from '@/utils/tmdb';
 
 export default {
   name: 'MoviesPage',
@@ -205,12 +153,12 @@ export default {
       this.lastSearchQuery = this.searchQuery;
 
       try {
-        const response = await this.fetchMovies(this.searchQuery, 1);
-        this.movies = response.results || [];
-        this.totalPages = response.total_pages || 1;
+        const data = await tmdbAPI.searchMovies(this.searchQuery, 1);
+        this.movies = data.results || [];
+        this.totalPages = data.total_pages || 1;
       } catch (error) {
-        this.error = 'Error searching movies. Please try again.';
         console.error('Error searching movies:', error);
+        this.error = error.message || 'Error searching movies. Please try again.';
       } finally {
         this.loading = false;
       }
@@ -222,27 +170,15 @@ export default {
       this.loadingMore = true;
 
       try {
-        const response = await this.fetchMovies(this.lastSearchQuery, this.currentPage + 1);
-        this.movies.push(...(response.results || []));
+        const data = await tmdbAPI.searchMovies(this.lastSearchQuery, this.currentPage + 1);
+        this.movies.push(...(data.results || []));
         this.currentPage++;
       } catch (error) {
-        this.error = 'Error loading more movies.';
         console.error('Error loading more movies:', error);
+        this.error = 'Error loading more movies.';
       } finally {
         this.loadingMore = false;
       }
-    },
-
-    async fetchMovies(query, page = 1) {
-      const apiKey = import.meta.env.VITE_MOVIEDB_API_KEY;
-      const baseUrl = 'https://api.themoviedb.org/3';
-      const url = `${baseUrl}/search/movie?api_key=${apiKey}&language=en-US&query=${encodeURIComponent(query)}&page=${page}`;
-      
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return await response.json();
     },
 
     selectMovie(movie) {
@@ -262,11 +198,8 @@ export default {
       }
     },
 
-    getMoviePoster(movie) {
-      const baseUrl = 'https://image.tmdb.org/t/p/w500';
-      return movie.poster_path
-        ? `${baseUrl}${movie.poster_path}`
-        : '/images/placeholder-movie.jpg';
+    getMoviePoster(path) {
+      return tmdbAPI.getImageUrl(path);
     },
 
     handleImageError(event) {
@@ -325,23 +258,254 @@ export default {
 }
 </script>
 
-<style src="@/styles/search.scss" lang="scss" scoped></style>
+<style scoped>
+.search-page {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-<style lang="scss" scoped>
-.btn-review {
-  margin-top: 1.5rem;
+.search-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.search-box {
+  display: flex;
+  gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.search-box input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.search-box button {
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #ff6b6b, #feca57);
-  color: #fff;
+  background-color: #007bff;
+  color: white;
   border: none;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: 4px;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  font-size: 1rem;
+}
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+.search-box button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.movie-card {
+  cursor: pointer;
+  transition: transform 0.2s;
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.movie-card:hover {
+  transform: translateY(-5px);
+}
+
+.movie-poster {
+  position: relative;
+  padding-top: 150%;
+}
+
+.movie-poster img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.movie-info {
+  padding: 1rem;
+}
+
+.movie-info h3 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.movie-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.movie-rating {
+  margin-top: 0.5rem;
+  color: #f5c518;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+}
+
+.modal-poster {
+  position: relative;
+  padding-top: 150%;
+}
+
+.modal-poster img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.modal-details h2 {
+  margin: 0;
+  margin-bottom: 0.5rem;
+}
+
+.release-date {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.rating {
+  color: #f5c518;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.overview {
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.genre-tag {
+  background: #f0f0f0;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.9rem;
+}
+
+.error-message {
+  text-align: center;
+  color: #dc3545;
+  padding: 1rem;
+  background: #f8d7da;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.retry-button {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.no-results {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+.loading {
+  text-align: center;
+  color: #666;
+}
+
+.load-more {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.load-more button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.load-more button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .modal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-poster {
+    padding-top: 0;
+    height: 300px;
   }
 }
 </style>

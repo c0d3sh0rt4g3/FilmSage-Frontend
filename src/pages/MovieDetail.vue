@@ -127,7 +127,7 @@
 
 <script>
 import { useAuthStore } from '@/stores/authStore';
-import { reviewAPI, interactionAPI } from '@/utils/api';
+import { reviewAPI, interactionAPI, userAPI } from '@/utils/api';
 
 export default {
   name: 'MovieDetail',
@@ -178,49 +178,91 @@ export default {
       try {
         // Load movie details from TMDB
         const movieId = this.$route.params.id;
-        const response = await fetch(`${import.meta.env.VITE_TMDB_API_URL}/movie/${movieId}?api_key=${import.meta.env.VITE_TMDB_API_KEY}&append_to_response=credits,similar`);
-        const data = await response.json();
+        const apiKey = import.meta.env.VITE_MOVIEDB_API_KEY;
+        const tmdbBaseUrl = 'https://api.themoviedb.org/3';
+
+        if (!movieId) {
+          throw new Error('Movie ID is required');
+        }
+
+        // Check if API key is available
+        if (!apiKey) {
+          console.error('TMDB API key is not available:', {
+            envKeys: Object.keys(import.meta.env),
+            hasMovieDBKey: 'VITE_MOVIEDB_API_KEY' in import.meta.env
+          });
+          throw new Error('TMDB API key is not configured. Please check your environment variables.');
+        }
+
+        const url = `${tmdbBaseUrl}/movie/${movieId}?api_key=${apiKey}&append_to_response=credits,similar`;
+        const response = await fetch(url);
         
         if (!response.ok) {
-          throw new Error(data.status_message || 'Failed to load movie data');
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            `Failed to load movie data: ${response.status}${errorData.status_message ? ` - ${errorData.status_message}` : ''}`
+          );
         }
         
+        const data = await response.json();
         this.movie = data;
 
-        // Load reviews
-        const [reviewsError, reviewsData] = await reviewAPI.getByContent(movieId, 'movie');
-        if (!reviewsError) {
-          this.reviews = reviewsData.reviews;
-          this.userReview = this.reviews.find(review => review.user_id === useAuthStore().userData?.id);
-        }
+        // Load reviews if movie data was loaded successfully
+        if (this.movie) {
+          const [reviewsError, reviewsData] = await reviewAPI.getByContent(movieId, 'movie');
+          if (!reviewsError && reviewsData?.reviews) {
+            this.reviews = reviewsData.reviews;
+            // Find user's review using the correct id field
+            const authStore = useAuthStore();
+            this.userReview = this.reviews.find(review => review.user_id === authStore.userData?.id);
+          }
 
-        this.loading = false;
+          // Load user interactions if authenticated
+          if (useAuthStore().isAuthenticated) {
+            await this.loadUserInteractions();
+          }
+        }
       } catch (error) {
         console.error('Error loading movie data:', error);
-        this.error = error.message;
+        this.error = error.message || 'Failed to load movie data';
+      } finally {
         this.loading = false;
       }
     },
     async loadUserInteractions() {
-      const movieId = this.$route.params.id;
+      try {
+        const [userError, currentUser] = userAPI.getCurrentUser();
+        if (userError) {
+          console.error('Error getting current user:', userError);
+          return;
+        }
 
-      // Check if movie is in user's watchlist
-      const [watchlistError, watchlistData] = await interactionAPI.getWatchlist();
-      if (!watchlistError) {
-        this.isInWatchlist = watchlistData.some(item => item.tmdb_id === movieId && item.content_type === 'movie');
-      }
+        // Check watchlist status
+        const [watchlistError, watchlistData] = await interactionAPI.getWatchlist();
+        if (!watchlistError && watchlistData?.items) {
+          this.isInWatchlist = watchlistData.items.some(item => 
+            item.tmdb_id === this.movie.id && item.content_type === 'movie'
+          );
+        }
 
-      // Check if movie is in user's favorites
-      const [favoritesError, favoritesData] = await interactionAPI.getFavorites();
-      if (!favoritesError) {
-        this.isInFavorites = favoritesData.some(item => item.tmdb_id === movieId && item.content_type === 'movie');
-      }
+        // Check favorites status
+        const [favoritesError, favoritesData] = await interactionAPI.getFavorites();
+        if (!favoritesError && favoritesData?.items) {
+          this.isInFavorites = favoritesData.items.some(item => 
+            item.tmdb_id === this.movie.id && item.content_type === 'movie'
+          );
+        }
 
-      // Get user's rating
-      const [ratingsError, ratingsData] = await interactionAPI.getUserRatings();
-      if (!ratingsError) {
-        const userRating = ratingsData.find(rating => rating.tmdb_id === movieId && rating.content_type === 'movie');
-        this.userRating = userRating ? userRating.rating : null;
+        // Get user's rating if exists
+        const [ratingsError, ratingsData] = await interactionAPI.getUserRatings();
+        if (!ratingsError && ratingsData?.ratings) {
+          const userRating = ratingsData.ratings.find(rating => 
+            rating.tmdb_id === this.movie.id && rating.content_type === 'movie'
+          );
+          this.userRating = userRating ? userRating.rating : null;
+        }
+      } catch (error) {
+        console.error('Error loading user interactions:', error);
       }
     },
     async toggleWatchlist() {
@@ -357,6 +399,9 @@ export default {
           }))
         }
       });
+    },
+    async handleReviewCreated() {
+      await this.loadMovieData();
     }
   }
 }

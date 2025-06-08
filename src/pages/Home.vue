@@ -84,6 +84,7 @@
 import RegisterModal from "@/components/RegisterModal.vue";
 import LoginModal from "@/components/LoginModal.vue";
 import { useAuthStore } from '@/stores/authStore'
+import { userAPI } from '@/utils/api'
 
 export default {
   name: 'HomePage',
@@ -163,35 +164,28 @@ export default {
       this.loading = true;
 
       try {
-        const response = await fetch('http://localhost:3000/users/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            username: this.form.username,
-            email: this.form.email,
-            password: this.form.password,
-            role: 'user'
-          })
+        const [error, data] = await userAPI.register({
+          username: this.form.username,
+          email: this.form.email,
+          password: this.form.password,
+          role: 'user'
         });
 
-        const data = await response.json();
-
-        if (response.ok) {
-          this.handleRegistrationSuccess(data);
-          this.resetForm();
-          this.closeRegisterModal();
-          alert('Account created successfully! Welcome to FilmSage.');
-        } else {
-          if (response.status === 409) {
+        if (error) {
+          if (error.message.includes('already exists')) {
             this.generalError = 'A user with this email or username already exists';
-          } else if (data.errors) {
-            this.handleValidationErrors(data.errors);
+          } else if (error.errors) {
+            this.handleValidationErrors(error.errors);
           } else {
-            this.generalError = data.message || 'Error creating account';
+            this.generalError = error.message || 'Error creating account';
           }
+          return;
         }
+
+        this.handleRegistrationSuccess(data);
+        this.resetForm();
+        this.closeRegisterModal();
+        alert('Account created successfully! Welcome to FilmSage.');
       } catch (error) {
         console.error('Registration error:', error);
         this.generalError = 'Connection error. Please try again.';
@@ -305,30 +299,42 @@ export default {
     },
 
     async loadRandomMovies() {
-      this.loading = true;
       try {
-        const selectedMovies = this.getRandomMovieIds(3);
-        const moviePromises = selectedMovies.map(id => this.fetchMovieDetails(id));
-        const movies = await Promise.all(moviePromises);
-
-        const validMovies = movies.filter(movie => movie !== null);
-
-        if (validMovies.length > 0) {
-          this.featuredMovies = validMovies;
-        } else {
-          this.loadFallbackMovies();
+        const apiKey = import.meta.env.VITE_MOVIEDB_API_KEY;
+        if (!apiKey) {
+          throw new Error('TMDB API key is not configured');
         }
-      } catch (error) {
-        console.error('Error loading movies:', error);
-        this.loadFallbackMovies();
-      } finally {
-        this.loading = false;
-      }
-    },
 
-    getRandomMovieIds(count) {
-      const shuffled = [...this.popularMovieIds].sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, count);
+        // Get popular movies first
+        const popularUrl = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=1`;
+        const popularResponse = await fetch(popularUrl);
+        if (!popularResponse.ok) {
+          throw new Error(`Failed to fetch popular movies: ${popularResponse.status}`);
+        }
+
+        const popularData = await popularResponse.json();
+        const movies = popularData.results || [];
+
+        // Randomly select 3 movies
+        const randomMovies = [];
+        const usedIndices = new Set();
+
+        while (randomMovies.length < 3 && usedIndices.size < movies.length) {
+          const randomIndex = Math.floor(Math.random() * movies.length);
+          if (!usedIndices.has(randomIndex)) {
+            usedIndices.add(randomIndex);
+            const movieDetails = await this.fetchMovieDetails(movies[randomIndex].id);
+            if (movieDetails) {
+              randomMovies.push(movieDetails);
+            }
+          }
+        }
+
+        this.featuredMovies = randomMovies;
+      } catch (error) {
+        console.error('Error loading random movies:', error);
+        this.error = error.message;
+      }
     },
 
     async fetchMovieDetails(movieId) {
@@ -337,19 +343,28 @@ export default {
         const baseUrl = 'https://api.themoviedb.org/3';
         const imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
 
-        const url = `${baseUrl}/movie/${movieId}?api_key=${apiKey}&language=en-US`;
+        // Check if API key is available
+        if (!apiKey) {
+          console.error('TMDB API key is not available:', {
+            envKeys: Object.keys(import.meta.env),
+            hasMovieDBKey: 'VITE_MOVIEDB_API_KEY' in import.meta.env
+          });
+          throw new Error('TMDB API key is not configured');
+        }
 
-        console.log(`Fetching movie: ${url}`);
+        const url = `${baseUrl}/movie/${movieId}?api_key=${apiKey}&language=en-US`;
+        console.log('Fetching movie from:', url.replace(apiKey, 'API_KEY'));
 
         const response = await fetch(url);
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            `HTTP error! status: ${response.status}${errorData.status_message ? ` - ${errorData.status_message}` : ''}`
+          );
         }
 
         const data = await response.json();
-
-        console.log('Movie data received:', data);
 
         return {
           id: data.id,

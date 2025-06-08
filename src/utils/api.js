@@ -135,11 +135,19 @@ export const interactionAPI = {
     body: JSON.stringify(rating)
   }),
 
-  getUserRatings: () => apiRequest('/userInteractions/ratings/user/me'),
+  getUserRatings: () => {
+    const [error, currentUser] = userAPI.getCurrentUser();
+    if (error) return [error, null];
+    return apiRequest(`/userInteractions/ratings/user/${currentUser.id}`);
+  },
 
-  removeRating: (tmdbId, contentType) => apiRequest(`/userInteractions/ratings/me/${tmdbId}/${contentType}`, {
-    method: 'DELETE'
-  }),
+  removeRating: (tmdbId, contentType) => {
+    const [error, currentUser] = userAPI.getCurrentUser();
+    if (error) return [error, null];
+    return apiRequest(`/userInteractions/ratings/${currentUser.id}/${tmdbId}/${contentType}`, {
+      method: 'DELETE'
+    });
+  },
 
   // Watchlist
   addToWatchlist: (item) => apiRequest('/userInteractions/watchlist', {
@@ -147,11 +155,19 @@ export const interactionAPI = {
     body: JSON.stringify(item)
   }),
 
-  getWatchlist: () => apiRequest('/userInteractions/watchlist/user/me'),
+  getWatchlist: () => {
+    const [error, currentUser] = userAPI.getCurrentUser();
+    if (error) return [error, null];
+    return apiRequest(`/userInteractions/watchlist/user/${currentUser.id}`);
+  },
 
-  removeFromWatchlist: (id) => apiRequest(`/userInteractions/watchlist/${id}`, {
-    method: 'DELETE'
-  }),
+  removeFromWatchlist: (id) => {
+    const [error, currentUser] = userAPI.getCurrentUser();
+    if (error) return [error, null];
+    return apiRequest(`/userInteractions/watchlist/${currentUser.id}/${id}`, {
+      method: 'DELETE'
+    });
+  },
 
   // Favorites
   addToFavorites: (item) => apiRequest('/userInteractions/favorites', {
@@ -159,11 +175,19 @@ export const interactionAPI = {
     body: JSON.stringify(item)
   }),
 
-  getFavorites: () => apiRequest('/userInteractions/favorites/user/me'),
+  getFavorites: () => {
+    const [error, currentUser] = userAPI.getCurrentUser();
+    if (error) return [error, null];
+    return apiRequest(`/userInteractions/favorites/user/${currentUser.id}`);
+  },
 
-  removeFromFavorites: (tmdbId, contentType) => apiRequest(`/userInteractions/favorites/me/${tmdbId}/${contentType}`, {
-    method: 'DELETE'
-  }),
+  removeFromFavorites: (tmdbId, contentType) => {
+    const [error, currentUser] = userAPI.getCurrentUser();
+    if (error) return [error, null];
+    return apiRequest(`/userInteractions/favorites/${currentUser.id}/${tmdbId}/${contentType}`, {
+      method: 'DELETE'
+    });
+  },
 
   // Follow System
   followUser: (userId) => apiRequest('/userInteractions/follow', {
@@ -171,9 +195,13 @@ export const interactionAPI = {
     body: JSON.stringify({ followedId: userId })
   }),
 
-  unfollowUser: (userId) => apiRequest(`/userInteractions/follow/me/${userId}`, {
-    method: 'DELETE'
-  }),
+  unfollowUser: (userId) => {
+    const [error, currentUser] = userAPI.getCurrentUser();
+    if (error) return [error, null];
+    return apiRequest(`/userInteractions/follow/${currentUser.id}/${userId}`, {
+      method: 'DELETE'
+    });
+  },
 
   getFollowers: (userId) => apiRequest(`/userInteractions/followers/${userId}`),
 

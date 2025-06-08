@@ -184,18 +184,32 @@ export default {
       try {
         // Load personalized recommendations
         const [recError, recData] = await apiRequest('/recommendations/personalized');
-        if (!recError) {
-          this.personalizedRecommendations = recData.recommendations || [];
+        if (!recError && recData?.recommendations) {
+          // Transform the recommendations data to match the expected format
+          this.personalizedRecommendations = recData.recommendations.map(rec => ({
+            ...rec,
+            poster_path: rec.poster_path || rec.poster,
+            title: rec.title || rec.name,
+            vote_average: rec.vote_average || rec.rating,
+            release_date: rec.release_date || rec.year,
+            genre_ids: rec.genre_ids || []
+          }));
         }
 
-        // Load trending movies
+        // Load trending movies from TMDB
         const apiKey = import.meta.env.VITE_MOVIEDB_API_KEY;
         const trendingUrl = `https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}`;
         const trendingResponse = await fetch(trendingUrl);
-        if (trendingResponse.ok) {
-          const trendingData = await trendingResponse.json();
-          this.trendingMovies = trendingData.results || [];
+        
+        if (!trendingResponse.ok) {
+          throw new Error('Failed to load trending movies');
         }
+        
+        const trendingData = await trendingResponse.json();
+        if (trendingData?.results) {
+          this.trendingMovies = trendingData.results;
+        }
+
       } catch (error) {
         console.error('Error loading recommendations:', error);
         this.error = 'Error loading recommendations. Please try again.';

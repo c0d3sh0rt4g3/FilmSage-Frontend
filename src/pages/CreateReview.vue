@@ -69,6 +69,7 @@
 <script>
 import { useReviewStore } from '@/stores/reviewStore';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore';
 
 export default {
   name: 'CreateReview',
@@ -77,6 +78,10 @@ export default {
       type: String,
       required: true
     }
+  },
+  setup() {
+    const router = useRouter();
+    return { router };
   },
   data() {
     return {
@@ -100,6 +105,16 @@ export default {
     }
   },
   created() {
+    // Check authentication first
+    const authStore = useAuthStore();
+    if (!authStore.isAuthenticated) {
+      this.router.push({
+        path: '/login',
+        query: { redirect: this.$route.fullPath }
+      });
+      return;
+    }
+
     try {
       // Decode the base64 movie data from the URL
       const decodedString = atob(this.movieData);
@@ -113,19 +128,49 @@ export default {
   },
   methods: {
     async submitReview() {
+      if (!this.validateForm()) {
+        return;
+      }
+
       this.loading = true;
       this.error = null;
-      
-      const reviewStore = useReviewStore();
-      const [error, data] = await reviewStore.createReview(this.review);
 
-      if (error) {
-        this.error = error.message;
+      try {
+        const reviewStore = useReviewStore();
+        const [error, data] = await reviewStore.createReview(this.review);
+
+        if (error) {
+          this.error = error.message;
+          return;
+        }
+
+        // Navigate back to movie detail page
+        await this.router.push({
+          name: 'movie-detail',
+          params: { id: this.review.movieId }
+        });
+      } catch (error) {
+        console.error('Error submitting review:', error);
+        this.error = 'Failed to submit review. Please try again.';
+      } finally {
         this.loading = false;
-      } else {
-        // Redirect to home or reviews list
-        this.$router.push('/');
       }
+    },
+    validateForm() {
+      let isValid = true;
+      this.error = null;
+
+      if (!this.review.content?.trim()) {
+        this.error = 'Please write your review';
+        isValid = false;
+      }
+
+      if (!this.review.rating || this.review.rating < 1 || this.review.rating > 10) {
+        this.error = 'Please provide a rating between 1 and 10';
+        isValid = false;
+      }
+
+      return isValid;
     },
     formatRating(rating) {
       return rating ? rating.toFixed(1) : 'N/A';
@@ -134,7 +179,7 @@ export default {
       return date ? date.split('-')[0] : 'N/A';
     },
     goBack() {
-      this.$router.back();
+      this.router.back();
     }
   }
 }
