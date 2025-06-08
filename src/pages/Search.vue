@@ -133,6 +133,10 @@
                 {{ getGenreName(genreId) }}
               </span>
             </div>
+
+            <button v-if="selectedMovie" @click="createReview" class="btn-review">
+              Write Review
+            </button>
           </div>
         </div>
       </div>
@@ -141,6 +145,9 @@
 </template>
 
 <script>
+import { useAuthStore } from '@/stores/authStore';
+import { apiRequest } from '@/utils/api';
+
 export default {
   name: 'MoviesPage',
   data() {
@@ -181,6 +188,10 @@ export default {
   computed: {
     canLoadMore() {
       return this.currentPage < this.totalPages && this.movies.length > 0;
+    },
+    isAuthenticated() {
+      const authStore = useAuthStore();
+      return authStore.isAuthenticated;
     }
   },
   methods: {
@@ -225,15 +236,12 @@ export default {
     async fetchMovies(query, page = 1) {
       const apiKey = import.meta.env.VITE_MOVIEDB_API_KEY;
       const baseUrl = 'https://api.themoviedb.org/3';
-
       const url = `${baseUrl}/search/movie?api_key=${apiKey}&language=en-US&query=${encodeURIComponent(query)}&page=${page}`;
-
+      
       const response = await fetch(url);
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       return await response.json();
     },
 
@@ -275,6 +283,39 @@ export default {
 
     getGenreName(genreId) {
       return this.genres[genreId] || 'Unknown';
+    },
+
+    async createReview() {
+      if (!this.selectedMovie) {
+        console.warn('No movie selected for review');
+        return;
+      }
+
+      // Store movie data before closing the modal
+      const movieData = {
+        id: this.selectedMovie.id,
+        title: this.selectedMovie.title,
+        poster_path: this.selectedMovie.poster_path,
+        release_date: this.selectedMovie.release_date,
+        vote_average: this.selectedMovie.vote_average
+      };
+
+      // Check authentication before proceeding
+      if (!this.isAuthenticated) {
+        this.$router.push('/login');
+        return;
+      }
+
+      // Close the modal
+      this.closeModal();
+
+      // Navigate to review page with movie data
+      this.$router.push({
+        name: 'create-review',
+        params: {
+          movieData: btoa(JSON.stringify(movieData))
+        }
+      });
     }
   },
 
@@ -285,3 +326,22 @@ export default {
 </script>
 
 <style src="@/styles/search.scss" scoped></style>
+
+<style lang="scss" scoped>
+.btn-review {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #ff6b6b, #feca57);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+  }
+}
+</style>

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { apiRequest } from '@/utils/api';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
@@ -10,7 +11,7 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
-    isAuthenticated: (state) => state.logged,*
+    isAuthenticated: (state) => state.logged,
     getUser: (state) => state.userData,
     getErrors: (state) => state.errors
   },
@@ -32,20 +33,21 @@ export const useAuthStore = defineStore('auth', {
           this.userData = data.user;
           this.logged = true;
           localStorage.setItem('userData', JSON.stringify(data.user));
+          localStorage.setItem('token', data.token);
           this.errors = {};
           return [null, data];
         } else {
           if (response.status === 401) {
-            this.errors = { message: "Email o contraseña incorrectos" };
+            this.errors = { message: "Invalid email or password" };
           } else if (response.status === 404) {
-            this.errors = { message: "Usuario no encontrado" };
+            this.errors = { message: "User not found" };
           } else {
-            this.errors = { message: data.message || "Error al iniciar sesión" };
+            this.errors = { message: data.message || "Login error" };
           }
           return [new Error(this.errors.message), null];
         }
       } catch (error) {
-        this.errors = { message: "Error de conexión. Por favor, inténtalo de nuevo." };
+        this.errors = { message: "Connection error. Please try again." };
         return [error, null];
       }
     },
@@ -66,20 +68,21 @@ export const useAuthStore = defineStore('auth', {
           this.userData = data.user;
           this.logged = true;
           localStorage.setItem('userData', JSON.stringify(data.user));
+          localStorage.setItem('token', data.token);
           this.errors = {};
           return [null, data];
         } else {
           if (response.status === 409) {
-            this.errors = { message: "Ya existe un usuario con este email o nombre de usuario" };
+            this.errors = { message: "A user with this email or username already exists" };
           } else if (data.errors) {
-            this.errors = { message: "Error en los datos proporcionados" };
+            this.errors = { message: "Error in provided data" };
           } else {
-            this.errors = { message: data.message || "Error al crear la cuenta" };
+            this.errors = { message: data.message || "Error creating account" };
           }
           return [new Error(this.errors.message), null];
         }
       } catch (error) {
-        this.errors = { message: "Error de conexión. Por favor, inténtalo de nuevo." };
+        this.errors = { message: "Connection error. Please try again." };
         return [error, null];
       }
     },
@@ -89,6 +92,7 @@ export const useAuthStore = defineStore('auth', {
       this.logged = false;
       this.errors = {};
       localStorage.removeItem('userData');
+      localStorage.removeItem('token');
     },
 
     clearErrors() {
@@ -97,13 +101,17 @@ export const useAuthStore = defineStore('auth', {
 
     checkLocalStorage() {
       const userData = localStorage.getItem('userData');
-      if (userData) {
+      const token = localStorage.getItem('token');
+      
+      if (userData && token) {
         try {
           this.userData = JSON.parse(userData);
           this.logged = true;
         } catch (e) {
-          localStorage.removeItem('userData');
+          this.logout();
         }
+      } else {
+        this.logout();
       }
     }
   }
