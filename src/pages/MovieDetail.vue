@@ -179,6 +179,21 @@ export default {
       await this.loadUserInteractions();
     }
   },
+  watch: {
+    '$route.params.id': {
+      handler: async function(newId, oldId) {
+        if (newId !== oldId) {
+          this.loading = true;
+          this.error = null;
+          await this.loadMovieData();
+          if (useAuthStore().isAuthenticated) {
+            await this.loadUserInteractions();
+          }
+        }
+      },
+      immediate: false
+    }
+  },
   methods: {
     async loadMovieData() {
       try {

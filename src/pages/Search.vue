@@ -254,7 +254,8 @@ export default {
         title: this.selectedMovie.title,
         poster_path: this.selectedMovie.poster_path,
         release_date: this.selectedMovie.release_date,
-        vote_average: this.selectedMovie.vote_average
+        vote_average: this.selectedMovie.vote_average,
+        overview: this.selectedMovie.overview
       };
 
       // Check authentication before proceeding

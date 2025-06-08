@@ -3,14 +3,15 @@
     <div class="review-container">
       <div class="movie-info">
         <div class="movie-poster">
-          <img :src="getMoviePoster" :alt="movieData.title" />
+          <img :src="getMoviePoster" :alt="decodedMovieData?.title" />
         </div>
         <div class="movie-details">
-          <h1>{{ movieData.title }}</h1>
-          <p class="release-year">{{ formatYear(movieData.release_date) }}</p>
+          <h1>{{ decodedMovieData?.title || 'Loading...' }}</h1>
+          <p class="release-year">{{ formatYear(decodedMovieData?.release_date) }}</p>
           <div class="movie-rating">
-            <span>⭐ {{ formatRating(movieData.vote_average) }}</span>
+            <span>⭐ {{ formatRating(decodedMovieData?.vote_average) }}</span>
           </div>
+          <p class="movie-overview">{{ decodedMovieData?.overview || 'No overview available.' }}</p>
         </div>
       </div>
 
@@ -19,10 +20,10 @@
         
         <form @submit.prevent="submitReview" class="review-form">
           <div class="form-group">
-            <label for="rating">Your Rating (1-10)</label>
+            <label for="rating">Your Rating (1-5)</label>
             <select v-model="review.rating" id="rating" required>
               <option value="" disabled>Select a rating</option>
-              <option v-for="n in 10" :key="n" :value="n">{{ n }}</option>
+              <option v-for="n in 5" :key="n" :value="n">{{ n }}</option>
             </select>
           </div>
 
@@ -165,8 +166,8 @@ export default {
         isValid = false;
       }
 
-      if (!this.review.rating || this.review.rating < 1 || this.review.rating > 10) {
-        this.error = 'Please provide a rating between 1 and 10';
+      if (!this.review.rating || this.review.rating < 1 || this.review.rating > 5) {
+        this.error = 'Please provide a rating between 1 and 5';
         isValid = false;
       }
 

@@ -18,10 +18,6 @@
               <label>Username</label>
               <input type="text" v-model="userData.username" :disabled="!isEditing" />
             </div>
-            <div class="info-item">
-              <label>Email</label>
-              <input type="email" v-model="userData.email" :disabled="!isEditing" />
-            </div>
             <div class="info-item actions">
               <button v-if="!isEditing" @click="startEditing" class="btn-edit">
                 Edit Profile
@@ -171,12 +167,12 @@ export default {
         }
         
         this.userData = {
-          username: profileData.username,
-          email: profileData.email,
-          role: profileData.role,
-          id: profileData.id // Ensure we store the user ID
+          username: profileData.user.username,
+          email: profileData.user.email,
+          role: profileData.user.role,
+          id: profileData.user.id // Ensure we store the user ID
         };
-        this.selectedGenres = profileData.favorite_genres || [];
+        this.selectedGenres = profileData.user.favorite_genres || [];
         this.originalUserData = { ...this.userData };
 
         // Load activity data
@@ -205,13 +201,21 @@ export default {
       this.error = null;
       
       try {
-        const [error, data] = await userAPI.updateProfile({
+        // Debug logging
+        const token = localStorage.getItem('token');
+        console.log('Token exists:', !!token);
+        console.log('User ID:', this.userData.id);
+        console.log('Update data:', {
           username: this.userData.username,
-          email: this.userData.email,
           favorite_genres: this.selectedGenres
         });
 
+        const [error, data] = await userAPI.updateProfile({
+          username: this.userData.username
+        });
+
         if (error) {
+          console.error('Profile update error:', error);
           this.error = error.message || 'Failed to update profile';
           return;
         }
