@@ -325,7 +325,7 @@ export default {
 }
 </script>
 
-<style src="@/styles/search.scss" scoped></style>
+<style src="@/styles/search.scss" lang="scss" scoped></style>
 
 <style lang="scss" scoped>
 .btn-review {

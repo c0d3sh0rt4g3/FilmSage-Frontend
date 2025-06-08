@@ -125,18 +125,18 @@ export default {
       this.loading = true;
 
       const authStore = useAuthStore();
-      const [error, data] = await authStore.login({
+      const success = await authStore.login({
         email: this.email,
         password: this.password
       });
 
-      if (error) {
-        this.loginError = authStore.getErrors.message;
+      if (!success) {
+        this.loginError = authStore.getErrors.login || 'Login failed. Please try again.';
         this.loading = false;
         return;
       }
 
-      this.$emit('success', data);
+      this.$emit('success', authStore.userData);
       this.resetForm();
       this.closeModal();
       this.loading = false;

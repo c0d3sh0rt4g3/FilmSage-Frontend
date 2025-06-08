@@ -7,7 +7,12 @@ import Home from "@/pages/Home.vue";
 import {createRouter, createWebHistory} from "vue-router";
 import Search from "@/pages/Search.vue";
 import CreateReview from "@/pages/CreateReview.vue";
+import Profile from "@/pages/Profile.vue";
+import MovieDetail from "@/pages/MovieDetail.vue";
+import Recommendations from "@/pages/Recommendations.vue";
+import AdminDashboard from "@/pages/AdminDashboard.vue";
 import { useAuthStore } from '@/stores/authStore';
+import { apiRequest } from '@/utils/api';
 
 /**
  * Application routes configuration array
@@ -40,6 +45,36 @@ const routes = [
         meta: {
             requiresAuth: true
         }
+    },
+    {
+        path: '/profile',
+        name: 'profile',
+        component: Profile,
+        meta: {
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/movie/:id',
+        name: 'movie-detail',
+        component: MovieDetail
+    },
+    {
+        path: '/recommendations',
+        name: 'recommendations',
+        component: Recommendations,
+        meta: {
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/admin',
+        name: 'admin-dashboard',
+        component: AdminDashboard,
+        meta: {
+            requiresAuth: true,
+            requiresAdmin: true
+        }
     }
 ]
 
@@ -52,19 +87,26 @@ const router = createRouter({
     routes
 })
 
-// Navigation guard to check authentication
-router.beforeEach((to, from, next) => {
-    if (to.meta.requiresAuth) {
-        const authStore = useAuthStore();
-        if (!authStore.isAuthenticated) {
-            // Redirect to home if not authenticated
-            next('/');
-        } else {
-            next();
-        }
-    } else {
-        next();
+// Navigation guard to check authentication and admin access
+router.beforeEach(async (to, from, next) => {
+    const authStore = useAuthStore();
+
+    if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+        // Redirect to home if not authenticated
+        next('/');
+        return;
     }
+
+    if (to.meta.requiresAdmin) {
+        // Check if user is admin
+        const [error, userData] = await apiRequest('/users/profile');
+        if (error || !userData.is_admin) {
+            next('/');
+            return;
+        }
+    }
+
+    next();
 });
 
 export default router;

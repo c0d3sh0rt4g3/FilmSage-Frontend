@@ -64,7 +64,93 @@
   align-items: center;
 }
 
-.btn-login, .btn-register, .btn-logout {
+.user-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .username {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: none;
+    color: $white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: $transition-base;
+
+    &:hover {
+      color: $white-80;
+    }
+
+    .arrow {
+      font-size: 0.8rem;
+      margin-left: 0.5rem;
+      transition: $transition-base;
+      
+      &.up {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 200px;
+  background: $black-80;
+  backdrop-filter: $blur-medium;
+  border: 1px solid $white-15;
+  border-radius: $border-radius-medium;
+  box-shadow: $shadow-medium;
+  margin-top: 0.5rem;
+  
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: $white;
+    text-decoration: none;
+    transition: $transition-base;
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: none;
+    font-size: 1rem;
+    cursor: pointer;
+    
+    i {
+      width: 1rem;
+      text-align: center;
+      color: $white-60;
+    }
+    
+    &:hover {
+      background: $white-10;
+    }
+    
+    &.logout {
+      border-top: 1px solid $white-15;
+      color: $error-light;
+      
+      &:hover {
+        background: $error-bg-10;
+      }
+
+      i {
+        color: $error-light;
+      }
+    }
+  }
+}
+
+.btn-login, .btn-register {
   padding: 0.8rem 1.5rem;
   border-radius: $border-radius-round;
   font-weight: 600;
@@ -93,27 +179,6 @@
   }
 }
 
-.btn-logout {
-  background: $error-red;
-  color: $white;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: $shadow-medium;
-  }
-}
-
-.user-menu {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-
-  .username {
-    color: $white;
-    font-weight: 600;
-  }
-}
-
 @media (max-width: 768px) {
   .header-content {
     flex-direction: column;
@@ -131,7 +196,7 @@
     width: 100%;
   }
 
-  .btn-login, .btn-register, .btn-logout {
+  .btn-login, .btn-register {
     width: 100%;
   }
 }

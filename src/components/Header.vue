@@ -13,7 +13,8 @@ export default {
     return {
       showLoginModal: false,
       showRegisterModal: false,
-      isScrolled: false
+      isScrolled: false,
+      showUserMenu: false
     };
   },
   computed: {
@@ -24,6 +25,9 @@ export default {
     user() {
       const authStore = useAuthStore();
       return authStore.getUser;
+    },
+    isAdmin() {
+      return this.user?.role === 'admin';
     }
   },
   methods: {
@@ -50,10 +54,23 @@ export default {
       const authStore = useAuthStore();
       authStore.logout();
       this.$router.push('/');
+    },
+    toggleUserMenu() {
+      this.showUserMenu = !this.showUserMenu;
+    },
+    closeUserMenu() {
+      this.showUserMenu = false;
     }
   },
   mounted() {
     window.addEventListener('scroll', this.handleScroll);
+    document.addEventListener('click', (e) => {
+      const userMenu = this.$refs.userMenu;
+      const userButton = this.$refs.userButton;
+      if (userMenu && !userMenu.contains(e.target) && !userButton.contains(e.target)) {
+        this.closeUserMenu();
+      }
+    });
   },
   beforeUnmount() {
     window.removeEventListener('scroll', this.handleScroll);
@@ -71,13 +88,36 @@ export default {
       <nav class="main-nav">
         <router-link to="/" class="nav-link">Home</router-link>
         <router-link v-if="isAuthenticated" to="/search" class="nav-link">Search</router-link>
+        <router-link v-if="isAuthenticated" to="/recommendations" class="nav-link">Recommendations</router-link>
       </nav>
 
       <div class="auth-section">
         <template v-if="isAuthenticated">
           <div class="user-menu">
-            <span class="username">{{ user?.username }}</span>
-            <button @click="logout" class="btn-logout">Sign Out</button>
+            <div class="user-menu-container" ref="userMenu">
+              <button 
+                ref="userButton"
+                class="username" 
+                @click="toggleUserMenu"
+              >
+                {{ user?.username }}
+                <span class="arrow" :class="{ 'up': showUserMenu }">▼</span>
+              </button>
+              <div v-show="showUserMenu" class="dropdown-menu">
+                <router-link to="/profile" class="menu-item" @click="closeUserMenu">
+                  <i class="fas fa-user"></i>
+                  Profile
+                </router-link>
+                <router-link v-if="isAdmin" to="/admin" class="menu-item" @click="closeUserMenu">
+                  <i class="fas fa-cog"></i>
+                  Admin Dashboard
+                </router-link>
+                <button @click="logout" class="menu-item logout">
+                  <i class="fas fa-sign-out-alt"></i>
+                  Sign Out
+                </button>
+              </div>
+            </div>
           </div>
         </template>
         <template v-else>
@@ -103,4 +143,4 @@ export default {
   </header>
 </template>
 
-<style src="@/styles/header.scss" scoped></style> 
+<style src="@/styles/header.scss" lang="scss" scoped></style> 
