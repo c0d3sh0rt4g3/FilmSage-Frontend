@@ -77,12 +77,20 @@
       @success="handleLoginSuccess"
       @switch-to-register="switchToRegister"
     />
+
+    <!-- Already Logged In modal -->
+    <AlreadyLoggedInModal
+      :show="showAlreadyLoggedInModal"
+      @close="closeAlreadyLoggedInModal"
+      @go-to-search="goToSearch"
+    />
   </main>
 </template>
 
 <script>
 import RegisterModal from "@/components/RegisterModal.vue";
 import LoginModal from "@/components/LoginModal.vue";
+import AlreadyLoggedInModal from "@/components/AlreadyLoggedInModal.vue";
 import { useAuthStore } from '@/stores/authStore'
 import { userAPI } from '@/utils/api'
 
@@ -90,12 +98,14 @@ export default {
   name: 'HomePage',
   components: {
     RegisterModal,
-    LoginModal
+    LoginModal,
+    AlreadyLoggedInModal
   },
   data() {
     return {
       showRegisterModal: false,
       showLoginModal: false,
+      showAlreadyLoggedInModal: false,
       form: {
         username: '',
         email: '',
@@ -260,8 +270,14 @@ export default {
     },
 
     openRegisterModal() {
-      this.showRegisterModal = true;
-      document.body.style.overflow = 'hidden';
+      const authStore = useAuthStore();
+      if (authStore.isAuthenticated) {
+        this.showAlreadyLoggedInModal = true;
+        document.body.style.overflow = 'hidden';
+      } else {
+        this.showRegisterModal = true;
+        document.body.style.overflow = 'hidden';
+      }
     },
 
     closeRegisterModal() {
@@ -296,6 +312,15 @@ export default {
     switchToRegister() {
       this.closeLoginModal();
       this.showRegisterModal = true;
+    },
+
+    closeAlreadyLoggedInModal() {
+      this.showAlreadyLoggedInModal = false;
+      document.body.style.overflow = '';
+    },
+
+    goToSearch() {
+      this.$router.push('/search');
     },
 
     async loadRandomMovies() {
@@ -419,7 +444,12 @@ export default {
     },
 
     startDiscovery() {
-      this.openRegisterModal();
+      const authStore = useAuthStore();
+      if (authStore.isAuthenticated) {
+        this.$router.push('/search');
+      } else {
+        this.openRegisterModal();
+      }
     },
 
     signUp() {

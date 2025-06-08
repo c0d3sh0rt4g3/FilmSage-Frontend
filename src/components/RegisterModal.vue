@@ -184,20 +184,20 @@ export default {
       this.loading = true;
 
       const authStore = useAuthStore();
-      const [error, data] = await authStore.register({
+      const success = await authStore.register({
         username: this.username,
         email: this.email,
         password: this.password,
         role: 'user'
       });
 
-      if (error) {
-        this.registerError = authStore.getErrors.message;
+      if (!success) {
+        this.registerError = authStore.getErrors.register || 'Registration failed. Please try again.';
         this.loading = false;
         return;
       }
 
-      this.$emit('success', data);
+      this.$emit('success', authStore.userData);
       this.resetForm();
       this.closeModal();
       this.loading = false;

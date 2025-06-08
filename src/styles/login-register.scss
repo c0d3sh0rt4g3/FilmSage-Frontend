@@ -1,28 +1,19 @@
 @import 'variables';
 
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: $black-80;
+  background: $purple-80;
   backdrop-filter: $blur-light;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: $z-modal;
 }
 
 .modal-container {
   background: $white-10;
   backdrop-filter: $blur-strong;
   border: 1px solid $white-20;
-  border-radius: $border-radius-xxl;
-  width: 90vw;
-  max-width: $modal-max-width;
-  max-height: $modal-max-height;
-  overflow-y: auto;
+  border-radius: 20px;
+  width: 45vw;
   box-shadow: $shadow-modal;
   color: $white;
 }
@@ -31,11 +22,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $modal-header-padding;
+  padding: 24px 24px 16px;
   border-bottom: 1px solid $white-10;
 
   h2 {
-    font-size: $modal-title-size;
+    font-size: clamp(1.5rem, 4vw, 2rem);
     font-weight: 700;
   }
 }
@@ -53,8 +44,8 @@
   color: $white;
   font-size: 1.5rem;
   cursor: pointer;
-  width: $close-btn-size;
-  height: $close-btn-size;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -69,7 +60,7 @@
 }
 
 .modal-body {
-  padding: $modal-padding;
+  padding: 24px;
 }
 
 .modal-form-group {
@@ -80,18 +71,18 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  font-size: $modal-label-size;
+  font-size: 0.9rem;
   color: $white-90;
 }
 
 .modal-form-input {
   width: 100%;
-  padding: $input-padding;
+  padding: 12px 16px;
   background: $white-10;
   backdrop-filter: $blur-light;
   border: 1px solid $white-20;
-  border-radius: $border-radius-medium;
-  font-size: $modal-input-size;
+  border-radius: 8px;
+  font-size: 1rem;
   color: $white;
   transition: $transition-base;
   box-sizing: border-box;
@@ -103,24 +94,24 @@
   &:focus {
     outline: none;
     border-color: $accent-orange-60;
-    box-shadow: $shadow-focus;
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
     background: $white-15;
   }
 
   &.error {
     border-color: $error-red;
-    box-shadow: $shadow-focus-error;
+    box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.2);
   }
 }
 
 .modal-error-message {
   color: $error-light;
-  font-size: $modal-error-size;
+  font-size: 0.85rem;
   margin-top: 5px;
   display: block;
   background: $error-bg-10;
   padding: 8px 12px;
-  border-radius: $border-radius-small;
+  border-radius: 6px;
   border: 1px solid $error-border-30;
 }
 
@@ -132,7 +123,7 @@
   display: flex;
   align-items: flex-start;
   cursor: pointer;
-  font-size: $modal-link-size;
+  font-size: 0.9rem;
   line-height: 1.4;
   color: $white-90;
 
@@ -157,21 +148,22 @@
   background: $error-bg-20;
   color: $error-light;
   padding: 16px;
-  border-radius: $border-radius-medium;
+  border-radius: 8px;
   margin-bottom: 20px;
-  font-size: $modal-link-size;
+  font-size: 0.9rem;
   border: 1px solid $error-border-40;
   backdrop-filter: $blur-light;
 }
 
 .modal-submit-btn {
   width: 100%;
-  padding: $button-padding;
+  height: 5vh;
+  padding: 14px 24px;
   background: $accent-gradient;
   color: $white;
   border: none;
-  border-radius: $border-radius-round;
-  font-size: $modal-button-size;
+  border-radius: 25px;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   transition: $transition-base;
@@ -194,8 +186,8 @@
 }
 
 .modal-spinner {
-  width: $spinner-size;
-  height: $spinner-size;
+  width: 16px;
+  height: 16px;
   border: 2px solid transparent;
   border-top: 2px solid $white;
   border-radius: 50%;
@@ -206,7 +198,7 @@
   text-align: center;
   margin-top: 25px;
   color: $white-80;
-  font-size: $modal-link-size;
+  font-size: 0.9rem;
 
   a {
     color: $accent-yellow;
@@ -226,7 +218,7 @@
   a {
     color: $white-80;
     text-decoration: none;
-    font-size: $modal-link-size;
+    font-size: 0.9rem;
 
     &:hover {
       color: $accent-yellow;
@@ -261,27 +253,63 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .modal-container {
-    width: 95%;
-    margin: 20px;
-    max-width: $modal-max-width-small;
-  }
-
-  .modal-header,
-  .modal-body {
-    padding: $modal-padding-mobile;
+    width: 95vw;
+    max-width: 400px;
+    margin: 20px auto;
   }
 
   .modal-header {
-    padding: $modal-header-padding-mobile;
+    padding: 20px 20px 16px;
 
     h2 {
-      font-size: $modal-title-size-mobile;
+      font-size: 1.5rem;
     }
   }
 
+  .modal-body {
+    padding: 20px;
+  }
+
+  .modal-close-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-container {
+    width: 95vw;
+    max-width: none;
+    margin: 10px;
+    border-radius: 16px;
+  }
+
+  .modal-header {
+    padding: 16px 16px 12px;
+
+    h2 {
+      font-size: 1.3rem;
+    }
+  }
+
+  .modal-body {
+    padding: 16px;
+  }
+
   .modal-form-input {
-    padding: $input-padding-mobile;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+  }
+
+  .modal-submit-btn {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+
+  .modal-form-group {
+    margin-bottom: 20px;
   }
 }
