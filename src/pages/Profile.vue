@@ -13,10 +13,13 @@
         <!-- User Info Section -->
         <div class="profile-card">
           <h2>Personal Information</h2>
+          <div v-if="error" class="error-message" style="color: red; margin-bottom: 1rem; padding: 0.5rem; background: #ffe6e6; border: 1px solid #ff0000; border-radius: 4px;">
+            {{ error }}
+          </div>
           <div class="info-grid">
             <div class="info-item">
               <label>Username</label>
-              <input type="text" v-model="userData.username" :disabled="!isEditing" />
+              <input type="text" v-model="userData.username" disabled />
             </div>
             <div class="info-item actions">
               <button v-if="!isEditing" @click="startEditing" class="btn-edit">
@@ -151,11 +154,12 @@ export default {
   methods: {
     async loadUserData() {
       try {
-        // Load profile data
-        const [profileError, profileData] = await userAPI.getProfile();
-        if (profileError) {
-          console.error('Error loading user data:', profileError);
-          if (profileError.message?.includes('token')) {
+        // Load user data
+        const [userError, userData] = await userAPI.getProfile();
+        if (userError) {
+          console.error('Error loading user data:', userError);
+          
+          if (userError.message?.includes('token')) {
             const authStore = useAuthStore();
             authStore.logout();
             this.$router.push({
@@ -167,12 +171,12 @@ export default {
         }
         
         this.userData = {
-          username: profileData.user.username,
-          email: profileData.user.email,
-          role: profileData.user.role,
-          id: profileData.user.id // Ensure we store the user ID
+          username: userData.user.username,
+          email: userData.user.email,
+          role: userData.user.role,
+          id: userData.user._id // Ensure we store the user ID
         };
-        this.selectedGenres = profileData.user.favorite_genres || [];
+        this.selectedGenres = userData.user.favorite_genres || [];
         this.originalUserData = { ...this.userData };
 
         // Load activity data
@@ -194,6 +198,7 @@ export default {
     },
     startEditing() {
       this.isEditing = true;
+      this.error = null;
       this.originalUserData = { ...this.userData };
     },
     async saveChanges() {
@@ -206,12 +211,11 @@ export default {
         console.log('Token exists:', !!token);
         console.log('User ID:', this.userData.id);
         console.log('Update data:', {
-          username: this.userData.username,
           favorite_genres: this.selectedGenres
         });
 
         const [error, data] = await userAPI.updateProfile({
-          username: this.userData.username
+          favorite_genres: this.selectedGenres
         });
 
         if (error) {
@@ -221,10 +225,7 @@ export default {
         }
 
         // Update local data
-        this.userData = {
-          ...this.userData,
-          ...data.user
-        };
+        this.selectedGenres = data.user.favorite_genres || [];
         this.originalUserData = { ...this.userData };
         this.isEditing = false;
       } catch (error) {
