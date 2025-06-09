@@ -13,7 +13,7 @@
   backdrop-filter: $blur-strong;
   border: 1px solid $white-20;
   border-radius: 20px;
-  width: 45vw;
+  width: 35vw;
   box-shadow: $shadow-modal;
   color: $white;
 }
@@ -42,14 +42,13 @@
   background: $white-10;
   border: 1px solid $white-20;
   color: $white;
-  font-size: 1.5rem;
   cursor: pointer;
   width: 36px;
   height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 100%;
   transition: $transition-base;
   backdrop-filter: $blur-light;
 
