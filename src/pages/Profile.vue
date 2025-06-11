@@ -69,8 +69,8 @@
               <span class="stat-label">Reviews Written</span>
             </div>
             <div class="stat-item">
-              <span class="stat-number">{{ userStats.ratings || 0 }}</span>
-              <span class="stat-label">Movies Rated</span>
+              <span class="stat-number">{{ userStats.ratingsAverage ? userStats.ratingsAverage.toFixed(1) : 'N/A' }}</span>
+              <span class="stat-label">Average Rating</span>
             </div>
             <div class="stat-item">
               <span class="stat-number">{{ userStats.favorites || 0 }}</span>
@@ -85,7 +85,7 @@
 
 <script>
 import { useAuthStore } from '@/stores/authStore';
-import { userAPI, interactionAPI } from '@/utils/api';
+import { userAPI, interactionAPI, reviewAPI } from '@/utils/api';
 
 export default {
   name: 'ProfilePage',
@@ -122,7 +122,7 @@ export default {
       ],
       userStats: {
         reviews: 0,
-        ratings: 0,
+        ratingsAverage: 0,
         favorites: 0
       },
       error: null
@@ -184,13 +184,19 @@ export default {
         if (!activityError && activityData) {
           this.userStats = {
             reviews: activityData.reviews_count || 0,
-            ratings: activityData.ratings_count || 0,
+            ratingsAverage: 0, // Will be calculated from actual ratings
             favorites: activityData.favorites_count || 0,
             watchlist: activityData.watchlist_count || 0,
             followers: activityData.followers_count || 0,
             following: activityData.following_count || 0
           };
         }
+
+        // Load user reviews count using the specific endpoint
+        await this.loadUserReviewsCount();
+        
+        // Load user ratings average
+        await this.loadUserRatingsAverage();
       } catch (error) {
         console.error('Error in loadUserData:', error);
         this.error = 'An unexpected error occurred while loading your profile.';
@@ -238,6 +244,74 @@ export default {
     cancelEditing() {
       this.userData = { ...this.originalUserData };
       this.isEditing = false;
+    },
+    async loadUserReviewsCount() {
+      try {
+        const [error, reviewsData] = await reviewAPI.getUserReviews(this.userData.id);
+        if (!error && reviewsData && reviewsData.reviews) {
+          // Update the reviews count with the actual number from the endpoint
+          this.userStats.reviews = reviewsData.reviews.length;
+        }
+      } catch (error) {
+        console.error('Error loading user reviews count:', error);
+        // Keep the existing count from activity data if the reviews endpoint fails
+      }
+    },
+    async loadUserRatingsAverage() {
+      try {
+        console.log('Loading user ratings average from reviews...');
+        console.log('User ID:', this.userData.id);
+        console.log('Full userData:', this.userData);
+        
+        const [error, ratingsData] = await interactionAPI.getUserRatings();
+        
+        console.log('Ratings API response - Error:', error);
+        console.log('Ratings API response - Data:', ratingsData);
+        
+        if (!error && ratingsData) {
+          console.log('Raw ratings data structure:', Object.keys(ratingsData));
+          
+          // Check different possible structures
+          let ratings = null;
+          if (ratingsData.ratings) {
+            ratings = ratingsData.ratings;
+          } else if (Array.isArray(ratingsData)) {
+            ratings = ratingsData;
+          } else if (ratingsData.data && ratingsData.data.ratings) {
+            ratings = ratingsData.data.ratings;
+          }
+          
+          console.log('Extracted ratings:', ratings);
+          console.log('Ratings length:', ratings ? ratings.length : 0);
+          
+          if (ratings && Array.isArray(ratings) && ratings.length > 0) {
+            console.log('Sample rating object:', ratings[0]);
+            
+            // Calculate the average rating
+            const totalRating = ratings.reduce((sum, rating) => {
+              console.log('Processing rating:', rating);
+              return sum + (rating.rating || rating.value || rating.score || 0);
+            }, 0);
+            const averageRating = totalRating / ratings.length;
+            
+            console.log('Total rating:', totalRating);
+            console.log('Average rating calculated:', averageRating);
+            
+            this.userStats.ratingsAverage = averageRating;
+          } else {
+            console.log('No ratings found or empty array');
+            this.userStats.ratingsAverage = 0;
+          }
+        } else {
+          console.log('Error or no data received');
+          this.userStats.ratingsAverage = 0;
+        }
+        
+        console.log('Final ratingsAverage value:', this.userStats.ratingsAverage);
+      } catch (error) {
+        console.error('Error loading user ratings average:', error);
+        this.userStats.ratingsAverage = 0;
+      }
     }
   }
 }

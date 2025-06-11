@@ -140,7 +140,7 @@ export const interactionAPI = {
   getUserRatings: () => {
     const [error, currentUser] = userAPI.getCurrentUser();
     if (error) return [error, null];
-    return apiRequest(`/userInteractions/ratings/user/${currentUser.id}`);
+    return apiRequest(`/userInteractions/ratings/user/${currentUser.id}/from-reviews`);
   },
 
   removeRating: (tmdbId, contentType) => {
