@@ -1,49 +1,51 @@
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+import { apiClient } from './axios';
 
 /**
- * Makes an authenticated request to the backend API
+ * Makes an authenticated request to the backend API using Axios
  * @param {string} endpoint - The API endpoint (e.g., '/users/profile')
- * @param {Object} options - Fetch options
+ * @param {Object} options - Axios options
  * @returns {Promise<[Error, null] | [null, Object]>} - Returns [error, null] or [null, data]
  */
 export async function apiRequest(endpoint, options = {}) {
-  const token = localStorage.getItem('token');
-  
-  // Only add token for non-auth endpoints
-  const isAuthEndpoint = endpoint.includes('/login') || endpoint.includes('/register');
-  const defaultHeaders = {
-    'Content-Type': 'application/json',
-    ...(!isAuthEndpoint && token && { 'Authorization': `Bearer ${token}` })
-  };
-
-  const config = {
-    ...options,
-    headers: {
-      ...defaultHeaders,
-      ...options.headers
-    }
-  };
-
   try {
-    const response = await fetch(`${BACKEND_URL}${endpoint}`, config);
-    
-    // If the token is invalid or expired
-    if (response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userData');
-      window.location.href = '/login';
-      return [new Error('Unauthorized'), null];
+    // Convert fetch-style options to axios-style
+    const axiosConfig = {
+      url: endpoint,
+      method: options.method || 'GET',
+      ...options
+    };
+
+    // Handle body data for POST/PUT requests
+    if (options.body) {
+      axiosConfig.data = JSON.parse(options.body);
+      delete axiosConfig.body;
     }
 
-    const data = await response.json();
-    if (!response.ok) {
-      return [new Error(data.message || 'API request failed'), null];
+    // Handle custom headers
+    if (options.headers) {
+      axiosConfig.headers = {
+        ...axiosConfig.headers,
+        ...options.headers
+      };
     }
 
-    return [null, data];
+    const response = await apiClient(axiosConfig);
+    return [null, response.data];
   } catch (error) {
     console.error('API Request Error:', error);
-    return [error, null];
+    
+    // Extract error message from axios error
+    let errorMessage = error.message;
+    if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.response?.statusText) {
+      errorMessage = error.response.statusText;
+    }
+    
+    const apiError = new Error(errorMessage);
+    apiError.status = error.response?.status;
+    
+    return [apiError, null];
   }
 }
 

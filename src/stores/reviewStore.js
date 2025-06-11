@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { useAuthStore } from './authStore';
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+import { apiClient } from '@/utils/axios';
 
 export const useReviewStore = defineStore('review', {
   state: () => ({
@@ -20,11 +19,6 @@ export const useReviewStore = defineStore('review', {
           throw new Error('User not authenticated');
         }
 
-        const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('Authentication token not found');
-        }
-
         const payload = {
           user_id: authStore.userData.id,
           tmdb_id: reviewData.movieId,
@@ -36,24 +30,10 @@ export const useReviewStore = defineStore('review', {
           is_spoiler: false
         };
 
-        const response = await fetch(`${BACKEND_URL}/reviews`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          this.error = null;
-          return [null, data];
-        } else {
-          this.error = data.message || 'Error creating review';
-          return [new Error(this.error), null];
-        }
+        const response = await apiClient.post('/reviews', payload);
+        
+        this.error = null;
+        return [null, response.data];
       } catch (error) {
         this.error = error.message || 'Error connecting to the server';
         return [error, null];

@@ -199,34 +199,13 @@ export default {
       try {
         // Load movie details from TMDB
         const movieId = this.$route.params.id;
-        const apiKey = import.meta.env.VITE_MOVIEDB_API_KEY;
-        const tmdbBaseUrl = 'https://api.themoviedb.org/3';
 
         if (!movieId) {
           throw new Error('Movie ID is required');
         }
 
-        // Check if API key is available
-        if (!apiKey) {
-          console.error('TMDB API key is not available:', {
-            envKeys: Object.keys(import.meta.env),
-            hasMovieDBKey: 'VITE_MOVIEDB_API_KEY' in import.meta.env
-          });
-          throw new Error('TMDB API key is not configured. Please check your environment variables.');
-        }
-
-        const url = `${tmdbBaseUrl}/movie/${movieId}?api_key=${apiKey}&append_to_response=credits,similar`;
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            `Failed to load movie data: ${response.status}${errorData.status_message ? ` - ${errorData.status_message}` : ''}`
-          );
-        }
-        
-        const data = await response.json();
-        this.movie = data;
+        const { tmdbAPI } = await import('@/utils/tmdb');
+        this.movie = await tmdbAPI.getMovieDetails(movieId);
 
         // Load reviews if movie data was loaded successfully
         if (this.movie) {

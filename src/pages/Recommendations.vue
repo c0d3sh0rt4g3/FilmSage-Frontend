@@ -197,15 +197,8 @@ export default {
         }
 
         // Load trending movies from TMDB
-        const apiKey = import.meta.env.VITE_MOVIEDB_API_KEY;
-        const trendingUrl = `https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}`;
-        const trendingResponse = await fetch(trendingUrl);
-        
-        if (!trendingResponse.ok) {
-          throw new Error('Failed to load trending movies');
-        }
-        
-        const trendingData = await trendingResponse.json();
+        const { tmdbAPI } = await import('@/utils/tmdb');
+        const trendingData = await tmdbAPI.getTrendingMovies();
         if (trendingData?.results) {
           this.trendingMovies = trendingData.results;
         }

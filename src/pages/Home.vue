@@ -325,19 +325,10 @@ export default {
 
     async loadRandomMovies() {
       try {
-        const apiKey = import.meta.env.VITE_MOVIEDB_API_KEY;
-        if (!apiKey) {
-          throw new Error('TMDB API key is not configured');
-        }
-
+        const { tmdbAPI } = await import('@/utils/tmdb');
+        
         // Get popular movies first
-        const popularUrl = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=1`;
-        const popularResponse = await fetch(popularUrl);
-        if (!popularResponse.ok) {
-          throw new Error(`Failed to fetch popular movies: ${popularResponse.status}`);
-        }
-
-        const popularData = await popularResponse.json();
+        const popularData = await tmdbAPI.getPopularMovies();
         const movies = popularData.results || [];
 
         // Randomly select 3 movies
@@ -364,32 +355,10 @@ export default {
 
     async fetchMovieDetails(movieId) {
       try {
-        const apiKey = import.meta.env.VITE_MOVIEDB_API_KEY;
-        const baseUrl = 'https://api.themoviedb.org/3';
+        const { tmdbAPI } = await import('@/utils/tmdb');
+        const data = await tmdbAPI.getMovieDetails(movieId);
+        
         const imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
-
-        // Check if API key is available
-        if (!apiKey) {
-          console.error('TMDB API key is not available:', {
-            envKeys: Object.keys(import.meta.env),
-            hasMovieDBKey: 'VITE_MOVIEDB_API_KEY' in import.meta.env
-          });
-          throw new Error('TMDB API key is not configured');
-        }
-
-        const url = `${baseUrl}/movie/${movieId}?api_key=${apiKey}&language=en-US`;
-        console.log('Fetching movie from:', url.replace(apiKey, 'API_KEY'));
-
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            `HTTP error! status: ${response.status}${errorData.status_message ? ` - ${errorData.status_message}` : ''}`
-          );
-        }
-
-        const data = await response.json();
 
         return {
           id: data.id,
@@ -400,8 +369,8 @@ export default {
           imdbRating: data.vote_average ? data.vote_average.toFixed(1) : 'N/A',
           Genre: data.genres ? data.genres.map(g => g.name).join(', ') : 'N/A',
           Plot: data.overview || 'No description available',
-          Director: 'N/A',
-          Actors: 'N/A',
+          Director: data.credits?.crew?.find(c => c.job === 'Director')?.name || 'N/A',
+          Actors: data.credits?.cast?.slice(0, 3).map(a => a.name).join(', ') || 'N/A',
           Runtime: data.runtime ? `${data.runtime} min` : 'N/A',
           Language: data.original_language?.toUpperCase() || 'N/A'
         };
