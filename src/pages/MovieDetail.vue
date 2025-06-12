@@ -35,7 +35,7 @@
             </div>
             <p class="overview">{{ movie.overview }}</p>
             <div class="actions">
-              <button @click="toggleFavorite" class="btn-favorite" :class="{ 'is-favorite': isInFavorites }" :title="isInFavorites ? 'Remove from Favorites' : 'Add to Favorites'">
+              <button @click="toggleFavorite" class="btn-favorite" :class="{ 'is-favorite': isInFavorites }" :title="isInFavorites ? 'Remove from Favorites' : 'Add to Favorites'" :disabled="isToggling">
                 {{ isInFavorites ? 'Remove from Favorites' : 'Add to Favorites' }}
               </button>
               <button @click="openReviewModal" class="btn-review">
@@ -133,6 +133,12 @@
 import { useAuthStore } from '@/stores/authStore';
 import { reviewAPI, interactionAPI, userAPI } from '@/utils/api';
 import defaultAvatar from '@/assets/pfp.jpg';
+import { 
+  isMovieInFavorites, 
+  addToFavoritesStorage, 
+  removeFromFavoritesStorage,
+  syncFavoritesWithServer 
+} from '@/utils/favorites';
 
 export default {
   name: 'MovieDetail',
@@ -144,6 +150,7 @@ export default {
       userRating: null,
       isInWatchlist: false,
       isInFavorites: false,
+      isToggling: false,
       loading: true,
       error: null,
       showReviewModal: false,
@@ -210,6 +217,85 @@ export default {
     }
   },
   methods: {
+    async verifyMovieInFavorites(movieId) {
+      // Try to add the movie to verify if it already exists
+      try {
+        const payload = {
+          tmdb_id: parseInt(movieId, 10),
+          content_type: 'movie'
+        };
+        
+        const [error] = await interactionAPI.addToFavorites(payload);
+        
+        if (error && (error.status === 409 || error.message?.includes('409') || error.message?.includes('Conflict'))) {
+          console.log('🎯 Verified: Movie is already in favorites on server');
+          // Update localStorage to reflect server state
+          addToFavoritesStorage(movieId, {
+            title: this.movie?.title,
+            poster_path: this.movie?.poster_path
+          });
+          return true;
+        } else if (!error) {
+          console.log('✅ Movie was successfully added to favorites');
+          // Update localStorage
+          addToFavoritesStorage(movieId, {
+            title: this.movie?.title,
+            poster_path: this.movie?.poster_path
+          });
+          return true;
+        } else {
+          console.log('❌ Error verifying movie favorite status:', error);
+          return false;
+        }
+      } catch (error) {
+        console.error('❌ Error in verifyMovieInFavorites:', error);
+        return false;
+      }
+         },
+     
+    async backgroundVerifyFavoriteStatus(movieId) {
+      // Quietly verify if the movie is in favorites by attempting to add it
+      try {
+        const payload = {
+          tmdb_id: parseInt(movieId, 10),
+          content_type: 'movie'
+        };
+        
+        const [error] = await interactionAPI.addToFavorites(payload);
+        
+        if (error && (error.status === 409 || error.message?.includes('409') || error.message?.includes('Conflict'))) {
+          console.log('🎯 Background verification: Movie is already in favorites');
+          // Update localStorage and UI
+          addToFavoritesStorage(movieId, {
+            title: this.movie?.title,
+            poster_path: this.movie?.poster_path
+          });
+          this.isInFavorites = true;
+        } else if (!error) {
+          console.log('✅ Background verification: Movie was added to favorites');
+          // Movie wasn't in favorites but now it is
+          addToFavoritesStorage(movieId, {
+            title: this.movie?.title,
+            poster_path: this.movie?.poster_path
+          });
+          this.isInFavorites = true;
+        }
+        // If other error, do nothing - keep current state
+      } catch (error) {
+        // Silent fail - keep current state
+        console.log('Background verification failed silently:', error);
+      }
+    },
+     
+    initializeFavoritesFromStorage() {
+      // Check localStorage immediately for instant UI update
+      if (this.movie && this.movie.id) {
+        const movieId = this.movie.id;
+        const isInFavorites = isMovieInFavorites(movieId);
+        this.isInFavorites = isInFavorites;
+      }
+    },
+    
     async loadMovieData() {
       try {
         // Load movie details from TMDB
@@ -238,6 +324,9 @@ export default {
             const authStore = useAuthStore();
             this.userReview = this.reviews.find(review => review.user_id === authStore.userData?.id);
           }
+          
+          // Initialize favorites state from localStorage now that movie data is available
+          this.initializeFavoritesFromStorage();
         }
       } catch (error) {
         console.error('Error loading movie data:', error);
@@ -273,32 +362,69 @@ export default {
         ]);
 
         // Check watchlist status
-        if (!watchlistError && watchlistData?.items) {
-          this.isInWatchlist = watchlistData.items.some(item => {
-            const watchlistId = parseInt(item.tmdb_id, 10);
-            return watchlistId === movieId && item.content_type === 'movie';
-          });
+        if (watchlistError) {
+          console.error('Error loading watchlist:', watchlistError);
+          this.isInWatchlist = false;
+        } else {
+          // API call was successful, check if user has any watchlist items
+          if (watchlistData?.items && Array.isArray(watchlistData.items)) {
+            this.isInWatchlist = watchlistData.items.some(item => {
+              const watchlistId = parseInt(item.tmdb_id, 10);
+              return watchlistId === movieId && item.content_type === 'movie';
+            });
+          } else {
+            // User has no watchlist items or empty watchlist
+            this.isInWatchlist = false;
+          }
         }
 
-        // Check favorites status
-        if (!favoritesError && favoritesData?.items) {
-          this.isInFavorites = favoritesData.items.some(item => {
-            const favoriteId = parseInt(item.tmdb_id, 10);
-            const isMatch = favoriteId === movieId && item.content_type === 'movie';
-            return isMatch;
-          });
-        } else {
+        // Check favorites status and sync with localStorage
+        if (favoritesError) {
           console.error('Error loading favorites:', favoritesError);
-          this.isInFavorites = false;
+          // Keep localStorage state if server fails
+          this.isInFavorites = isMovieInFavorites(movieId);
+        } else {
+          // API call was successful, sync server data with localStorage
+          if (favoritesData?.items && Array.isArray(favoritesData.items) && favoritesData.items.length > 0) {
+            // Sync server favorites with localStorage
+            syncFavoritesWithServer(favoritesData.items);
+            
+            // Update current movie's favorite status
+            const serverHasFavorite = favoritesData.items.some(item => {
+              const favoriteId = parseInt(item.tmdb_id, 10);
+              const isMatch = favoriteId === movieId && item.content_type === 'movie';
+              return isMatch;
+            });
+            
+            this.isInFavorites = serverHasFavorite;
+          } else {
+            // Server didn't return favorites list properly
+            // Keep localStorage state for now
+            this.isInFavorites = isMovieInFavorites(movieId);
+            
+            // If localStorage also says it's not a favorite, do a quick verification
+            if (!this.isInFavorites) {
+              this.backgroundVerifyFavoriteStatus(movieId);
+            }
+          }
         }
 
         // Get user's rating if exists
-        if (!ratingsError && ratingsData?.ratings) {
-          const userRating = ratingsData.ratings.find(rating => {
-            const ratingId = parseInt(rating.tmdb_id, 10);
-            return ratingId === movieId && rating.content_type === 'movie';
-          });
-          this.userRating = userRating ? userRating.rating : null;
+        if (ratingsError) {
+          console.error('Error loading ratings:', ratingsError);
+          this.userRating = null;
+        } else {
+          // API call was successful, check if user has any ratings
+          if (ratingsData?.ratings && Array.isArray(ratingsData.ratings)) {
+            const userRating = ratingsData.ratings.find(rating => {
+              const ratingId = parseInt(rating.tmdb_id, 10);
+              return ratingId === movieId && rating.content_type === 'movie';
+            });
+            this.userRating = userRating ? userRating.rating : null;
+          } else {
+            // User has no ratings or empty ratings list
+            this.userRating = null;
+          }
         }
       } catch (error) {
         console.error('Error loading user interactions:', error);
@@ -331,36 +457,68 @@ export default {
     async toggleFavorite() {
       const movieId = this.$route.params.id;
       
+      // Prevent rapid clicks
+      if (this.isToggling) return;
+      this.isToggling = true;
+      
       try {
         if (this.isInFavorites) {
+          // Update localStorage immediately for instant UI feedback
+          removeFromFavoritesStorage(movieId);
+          this.isInFavorites = false;
+          
+          // Sync with server
           const [error] = await interactionAPI.removeFromFavorites(movieId, 'movie');
-          if (!error) {
-            this.isInFavorites = false;
-          } else {
-            console.error('Error removing from favorites:', error);
+          if (error) {
+            console.error('Error removing from favorites on server:', error);
+            // Revert localStorage change if server fails
+            addToFavoritesStorage(movieId, {
+              title: this.movie?.title,
+              poster_path: this.movie?.poster_path
+            });
+            this.isInFavorites = true;
             alert('Error removing from favorites. Please try again.');
           }
         } else {
+          // Update localStorage immediately for instant UI feedback
+          addToFavoritesStorage(movieId, {
+            title: this.movie?.title,
+            poster_path: this.movie?.poster_path
+          });
+          this.isInFavorites = true;
+          
+          // Sync with server
           const payload = {
             tmdb_id: parseInt(movieId, 10),
             content_type: 'movie'
           };
           
           const [error] = await interactionAPI.addToFavorites(payload);
-          if (!error) {
-            this.isInFavorites = true;
-          } else {
-            console.error('Error adding to favorites:', error);
-            alert('Error adding to favorites. Please try again.');
+          if (error) {
+            console.error('Error adding to favorites on server:', error);
+            
+            // Check if error is 409 (Conflict) - movie already in favorites
+            if (error.status === 409 || error.message?.includes('409') || error.message?.includes('Conflict')) {
+              console.log('🎯 Movie already in favorites on server, updating localStorage and UI');
+              // Movie already exists on server, keep it in localStorage and update UI
+              this.isInFavorites = true;
+              alert('This movie is already in your favorites!');
+            } else {
+              // Other error, revert localStorage change
+              removeFromFavoritesStorage(movieId);
+              this.isInFavorites = false;
+              alert('Error adding to favorites. Please try again.');
+            }
           }
         }
         
-        // Force a refresh of user interactions to ensure consistency
-        await this.loadUserInteractions();
-        
       } catch (error) {
         console.error('Unexpected error in toggleFavorite:', error);
+        // Revert to localStorage state on unexpected error
+        this.isInFavorites = isMovieInFavorites(movieId);
         alert('An unexpected error occurred. Please try again.');
+      } finally {
+        this.isToggling = false;
       }
     },
     async submitReview() {

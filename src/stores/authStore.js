@@ -72,6 +72,8 @@ export const useAuthStore = defineStore('auth', {
       this.logged = false;
       localStorage.removeItem('token');
       localStorage.removeItem('userData');
+      // Clear favorites on logout for privacy
+      localStorage.removeItem('filmsage_favorites');
       this.errors = {};
     },
 

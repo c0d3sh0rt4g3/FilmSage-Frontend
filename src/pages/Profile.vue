@@ -87,6 +87,7 @@
 <script>
 import { useAuthStore } from '@/stores/authStore';
 import { userAPI, interactionAPI, reviewAPI } from '@/utils/api';
+import { getFavoritesCount, syncFavoritesWithServer } from '@/utils/favorites';
 
 export default {
   name: 'ProfilePage',
@@ -132,6 +133,16 @@ export default {
   mounted() {
     // Ensure we check localStorage immediately on mount
     this.loadInitialDataFromStorage();
+    
+    // Initialize favorites count from localStorage immediately
+    this.userStats.favorites = getFavoritesCount();
+    
+    // Listen for visibility changes to refresh favorites count
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+  },
+  beforeUnmount() {
+    // Clean up event listener
+    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
   },
   async created() {
     const authStore = useAuthStore();
@@ -168,6 +179,9 @@ export default {
       });
       return;
     }
+
+    // Initialize favorites count from localStorage immediately for instant display
+    this.userStats.favorites = getFavoritesCount();
 
     await this.loadUserData();
   },
@@ -273,6 +287,9 @@ export default {
         
         // Load user ratings average
         await this.loadUserRatingsAverage();
+        
+        // Load favorites count from localStorage and sync with server
+        await this.loadFavoritesCount();
       } catch (error) {
         console.error('Error in loadUserData:', error);
         this.error = 'An unexpected error occurred while loading your profile.';
@@ -367,9 +384,44 @@ export default {
         console.error('Error loading user ratings average:', error);
         this.userStats.ratingsAverage = 0;
       }
-    }
-  }
-}
+    },
+    async loadFavoritesCount() {
+      try {
+        // Get initial count from localStorage
+        const localCount = getFavoritesCount();
+        this.userStats.favorites = localCount;
+        
+        // Try to sync with server favorites and update count
+        const [favoritesError, favoritesData] = await interactionAPI.getFavorites();
+        
+        if (!favoritesError && favoritesData?.items && Array.isArray(favoritesData.items)) {
+          // Server returned favorites successfully, sync with localStorage
+          syncFavoritesWithServer(favoritesData.items);
+          
+          // Update count with server data
+          this.userStats.favorites = favoritesData.items.length;
+        } else {
+          // Server failed or returned undefined, keep localStorage count
+          console.log('Using localStorage favorites count:', localCount);
+          // Keep the localStorage count that was already set
+        }
+      } catch (error) {
+        console.error('Error loading favorites count:', error);
+                 // Fall back to localStorage count
+         this.userStats.favorites = getFavoritesCount();
+       }
+     },
+     handleVisibilityChange() {
+       // When user returns to the page, refresh favorites count from localStorage
+       if (!document.hidden) {
+         const currentCount = getFavoritesCount();
+         if (currentCount !== this.userStats.favorites) {
+           this.userStats.favorites = currentCount;
+         }
+       }
+     }
+   }
+ }
 </script>
 
 <style src="@/styles/profile.scss" lang="scss"></style> 
