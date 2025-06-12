@@ -172,10 +172,12 @@ export const interactionAPI = {
   },
 
   // Favorites
-  addToFavorites: (item) => apiRequest('/userInteractions/favorites', {
-    method: 'POST',
-    body: JSON.stringify(item)
-  }),
+  addToFavorites: (item) => {
+    return apiRequest('/userInteractions/favorites', {
+      method: 'POST',
+      body: JSON.stringify(item)
+    });
+  },
 
   getFavorites: () => {
     const [error, currentUser] = userAPI.getCurrentUser();

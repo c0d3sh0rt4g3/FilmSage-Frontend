@@ -53,6 +53,7 @@
                   type="checkbox" 
                   :value="genre.id" 
                   v-model="selectedGenres"
+                  :disabled="!isEditing"
                 />
                 <span>{{ genre.name }}</span>
               </label>
@@ -128,14 +129,33 @@ export default {
       error: null
     }
   },
+  mounted() {
+    // Ensure we check localStorage immediately on mount
+    this.loadInitialDataFromStorage();
+  },
   async created() {
     const authStore = useAuthStore();
+    
+    // Ensure authStore has checked localStorage
+    authStore.checkLocalStorage();
+    
     if (!authStore.isAuthenticated) {
       this.$router.push({
         path: '/login',
         query: { redirect: '/profile' }
       });
       return;
+    }
+
+    // First, try to load user data from localStorage (authStore)
+    if (authStore.userData) {
+      this.userData = {
+        username: authStore.userData.username || '',
+        email: authStore.userData.email || '',
+        role: authStore.userData.role || '',
+        id: authStore.userData._id || authStore.userData.id || ''
+      };
+      this.selectedGenres = authStore.userData.favorite_genres || [];
     }
 
     const [userError, currentUser] = userAPI.getCurrentUser();
@@ -151,7 +171,49 @@ export default {
 
     await this.loadUserData();
   },
+  watch: {
+    // Watch for changes in authStore userData
+    '$authStore.userData': {
+      handler(newUserData) {
+        if (newUserData && newUserData.favorite_genres) {
+          // Convert to numbers to ensure consistency
+          this.selectedGenres = newUserData.favorite_genres.map(id => typeof id === 'string' ? parseInt(id, 10) : id);
+        }
+      },
+      immediate: true,
+      deep: true
+    }
+  },
+  computed: {
+    $authStore() {
+      return useAuthStore();
+    }
+  },
   methods: {
+    loadInitialDataFromStorage() {
+      // Load immediately from localStorage if available
+      const authStore = useAuthStore();
+      
+      // Check localStorage directly
+      const userDataLS = localStorage.getItem('userData');
+      if (userDataLS) {
+        try {
+          const parsedUserData = JSON.parse(userDataLS);
+          if (parsedUserData.favorite_genres) {
+            // Convert to numbers to ensure consistency
+            this.selectedGenres = parsedUserData.favorite_genres.map(id => typeof id === 'string' ? parseInt(id, 10) : id);
+          }
+        } catch (e) {
+          console.error('Error parsing localStorage:', e);
+        }
+      }
+      
+      // Also check authStore as backup
+      if (authStore.userData && authStore.userData.favorite_genres) {
+        // Convert to numbers to ensure consistency
+        this.selectedGenres = authStore.userData.favorite_genres.map(id => typeof id === 'string' ? parseInt(id, 10) : id);
+      }
+    },
     async loadUserData() {
       try {
         // Load user data
@@ -176,8 +238,22 @@ export default {
           role: userData.user.role,
           id: userData.user._id // Ensure we store the user ID
         };
-        this.selectedGenres = userData.user.favorite_genres || [];
+        
+        // Only update selectedGenres if we got new data from API or if we don't have any
+        if (userData.user.favorite_genres && userData.user.favorite_genres.length > 0) {
+          // Convert to numbers to ensure consistency
+          this.selectedGenres = userData.user.favorite_genres.map(id => typeof id === 'string' ? parseInt(id, 10) : id);
+        } else if (!this.selectedGenres || this.selectedGenres.length === 0) {
+          // Convert to numbers to ensure consistency
+          const apiGenres = userData.user.favorite_genres || [];
+          this.selectedGenres = apiGenres.map(id => typeof id === 'string' ? parseInt(id, 10) : id);
+        }
+        
         this.originalUserData = { ...this.userData };
+
+        // Sync with authStore to ensure localStorage is updated
+        const authStore = useAuthStore();
+        authStore.updateUserData(userData.user);
 
         // Load activity data
         const [activityError, activityData] = await interactionAPI.getUserActivity(this.userData.id);
@@ -212,26 +288,25 @@ export default {
       this.error = null;
       
       try {
-        // Debug logging
-        const token = localStorage.getItem('token');
-        console.log('Token exists:', !!token);
-        console.log('User ID:', this.userData.id);
-        console.log('Update data:', {
+
+        const authStore = useAuthStore();
+        const success = await authStore.updateProfile({
           favorite_genres: this.selectedGenres
         });
 
-        const [error, data] = await userAPI.updateProfile({
-          favorite_genres: this.selectedGenres
-        });
-
-        if (error) {
+        if (!success) {
+          const error = authStore.getErrors.profile || 'Failed to update profile';
           console.error('Profile update error:', error);
-          this.error = error.message || 'Failed to update profile';
+          this.error = error;
           return;
         }
 
-        // Update local data
-        this.selectedGenres = data.user.favorite_genres || [];
+        // Update local data from the updated store data
+        // Convert to numbers to ensure consistency
+        const updatedGenres = authStore.userData.favorite_genres || [];
+        this.selectedGenres = updatedGenres.map(id => typeof id === 'string' ? parseInt(id, 10) : id);
+        
+        this.userData = { ...this.userData, ...authStore.userData };
         this.originalUserData = { ...this.userData };
         this.isEditing = false;
       } catch (error) {
@@ -243,6 +318,8 @@ export default {
     },
     cancelEditing() {
       this.userData = { ...this.originalUserData };
+      // Restore selectedGenres to the original state (from authStore/localStorage)
+      this.loadInitialDataFromStorage();
       this.isEditing = false;
     },
     async loadUserReviewsCount() {
@@ -259,18 +336,9 @@ export default {
     },
     async loadUserRatingsAverage() {
       try {
-        console.log('Loading user ratings average from reviews...');
-        console.log('User ID:', this.userData.id);
-        console.log('Full userData:', this.userData);
-        
         const [error, ratingsData] = await interactionAPI.getUserRatings();
         
-        console.log('Ratings API response - Error:', error);
-        console.log('Ratings API response - Data:', ratingsData);
-        
         if (!error && ratingsData) {
-          console.log('Raw ratings data structure:', Object.keys(ratingsData));
-          
           // Check different possible structures
           let ratings = null;
           if (ratingsData.ratings) {
@@ -281,33 +349,20 @@ export default {
             ratings = ratingsData.data.ratings;
           }
           
-          console.log('Extracted ratings:', ratings);
-          console.log('Ratings length:', ratings ? ratings.length : 0);
-          
           if (ratings && Array.isArray(ratings) && ratings.length > 0) {
-            console.log('Sample rating object:', ratings[0]);
-            
             // Calculate the average rating
             const totalRating = ratings.reduce((sum, rating) => {
-              console.log('Processing rating:', rating);
               return sum + (rating.rating || rating.value || rating.score || 0);
             }, 0);
             const averageRating = totalRating / ratings.length;
             
-            console.log('Total rating:', totalRating);
-            console.log('Average rating calculated:', averageRating);
-            
             this.userStats.ratingsAverage = averageRating;
           } else {
-            console.log('No ratings found or empty array');
             this.userStats.ratingsAverage = 0;
           }
         } else {
-          console.log('Error or no data received');
           this.userStats.ratingsAverage = 0;
         }
-        
-        console.log('Final ratingsAverage value:', this.userStats.ratingsAverage);
       } catch (error) {
         console.error('Error loading user ratings average:', error);
         this.userStats.ratingsAverage = 0;

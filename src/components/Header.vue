@@ -63,6 +63,10 @@ export default {
     }
   },
   mounted() {
+    // Check localStorage for authentication on app start
+    const authStore = useAuthStore();
+    authStore.checkLocalStorage();
+    
     window.addEventListener('scroll', this.handleScroll);
     document.addEventListener('click', (e) => {
       const userMenu = this.$refs.userMenu;

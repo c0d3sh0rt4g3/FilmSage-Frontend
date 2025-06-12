@@ -4,8 +4,6 @@ const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
 async function fetchFromTMDB(endpoint, params = {}) {
   try {
-    console.log('Fetching from TMDB:', endpoint);
-
     const response = await tmdbClient.get(endpoint, {
       params: params
     });

@@ -78,41 +78,7 @@
       </div>
     </section>
 
-    <!-- Movie Details Modal -->
-    <div v-if="selectedMovie" class="modal-overlay" @click.self="closeModal">
-      <div class="modal-content">
-        <button class="modal-close" @click="closeModal">&times;</button>
-        <div class="modal-body">
-          <div class="modal-poster">
-            <img
-              :src="getMoviePoster(selectedMovie.poster_path)"
-              :alt="selectedMovie.title"
-              @error="$event.target.src = '/images/placeholder-movie.jpg'"
-            />
-          </div>
-          <div class="modal-details">
-            <h2>{{ selectedMovie.title }}</h2>
-            <div class="movie-meta">
-              <span class="year">
-                {{ selectedMovie.release_date ? new Date(selectedMovie.release_date).getFullYear() : 'N/A' }}
-              </span>
-              <span class="rating" v-if="selectedMovie.vote_average">
-                ⭐ {{ selectedMovie.vote_average.toFixed(1) }}
-              </span>
-            </div>
-            <p class="overview">{{ selectedMovie.overview || 'No overview available.' }}</p>
-            <div class="genres" v-if="selectedMovie.genre_ids">
-              <span v-for="genreId in selectedMovie.genre_ids" :key="genreId" class="genre-tag">
-                {{ genres[genreId] || 'Unknown' }}
-              </span>
-            </div>
-            <button v-if="isAuthenticated" class="btn-review" @click="createReview">
-              Write a Review
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+
   </div>
 </template>
 
@@ -127,34 +93,12 @@ export default {
       searchQuery: '',
       lastSearchQuery: '',
       movies: [],
-      selectedMovie: null,
       loading: false,
       loadingMore: false,
       error: null,
       hasSearched: false,
       currentPage: 1,
-      totalPages: 1,
-      genres: {
-        28: 'Action',
-        12: 'Adventure',
-        16: 'Animation',
-        35: 'Comedy',
-        80: 'Crime',
-        99: 'Documentary',
-        18: 'Drama',
-        10751: 'Family',
-        14: 'Fantasy',
-        36: 'History',
-        27: 'Horror',
-        10402: 'Music',
-        9648: 'Mystery',
-        10749: 'Romance',
-        878: 'Science Fiction',
-        10770: 'TV Movie',
-        53: 'Thriller',
-        10752: 'War',
-        37: 'Western'
-      }
+      totalPages: 1
     }
   },
   computed: {
@@ -206,14 +150,14 @@ export default {
     },
 
     selectMovie(movie) {
-      this.selectedMovie = movie;
-      document.body.style.overflow = 'hidden';
+      // Navigate directly to movie details page
+      this.$router.push({
+        name: 'movie-detail',
+        params: { id: movie.id }
+      });
     },
 
-    closeModal() {
-      this.selectedMovie = null;
-      document.body.style.overflow = '';
-    },
+
 
     retrySearch() {
       if (this.lastSearchQuery) {
@@ -226,59 +170,9 @@ export default {
       return tmdbAPI.getImageUrl(path);
     },
 
-    handleImageError(event) {
-      event.target.src = '/images/placeholder-movie.jpg';
-    },
 
-    formatRating(rating) {
-      return rating ? rating.toFixed(1) : 'N/A';
-    },
 
-    formatYear(date) {
-      return date ? date.split('-')[0] : 'N/A';
-    },
 
-    getGenreName(genreId) {
-      return this.genres[genreId] || 'Unknown';
-    },
-
-    async createReview() {
-      if (!this.selectedMovie) {
-        console.warn('No movie selected for review');
-        return;
-      }
-
-      // Store movie data before closing the modal
-      const movieData = {
-        id: this.selectedMovie.id,
-        title: this.selectedMovie.title,
-        poster_path: this.selectedMovie.poster_path,
-        release_date: this.selectedMovie.release_date,
-        vote_average: this.selectedMovie.vote_average,
-        overview: this.selectedMovie.overview
-      };
-
-      // Check authentication before proceeding
-      if (!this.isAuthenticated) {
-        this.$router.push('/login');
-        return;
-      }
-
-      // Close the modal
-      this.closeModal();
-
-      // Navigate to review page with movie data
-      this.$router.push({
-        name: 'create-review',
-        params: {
-          movieData: btoa(JSON.stringify(movieData))
-        }
-      });
-    }
-  },
-
-  beforeUnmount() {
-    document.body.style.overflow = '';
   }
 }
 </script>

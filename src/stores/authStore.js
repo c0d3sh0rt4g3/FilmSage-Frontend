@@ -112,6 +112,12 @@ export const useAuthStore = defineStore('auth', {
         };
         return false;
       }
+    },
+
+    // Utility method to update userData and sync with localStorage
+    updateUserData(newUserData) {
+      this.userData = { ...this.userData, ...newUserData };
+      localStorage.setItem('userData', JSON.stringify(this.userData));
     }
   }
 });

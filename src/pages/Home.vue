@@ -306,7 +306,6 @@ export default {
     },
 
     handleLoginSuccess(userData) {
-      console.log('User logged in successfully:', userData);
     },
 
     switchToRegister() {
