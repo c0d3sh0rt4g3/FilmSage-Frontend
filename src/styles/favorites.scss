@@ -1,0 +1,371 @@
+@import 'variables';
+
+// Favorites page specific styles
+.favorites-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: $white;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.favorites-hero {
+  padding: 80px 0 60px;
+  background: $white-10;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  backdrop-filter: $blur-large;
+}
+
+.favorites-content {
+  width: 95%;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 0 2.5%;
+}
+
+.favorites-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.gradient-text {
+  background: $accent-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.favorites-subtitle {
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  line-height: 1.6;
+  margin-bottom: 3rem;
+  opacity: 0.9;
+}
+
+.results-section {
+  padding: 4rem 0 8rem;
+  width: 100%;
+}
+
+.container {
+  width: 95%;
+  max-width: none;
+  margin: 0 auto;
+  padding: 0 2.5%;
+}
+
+.results-header-info {
+  text-align: center;
+  margin-bottom: 2rem;
+  
+  .results-title {
+    margin-bottom: 1rem;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 700;
+  }
+}
+
+.results-meta-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  .results-count {
+    color: $white-80;
+    font-size: 1rem;
+  }
+}
+
+// List view styles for favorites
+.movies-grid.list-view {
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  .movie-card.list-card {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    padding: 0;
+    height: auto;
+
+    .movie-poster {
+      width: 200px;
+      height: 280px;
+      flex-shrink: 0;
+      border-radius: $border-radius-medium 0 0 $border-radius-medium;
+
+      img {
+        border-radius: $border-radius-medium 0 0 $border-radius-medium;
+      }
+    }
+
+    .movie-info {
+      flex: 1;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 0 $border-radius-medium $border-radius-medium 0;
+
+      h4 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+        -webkit-line-clamp: 2;
+      }
+
+      .movie-overview {
+        color: $white-80;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 1rem;
+      }
+
+      .genres {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+
+        .genre-tag {
+          background: rgba(255, 107, 107, 0.2);
+          color: $white;
+          padding: 4px 8px;
+          border-radius: $border-radius-small;
+          font-size: 0.8rem;
+          border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+      }
+    }
+
+    .card-overlay {
+      position: absolute;
+      width: 105px;
+      top: 15px;
+      left: 0;
+      border-radius: 0 $border-radius-medium $border-radius-medium 0;
+    }
+
+    .remove-favorite-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 107, 107, 0.9);
+      color: $white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: $transition-base;
+      z-index: 3;
+      backdrop-filter: $blur-medium;
+
+      &:hover:not(:disabled) {
+        background: rgba(255, 107, 107, 1);
+        transform: scale(1.1);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      // Style for the × symbol
+      font-size: 18px;
+      font-weight: bold;
+      line-height: 1;
+    }
+  }
+}
+
+// Grid view styles
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.movie-card {
+  position: relative;
+  border-radius: $border-radius-medium;
+  overflow: hidden;
+  box-shadow: $shadow-large;
+  cursor: pointer;
+  transition: $transition-base;
+  background: $white-10;
+  backdrop-filter: $blur-large;
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.movie-poster {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: $transition-base;
+  }
+}
+
+.card-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: $black-80;
+  padding: 8px 12px;
+  border-radius: $border-radius-xl;
+  z-index: 2;
+}
+
+.rating {
+  color: $accent-yellow;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.movie-info {
+  padding: 1.5rem;
+  background: $white-10;
+
+  h4 {
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+}
+
+// Loading, Error, and State Styles
+.loading-state, .error-state, .no-results {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid $white-20;
+  border-top: 4px solid $accent-orange;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.btn-retry, .btn-search-movies {
+  padding: 1rem 2rem;
+  border-radius: $border-radius-round;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: $transition-base;
+  background: $accent-gradient;
+  color: $white;
+  margin-top: 1rem;
+  text-decoration: none;
+  display: inline-block;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+  }
+}
+
+.no-results-suggestions {
+  margin: 2rem 0;
+  
+  h4 {
+    margin-bottom: 1rem;
+    color: $white-90;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    
+    li {
+      margin: 0.5rem 0;
+      color: $white-80;
+      
+      &:before {
+        content: "•";
+        color: $accent-orange;
+        font-weight: bold;
+        display: inline-block;
+        width: 1em;
+        margin-left: -1em;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .movies-grid.list-view .movie-card.list-card {
+    flex-direction: column;
+
+    .movie-poster {
+      width: 100%;
+      height: 300px;
+      border-radius: $border-radius-medium $border-radius-medium 0 0;
+
+      img {
+        border-radius: $border-radius-medium $border-radius-medium 0 0;
+      }
+    }
+
+    .movie-info {
+      border-radius: 0 0 $border-radius-medium $border-radius-medium;
+    }
+
+    .card-overlay {
+      top: 15px;
+      right: 60px;
+      left: auto;
+      border-radius: $border-radius-medium;
+    }
+
+    .remove-favorite-btn {
+      top: 15px;
+      right: 15px;
+    }
+  }
+} 

@@ -1,0 +1,14 @@
+// Global app styles
+html, body {
+  overflow-x: hidden;
+}
+
+#app {
+  margin: 0;
+  padding: 0;
+}
+
+/* Add padding for the fixed header */
+.router-view {
+  padding-top: 80px;
+} 
