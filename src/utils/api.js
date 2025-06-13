@@ -129,6 +129,14 @@ export const reviewAPI = {
   })
 };
 
+// AI Recommendations API functions
+export const recommendationAPI = {
+  getAIRecommendations: (reviews, userId = null) => apiRequest('/api/recommendations', {
+    method: 'POST',
+    body: JSON.stringify({ reviews, userId })
+  })
+};
+
 // User Interaction API functions
 export const interactionAPI = {
   // Ratings
