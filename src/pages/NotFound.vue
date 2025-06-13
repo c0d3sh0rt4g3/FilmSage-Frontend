@@ -136,7 +136,7 @@ export default {
   justify-content: center;
   position: relative;
   overflow: hidden;
-  font-family: 'Courier New', monospace;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
 // TV Static Background
@@ -385,7 +385,7 @@ export default {
   border: 2px solid #555;
   border-radius: 8px;
   color: #ffffff;
-  font-family: 'Courier New', monospace;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   font-size: 1rem;
   font-weight: 600;
   text-decoration: none;
