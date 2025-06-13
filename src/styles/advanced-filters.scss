@@ -93,7 +93,10 @@
 
     .rating-container {
       .rating-value {
-        color: $accent-yellow;
+        background: $accent-gradient;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         font-weight: 600;
         font-size: 1.1rem;
         margin-bottom: 8px;

@@ -24,8 +24,14 @@ html, body {
   padding: 0;
 }
 
-/* Remove the padding-top since header is now initially static */
+/* Header is always fixed now */
 .router-view {
-  /* padding-top removed */
+  padding-top: 120px; /* Space for fixed header */
+}
+
+@media (max-width: 768px) {
+  .router-view {
+    padding-top: 200px; /* More space for mobile vertical layout */
+  }
 }
 </style>

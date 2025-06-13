@@ -4,7 +4,7 @@ $primary-blue: #667eea;
 
 // Secondary Gradient colors
 $accent-orange: #ff6b6b;
-$accent-yellow: #feca57;
+$accent-yellow: linear-gradient(135deg, #ff6b6b, #ffd93d);
 
 // Base colors
 $white: #ffffff;
@@ -53,7 +53,7 @@ $accent-orange-40: rgba(255, 107, 107, 0.4);
 
 // Gradients
 $primary-gradient: linear-gradient(135deg, $primary-purple 0%, $primary-blue 100%);
-$accent-gradient: linear-gradient(45deg, $accent-orange, $accent-yellow);
+$accent-gradient: linear-gradient(135deg, #ff6b6b, #ffd93d);
 
 // Shadows
 $shadow-light: 0 0.4vw 1.3vw $accent-orange-30;

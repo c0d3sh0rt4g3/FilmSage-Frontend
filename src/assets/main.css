@@ -105,4 +105,7 @@ a {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.4);
-} 
+}
+
+/* Import header fix LAST to override any conflicting styles */
+@import '../styles/global-header-fix.scss'; 

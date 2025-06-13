@@ -168,7 +168,10 @@
 }
 
 .rating {
-  color: $accent-yellow;
+  background: $accent-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-weight: 600;
   font-size: 0.9rem;
 }
@@ -396,7 +399,10 @@
   }
   
   .rating {
-    color: $accent-yellow;
+    background: $accent-gradient;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
 

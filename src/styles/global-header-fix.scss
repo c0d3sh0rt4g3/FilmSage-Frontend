@@ -1,0 +1,69 @@
+/* 
+ * GLOBAL HEADER FIX
+ * This file ensures the header remains fixed regardless of other styles
+ * Import this file LAST to override any conflicting styles
+ */
+
+/* Primary header fix */
+.site-header,
+header.site-header,
+[class*="site-header"] {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 9999 !important;
+  transform: none !important;
+  transition: none !important;
+  margin: 0 !important;
+  will-change: auto !important;
+}
+
+/* Ensure header doesn't move with any transforms */
+.site-header * {
+  position: relative !important;
+}
+
+/* Override any scroll-related positioning */
+html {
+  scroll-behavior: auto !important;
+}
+
+body {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Ensure content doesn't overlap with fixed header */
+#app > .router-view,
+.router-view {
+  padding-top: 120px !important;
+  margin-top: 0 !important;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  #app > .router-view,
+  .router-view {
+    padding-top: 200px !important;
+  }
+}
+
+/* Override any theme-specific positioning */
+.dark-theme .site-header,
+.light-theme .site-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 9999 !important;
+  transform: none !important;
+}
+
+/* Force header to stay in place during any animations or transitions */
+.site-header,
+.site-header * {
+  backface-visibility: hidden !important;
+  perspective: 1000px !important;
+} 

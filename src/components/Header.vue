@@ -16,7 +16,6 @@ export default {
     return {
       showLoginModal: false,
       showRegisterModal: false,
-      isScrolled: false,
       showUserMenu: false
     };
   },
@@ -33,13 +32,6 @@ export default {
     }
   },
   methods: {
-    handleScroll() {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const scrollThreshold = 80; // Reducir el threshold para que sea más responsive
-      
-      // Simplificar: solo determinar si mostrar el header fixed o no
-      this.isScrolled = scrollTop > scrollThreshold;
-    },
     showLogin() {
       this.showLoginModal = true;
       this.showRegisterModal = false;
@@ -80,8 +72,7 @@ export default {
     // Initialize theme
     this.loadFromStorage();
     
-    // Agregar listener para el scroll
-    window.addEventListener('scroll', this.handleScroll, { passive: true });
+    // Header is now always fixed - no scroll listener needed
     
     // Cerrar menu de usuario cuando se hace click fuera
     document.addEventListener('click', (e) => {
@@ -91,14 +82,17 @@ export default {
     });
   },
   beforeUnmount() {
-    window.removeEventListener('scroll', this.handleScroll);
+    // No scroll listener to remove
   }
 };
 </script>
 
 <template>
   <div>
-    <header :class="['site-header', { 'scrolled': isScrolled }]">
+    <header 
+      class="site-header" 
+      style="position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; z-index: 9999 !important; transform: none !important;"
+    >
       <div class="header-content">
         <router-link to="/" class="logo">
           <span class="gradient-text">FilmSage</span>

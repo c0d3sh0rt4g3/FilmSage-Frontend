@@ -9,11 +9,13 @@
   
   // Header styling
   .site-header {
-    background: rgba(0, 0, 0, 0.3) !important;
-    
-    &.scrolled {
-      background: rgba(10, 10, 10, 0.95) !important;
-    }
+    background: rgba(0, 0, 0, 0.8) !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    transform: none !important;
   }
   
   // Navigation links
@@ -599,10 +601,117 @@
   }
 }
 
-// Ensure light theme maintains current styling (default)
+// Light theme overrides - using purple gradients
 .light-theme {
-  // This ensures the current purple theme is preserved in light mode
-  // No overrides needed as current styles are already the light theme
+  // LOGIN AND REGISTER MODALS - Light mode with purple styling
+  .modal-overlay {
+    background: rgba(118, 75, 162, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+
+  .modal-container {
+    background: linear-gradient(135deg, rgba(118, 75, 162, 0.95) 0%, rgba(102, 126, 234, 0.95) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+
+  .modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+    
+    h2 {
+      color: rgba(255, 255, 255, 0.95) !important;
+    }
+  }
+
+  .modal-close-btn {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.2) !important;
+    }
+  }
+
+  .modal-form-label {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .modal-form-input {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.6) !important;
+    }
+    
+    &:focus {
+      background: rgba(255, 255, 255, 0.15) !important;
+      border-color: #ff6b6b !important;
+      box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2) !important;
+    }
+    
+    &.error {
+      border-color: #ff4757 !important;
+      box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.2) !important;
+    }
+  }
+
+  .modal-checkbox-label {
+    color: rgba(255, 255, 255, 0.9) !important;
+    
+    input[type="checkbox"] {
+      accent-color: #ff6b6b !important;
+    }
+    
+    a {
+      color: #feca57 !important;
+    }
+  }
+
+  .modal-error-message {
+    background: rgba(255, 71, 87, 0.1) !important;
+    border: 1px solid rgba(255, 71, 87, 0.3) !important;
+    color: #ff6b6b !important;
+  }
+
+  .modal-general-error {
+    background: rgba(255, 71, 87, 0.1) !important;
+    border: 1px solid rgba(255, 71, 87, 0.3) !important;
+    color: #ff6b6b !important;
+  }
+
+  .modal-forgot-password {
+    text-align: center;
+    margin-top: 1rem;
+    
+    a {
+      color: rgba(255, 255, 255, 0.8) !important;
+      text-decoration: none;
+      font-size: 0.9rem;
+      
+      &:hover {
+        color: #feca57 !important;
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .modal-link-section {
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-align: center;
+    margin-top: 1rem;
+    
+    a {
+      color: #feca57 !important;
+      font-weight: 600;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
 }
 
   // LOGIN AND REGISTER MODALS - Dark mode styling
