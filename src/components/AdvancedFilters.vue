@@ -109,15 +109,19 @@
         <div class="filter-tags">
           <span v-if="localFilters.genre" class="filter-tag">
             Genre: {{ getGenreName(localFilters.genre) }}
+            <button @click="removeFilter('genre')" class="remove-filter-btn">&times;</button>
           </span>
           <span v-if="localFilters.yearFrom || localFilters.yearTo" class="filter-tag">
             Year: {{ formatYearRange() }}
+            <button @click="removeFilter('year')" class="remove-filter-btn">&times;</button>
           </span>
           <span v-if="localFilters.minRating > 0" class="filter-tag">
             Rating: {{ localFilters.minRating }}+ ⭐
+            <button @click="removeFilter('minRating')" class="remove-filter-btn">&times;</button>
           </span>
           <span v-if="localFilters.sortBy !== 'popularity.desc'" class="filter-tag">
             Sort: {{ getSortLabel(localFilters.sortBy) }}
+            <button @click="removeFilter('sortBy')" class="remove-filter-btn">&times;</button>
           </span>
         </div>
       </div>
@@ -220,6 +224,26 @@ export default {
         sortBy: 'popularity.desc',
         searchType: 'all'
       };
+      this.onFilterChange();
+      this.applyFilters();
+    },
+
+    removeFilter(filterName) {
+      switch (filterName) {
+        case 'genre':
+          this.localFilters.genre = '';
+          break;
+        case 'year':
+          this.localFilters.yearFrom = '';
+          this.localFilters.yearTo = '';
+          break;
+        case 'minRating':
+          this.localFilters.minRating = 0;
+          break;
+        case 'sortBy':
+          this.localFilters.sortBy = 'popularity.desc';
+          break;
+      }
       this.onFilterChange();
       this.applyFilters();
     },
@@ -490,10 +514,39 @@ export default {
       background: rgba(255, 107, 107, 0.2);
       color: white;
       padding: 6px 12px;
+      padding-right: 28px;
       border-radius: 15px;
       font-size: 0.85rem;
       font-weight: 500;
       border: 1px solid rgba(255, 107, 107, 0.3);
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .remove-filter-btn {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.3);
+      color: white;
+      border: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+      line-height: 1;
+      padding: 0;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.5);
+      }
     }
   }
 }

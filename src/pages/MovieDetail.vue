@@ -217,76 +217,6 @@ export default {
     }
   },
   methods: {
-    async verifyMovieInFavorites(movieId) {
-      // Try to add the movie to verify if it already exists
-      try {
-        const payload = {
-          tmdb_id: parseInt(movieId, 10),
-          content_type: 'movie'
-        };
-        
-        const [error] = await interactionAPI.addToFavorites(payload);
-        
-        if (error && (error.status === 409 || error.message?.includes('409') || error.message?.includes('Conflict'))) {
-          console.log('🎯 Verified: Movie is already in favorites on server');
-          // Update localStorage to reflect server state
-          addToFavoritesStorage(movieId, {
-            title: this.movie?.title,
-            poster_path: this.movie?.poster_path
-          });
-          return true;
-        } else if (!error) {
-          console.log('✅ Movie was successfully added to favorites');
-          // Update localStorage
-          addToFavoritesStorage(movieId, {
-            title: this.movie?.title,
-            poster_path: this.movie?.poster_path
-          });
-          return true;
-        } else {
-          console.log('❌ Error verifying movie favorite status:', error);
-          return false;
-        }
-      } catch (error) {
-        console.error('❌ Error in verifyMovieInFavorites:', error);
-        return false;
-      }
-         },
-     
-    async backgroundVerifyFavoriteStatus(movieId) {
-      // Quietly verify if the movie is in favorites by attempting to add it
-      try {
-        const payload = {
-          tmdb_id: parseInt(movieId, 10),
-          content_type: 'movie'
-        };
-        
-        const [error] = await interactionAPI.addToFavorites(payload);
-        
-        if (error && (error.status === 409 || error.message?.includes('409') || error.message?.includes('Conflict'))) {
-          console.log('🎯 Background verification: Movie is already in favorites');
-          // Update localStorage and UI
-          addToFavoritesStorage(movieId, {
-            title: this.movie?.title,
-            poster_path: this.movie?.poster_path
-          });
-          this.isInFavorites = true;
-        } else if (!error) {
-          console.log('✅ Background verification: Movie was added to favorites');
-          // Movie wasn't in favorites but now it is
-          addToFavoritesStorage(movieId, {
-            title: this.movie?.title,
-            poster_path: this.movie?.poster_path
-          });
-          this.isInFavorites = true;
-        }
-        // If other error, do nothing - keep current state
-      } catch (error) {
-        // Silent fail - keep current state
-        console.log('Background verification failed silently:', error);
-      }
-    },
-     
     initializeFavoritesFromStorage() {
       // Check localStorage immediately for instant UI update
       if (this.movie && this.movie.id) {
@@ -367,8 +297,8 @@ export default {
           this.isInWatchlist = false;
         } else {
           // API call was successful, check if user has any watchlist items
-          if (watchlistData?.items && Array.isArray(watchlistData.items)) {
-            this.isInWatchlist = watchlistData.items.some(item => {
+          if (watchlistData?.watchlist && Array.isArray(watchlistData.watchlist)) {
+            this.isInWatchlist = watchlistData.watchlist.some(item => {
               const watchlistId = parseInt(item.tmdb_id, 10);
               return watchlistId === movieId && item.content_type === 'movie';
             });
@@ -385,12 +315,12 @@ export default {
           this.isInFavorites = isMovieInFavorites(movieId);
         } else {
           // API call was successful, sync server data with localStorage
-          if (favoritesData?.items && Array.isArray(favoritesData.items) && favoritesData.items.length > 0) {
+          if (favoritesData?.favorites && Array.isArray(favoritesData.favorites)) {
             // Sync server favorites with localStorage
-            syncFavoritesWithServer(favoritesData.items);
+            syncFavoritesWithServer(favoritesData.favorites);
             
             // Update current movie's favorite status
-            const serverHasFavorite = favoritesData.items.some(item => {
+            const serverHasFavorite = favoritesData.favorites.some(item => {
               const favoriteId = parseInt(item.tmdb_id, 10);
               const isMatch = favoriteId === movieId && item.content_type === 'movie';
               return isMatch;
@@ -399,13 +329,9 @@ export default {
             this.isInFavorites = serverHasFavorite;
           } else {
             // Server didn't return favorites list properly
-            // Keep localStorage state for now
+            console.error('Favorites data from server is not in the expected format:', favoritesData);
+            // Fallback to localStorage state if server response is malformed
             this.isInFavorites = isMovieInFavorites(movieId);
-            
-            // If localStorage also says it's not a favorite, do a quick verification
-            if (!this.isInFavorites) {
-              this.backgroundVerifyFavoriteStatus(movieId);
-            }
           }
         }
 
