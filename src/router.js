@@ -11,6 +11,7 @@ import Profile from "@/pages/Profile.vue";
 import MovieDetail from "@/pages/MovieDetail.vue";
 import Recommendations from "@/pages/Recommendations.vue";
 import AdminDashboard from "@/pages/AdminDashboard.vue";
+import Favorites from "@/pages/Favorites.vue";
 import { useAuthStore } from '@/stores/authStore';
 import { apiRequest } from '@/utils/api';
 
@@ -63,6 +64,14 @@ const routes = [
         path: '/recommendations',
         name: 'recommendations',
         component: Recommendations,
+        meta: {
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/favorites',
+        name: 'favorites',
+        component: Favorites,
         meta: {
             requiresAuth: true
         }

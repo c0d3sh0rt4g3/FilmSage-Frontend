@@ -112,6 +112,10 @@ export default {
                   <i class="fas fa-user"></i>
                   Profile
                 </router-link>
+                <router-link to="/favorites" class="menu-item" @click="closeUserMenu">
+                  <i class="fas fa-heart"></i>
+                  Favorites
+                </router-link>
                 <router-link v-if="isAdmin" to="/admin" class="menu-item" @click="closeUserMenu">
                   <i class="fas fa-cog"></i>
                   Admin Dashboard

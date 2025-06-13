@@ -73,7 +73,7 @@
               <span class="stat-number">{{ userStats.ratingsAverage ? userStats.ratingsAverage.toFixed(1) : 'N/A' }}</span>
               <span class="stat-label">Average Rating</span>
             </div>
-            <div class="stat-item">
+            <div class="stat-item clickable" @click="goToFavorites">
               <span class="stat-number">{{ userStats.favorites || 0 }}</span>
               <span class="stat-label">Favorites</span>
             </div>
@@ -419,6 +419,9 @@ export default {
            this.userStats.favorites = currentCount;
          }
        }
+     },
+     goToFavorites() {
+       this.$router.push('/favorites');
      }
    }
  }
