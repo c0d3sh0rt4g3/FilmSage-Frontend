@@ -41,7 +41,7 @@
         <div class="features-grid">
           <div class="feature-card" v-for="feature in features" :key="feature.id">
             <div class="feature-icon">
-              <i :class="feature.icon"></i>
+              <span class="material-icons">{{ feature.icon }}</span>
             </div>
             <h3>{{ feature.title }}</h3>
             <p>{{ feature.description }}</p>
@@ -132,25 +132,19 @@ export default {
       features: [
         {
           id: 1,
-          icon: 'icon-ai',
+          icon: 'smart_toy',
           title: 'Personalized AI',
           description: 'Advanced algorithms that learn from your preferences to offer unique recommendations.'
         },
         {
           id: 2,
-          icon: 'icon-search',
+          icon: 'search',
           title: 'Smart Search',
           description: 'Find exactly what you\'re looking for with autocomplete and advanced filters.'
         },
         {
-          id: 3,
-          icon: 'icon-social',
-          title: 'Social Experience',
-          description: 'Share your discoveries and connect with other movie and series enthusiasts.'
-        },
-        {
           id: 4,
-          icon: 'icon-trending',
+          icon: 'trending_up',
           title: 'Current Trends',
           description: 'Stay up to date with what\'s popular and the latest news in the audiovisual world.'
         }
