@@ -772,8 +772,10 @@ export default {
 
     .card-overlay {
       position: absolute;
+      width: 105px;
       top: 15px;
-      left: 15px;
+      left: 0;
+      border-radius: 0 15px 15px 0;
     }
   }
 }
@@ -866,6 +868,7 @@ export default {
       top: 15px;
       right: 15px;
       left: auto;
+      border-radius: 15px;
     }
   }
 }
