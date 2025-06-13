@@ -1,13 +1,5 @@
 <template>
   <main class="profile-page">
-    <section class="profile-hero">
-      <div class="profile-content">
-        <h1 class="profile-title">
-          Your <span class="gradient-text">Profile</span>
-        </h1>
-      </div>
-    </section>
-
     <section class="profile-sections">
       <div class="container">
         <!-- User Info Section -->

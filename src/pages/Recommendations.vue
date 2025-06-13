@@ -198,6 +198,7 @@ export default {
       try {
         const authStore = useAuthStore();
         const userId = authStore.userData?.id;
+        const favoriteGenres = authStore.userData?.favorite_genres || [];
 
         // Transform reviews to the format expected by the AI endpoint
         const formattedReviews = this.userReviews.map(review => ({
@@ -213,10 +214,11 @@ export default {
         console.log('Sending to AI API:', {
           reviewsCount: formattedReviews.length,
           userId: userId,
+          favoriteGenres: favoriteGenres,
           reviews: formattedReviews
         });
 
-        const [error, data] = await recommendationAPI.getAIRecommendations(formattedReviews, userId);
+        const [error, data] = await recommendationAPI.getAIRecommendations(formattedReviews, userId, favoriteGenres);
 
         // Log the API response for debugging
         console.log('AI Recommendations API Response:', data);

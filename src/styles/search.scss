@@ -243,6 +243,65 @@
   margin-top: 2rem;
 }
 
+// No Results Specific Styles
+.no-results {
+  h3 {
+    color: $white;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+
+  > p {
+    color: $white-80;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  .no-results-suggestions {
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: $border-radius-large;
+    padding: 1.5rem;
+    max-width: 500px;
+    margin: 0 auto;
+
+    h4 {
+      color: $accent-orange;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        color: $white-90;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        padding-left: 1.5rem;
+        font-size: 0.95rem;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        &:before {
+          content: "•";
+          color: $accent-orange;
+          position: absolute;
+          left: 0;
+          font-weight: bold;
+          font-size: 1.2rem;
+        }
+      }
+    }
+  }
+}
+
 // Modal Styles
 .modal-overlay {
   position: fixed;

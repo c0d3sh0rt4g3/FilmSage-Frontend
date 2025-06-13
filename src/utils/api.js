@@ -131,9 +131,9 @@ export const reviewAPI = {
 
 // AI Recommendations API functions
 export const recommendationAPI = {
-  getAIRecommendations: (reviews, userId = null) => apiRequest('/api/recommendations', {
+  getAIRecommendations: (reviews, userId = null, favoriteGenres = []) => apiRequest('/api/recommendations', {
     method: 'POST',
-    body: JSON.stringify({ reviews, userId })
+    body: JSON.stringify({ reviews, userId, favoriteGenres })
   })
 };
 

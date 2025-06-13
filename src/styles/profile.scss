@@ -10,35 +10,12 @@
   overflow-x: hidden;
 }
 
-.profile-hero {
-  padding: 60px 0 40px;
-  background: $white-10;
-  margin-bottom: 40px;
-  backdrop-filter: $blur-medium;
-}
 
-.profile-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.profile-title {
-  font-size: 2.5rem;
-  color: $white;
-  margin-bottom: 20px;
-  
-  .gradient-text {
-    background: $accent-gradient;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-}
 
 .profile-sections {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 100px 20px 0;
 }
 
 .profile-card {
