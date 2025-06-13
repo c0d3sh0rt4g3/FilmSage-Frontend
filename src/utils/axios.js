@@ -46,10 +46,11 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access
+      // Handle unauthorized access - only clear storage, don't redirect
+      // Let the component handle the error appropriately
       localStorage.removeItem('token');
       localStorage.removeItem('userData');
-      window.location.href = '/login';
+      // Don't auto-redirect since we use modals for login
     }
     return Promise.reject(error);
   }

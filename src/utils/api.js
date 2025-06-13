@@ -95,7 +95,16 @@ export const userAPI = {
         return [new Error('No user data found'), null];
       }
 
-      return [null, JSON.parse(userData)];
+      const parsedUserData = JSON.parse(userData);
+      
+      // Normalize user ID - ensure both _id and id are available
+      if (parsedUserData._id && !parsedUserData.id) {
+        parsedUserData.id = parsedUserData._id;
+      } else if (parsedUserData.id && !parsedUserData._id) {
+        parsedUserData._id = parsedUserData.id;
+      }
+
+      return [null, parsedUserData];
     } catch (error) {
       console.error('Error getting current user:', error);
       return [error, null];
@@ -111,7 +120,14 @@ export const userAPI = {
     if (error) {
       return [error, null];
     }
-    return apiRequest(`/users/${currentUser.id}`);
+    
+    // Additional validation to ensure user ID is defined
+    if (!currentUser.id && !currentUser._id) {
+      return [new Error('User ID not found in user data'), null];
+    }
+    
+    const userId = currentUser.id || currentUser._id;
+    return apiRequest(`/users/${userId}`);
   },
 
   /**
@@ -124,7 +140,14 @@ export const userAPI = {
     if (error) {
       return [error, null];
     }
-    return apiRequest(`/users/${currentUser.id}`, {
+    
+    // Additional validation to ensure user ID is defined
+    if (!currentUser.id && !currentUser._id) {
+      return [new Error('User ID not found in user data'), null];
+    }
+    
+    const userId = currentUser.id || currentUser._id;
+    return apiRequest(`/users/${userId}`, {
       method: 'PUT',
       body: JSON.stringify(profileData)
     });
@@ -139,7 +162,14 @@ export const userAPI = {
     if (error) {
       return [error, null];
     }
-    return apiRequest(`/users/${currentUser.id}/stats`);
+    
+    // Additional validation to ensure user ID is defined
+    if (!currentUser.id && !currentUser._id) {
+      return [new Error('User ID not found in user data'), null];
+    }
+    
+    const userId = currentUser.id || currentUser._id;
+    return apiRequest(`/users/${userId}/stats`);
   },
 
   /**
@@ -253,7 +283,14 @@ export const interactionAPI = {
   getUserRatings: () => {
     const [error, currentUser] = userAPI.getCurrentUser();
     if (error) return [error, null];
-    return apiRequest(`/userInteractions/ratings/user/${currentUser.id}/from-reviews`);
+    
+    // Additional validation to ensure user ID is defined
+    if (!currentUser.id && !currentUser._id) {
+      return [new Error('User ID not found in user data'), null];
+    }
+    
+    const userId = currentUser.id || currentUser._id;
+    return apiRequest(`/userInteractions/ratings/user/${userId}/from-reviews`);
   },
 
   /**
@@ -265,7 +302,14 @@ export const interactionAPI = {
   removeRating: (tmdbId, contentType) => {
     const [error, currentUser] = userAPI.getCurrentUser();
     if (error) return [error, null];
-    return apiRequest(`/userInteractions/ratings/${currentUser.id}/${tmdbId}/${contentType}`, {
+    
+    // Additional validation to ensure user ID is defined
+    if (!currentUser.id && !currentUser._id) {
+      return [new Error('User ID not found in user data'), null];
+    }
+    
+    const userId = currentUser.id || currentUser._id;
+    return apiRequest(`/userInteractions/ratings/${userId}/${tmdbId}/${contentType}`, {
       method: 'DELETE'
     });
   },
@@ -279,13 +323,27 @@ export const interactionAPI = {
   getWatchlist: () => {
     const [error, currentUser] = userAPI.getCurrentUser();
     if (error) return [error, null];
-    return apiRequest(`/userInteractions/watchlist/user/${currentUser.id}`);
+    
+    // Additional validation to ensure user ID is defined
+    if (!currentUser.id && !currentUser._id) {
+      return [new Error('User ID not found in user data'), null];
+    }
+    
+    const userId = currentUser.id || currentUser._id;
+    return apiRequest(`/userInteractions/watchlist/user/${userId}`);
   },
 
   removeFromWatchlist: (id) => {
     const [error, currentUser] = userAPI.getCurrentUser();
     if (error) return [error, null];
-    return apiRequest(`/userInteractions/watchlist/${currentUser.id}/${id}`, {
+    
+    // Additional validation to ensure user ID is defined
+    if (!currentUser.id && !currentUser._id) {
+      return [new Error('User ID not found in user data'), null];
+    }
+    
+    const userId = currentUser.id || currentUser._id;
+    return apiRequest(`/userInteractions/watchlist/${userId}/${id}`, {
       method: 'DELETE'
     });
   },
@@ -301,13 +359,27 @@ export const interactionAPI = {
   getFavorites: () => {
     const [error, currentUser] = userAPI.getCurrentUser();
     if (error) return [error, null];
-    return apiRequest(`/userInteractions/favorites/user/${currentUser.id}`);
+    
+    // Additional validation to ensure user ID is defined
+    if (!currentUser.id && !currentUser._id) {
+      return [new Error('User ID not found in user data'), null];
+    }
+    
+    const userId = currentUser.id || currentUser._id;
+    return apiRequest(`/userInteractions/favorites/user/${userId}`);
   },
 
   removeFromFavorites: (tmdbId, contentType) => {
     const [error, currentUser] = userAPI.getCurrentUser();
     if (error) return [error, null];
-    return apiRequest(`/userInteractions/favorites/${currentUser.id}/${tmdbId}/${contentType}`, {
+    
+    // Additional validation to ensure user ID is defined
+    if (!currentUser.id && !currentUser._id) {
+      return [new Error('User ID not found in user data'), null];
+    }
+    
+    const userId = currentUser.id || currentUser._id;
+    return apiRequest(`/userInteractions/favorites/${userId}/${tmdbId}/${contentType}`, {
       method: 'DELETE'
     });
   },
@@ -321,7 +393,14 @@ export const interactionAPI = {
   unfollowUser: (userId) => {
     const [error, currentUser] = userAPI.getCurrentUser();
     if (error) return [error, null];
-    return apiRequest(`/userInteractions/follow/${currentUser.id}/${userId}`, {
+    
+    // Additional validation to ensure user ID is defined
+    if (!currentUser.id && !currentUser._id) {
+      return [new Error('User ID not found in user data'), null];
+    }
+    
+    const currentUserId = currentUser.id || currentUser._id;
+    return apiRequest(`/userInteractions/follow/${currentUserId}/${userId}`, {
       method: 'DELETE'
     });
   },

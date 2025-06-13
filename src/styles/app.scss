@@ -10,11 +10,11 @@ html, body {
 
 /* Add padding for the fixed header */
 .router-view {
-  padding-top: 120px; /* Increased to account for always-fixed header */
+  padding-top: 90px; /* Increased to account for always-fixed header */
 }
 
 @media (max-width: 768px) {
   .router-view {
-    padding-top: 200px; /* Increased padding for mobile due to vertical header layout */
+    padding-top: 140px; /* Increased padding for mobile due to vertical header layout */
   }
 } 

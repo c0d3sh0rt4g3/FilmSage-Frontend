@@ -10,8 +10,6 @@ import { useAuthStore } from '@/stores/authStore';
  * Components are loaded only when needed
  */
 const Home = () => import('@/pages/Home.vue');
-const Login = () => import('@/pages/Login.vue');
-const Register = () => import('@/pages/Register.vue');
 const Profile = () => import('@/pages/Profile.vue');
 const Search = () => import('@/pages/Search.vue');
 const Favorites = () => import('@/pages/Favorites.vue');
@@ -19,6 +17,7 @@ const MovieDetail = () => import('@/pages/MovieDetail.vue');
 const Recommendations = () => import('@/pages/Recommendations.vue');
 const AdminDashboard = () => import('@/pages/AdminDashboard.vue');
 const NotFound = () => import('@/pages/NotFound.vue');
+const TestScroll = () => import('@/pages/TestScroll.vue');
 
 /**
  * Navigation guard that requires user authentication
@@ -30,10 +29,8 @@ const NotFound = () => import('@/pages/NotFound.vue');
 function requireAuth(to, from, next) {
   const authStore = useAuthStore();
   if (!authStore.isAuthenticated) {
-    next({ 
-      path: '/login',
-      query: { redirect: to.fullPath }
-    });
+    // Redirect to home page since we use modals for login
+    next({ path: '/' });
   } else {
     next();
   }
@@ -55,21 +52,7 @@ function requireAdmin(to, from, next) {
   }
 }
 
-/**
- * Navigation guard that redirects authenticated users
- * Used for login/register pages to prevent access when already logged in
- * @param {object} to - Target route
- * @param {object} from - Current route
- * @param {function} next - Navigation callback
- */
-function redirectIfLoggedIn(to, from, next) {
-  const authStore = useAuthStore();
-  if (authStore.isAuthenticated) {
-    next({ path: '/' });
-  } else {
-    next();
-  }
-}
+
 
 /**
  * Application routes configuration
@@ -81,18 +64,7 @@ const routes = [
     name: 'home',
     component: Home
   },
-  {
-    path: '/login',
-    name: 'login',
-    component: Login,
-    beforeEnter: redirectIfLoggedIn
-  },
-  {
-    path: '/register',
-    name: 'register',
-    component: Register,
-    beforeEnter: redirectIfLoggedIn
-  },
+
   {
     path: '/profile',
     name: 'profile',
@@ -130,6 +102,11 @@ const routes = [
     beforeEnter: requireAdmin
   },
   {
+    path: '/test-scroll',
+    name: 'test-scroll',
+    component: TestScroll
+  },
+  {
     // 404 Not Found
     path: '/:pathMatch(.*)*',
     name: 'not-found',
@@ -145,11 +122,8 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    } else {
-      return { top: 0 };
-    }
+    // Temporarily disable scroll behavior to test if it's causing issues
+    return false;
   }
 });
 

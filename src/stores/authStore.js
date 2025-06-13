@@ -51,10 +51,18 @@ export const useAuthStore = defineStore('auth', {
           return false;
         }
 
-        this.userData = data.user;
+        // Normalize user ID - ensure both _id and id are available
+        const normalizedUser = { ...data.user };
+        if (normalizedUser._id && !normalizedUser.id) {
+          normalizedUser.id = normalizedUser._id;
+        } else if (normalizedUser.id && !normalizedUser._id) {
+          normalizedUser._id = normalizedUser.id;
+        }
+
+        this.userData = normalizedUser;
         this.logged = true;
         localStorage.setItem('token', data.token);
-        localStorage.setItem('userData', JSON.stringify(data.user));
+        localStorage.setItem('userData', JSON.stringify(normalizedUser));
         this.errors = {};
         return true;
       } catch (error) {
@@ -85,10 +93,18 @@ export const useAuthStore = defineStore('auth', {
           return false;
         }
 
-        this.userData = data.user;
+        // Normalize user ID - ensure both _id and id are available
+        const normalizedUser = { ...data.user };
+        if (normalizedUser._id && !normalizedUser.id) {
+          normalizedUser.id = normalizedUser._id;
+        } else if (normalizedUser.id && !normalizedUser._id) {
+          normalizedUser._id = normalizedUser.id;
+        }
+
+        this.userData = normalizedUser;
         this.logged = true;
         localStorage.setItem('token', data.token);
-        localStorage.setItem('userData', JSON.stringify(data.user));
+        localStorage.setItem('userData', JSON.stringify(normalizedUser));
         this.errors = {};
         return true;
       } catch (error) {
@@ -124,8 +140,20 @@ export const useAuthStore = defineStore('auth', {
 
       if (token && userData) {
         try {
-          this.userData = JSON.parse(userData);
+          const parsedUserData = JSON.parse(userData);
+          
+          // Normalize user ID - ensure both _id and id are available
+          if (parsedUserData._id && !parsedUserData.id) {
+            parsedUserData.id = parsedUserData._id;
+          } else if (parsedUserData.id && !parsedUserData._id) {
+            parsedUserData._id = parsedUserData.id;
+          }
+          
+          this.userData = parsedUserData;
           this.logged = true;
+          
+          // Update localStorage with normalized data
+          localStorage.setItem('userData', JSON.stringify(parsedUserData));
         } catch (error) {
           console.error('Error parsing user data:', error);
           this.logout();
@@ -168,8 +196,17 @@ export const useAuthStore = defineStore('auth', {
      * @param {object} newUserData - New user data to merge
      */
     updateUserData(newUserData) {
-      this.userData = { ...this.userData, ...newUserData };
-      localStorage.setItem('userData', JSON.stringify(this.userData));
+      const mergedData = { ...this.userData, ...newUserData };
+      
+      // Normalize user ID - ensure both _id and id are available
+      if (mergedData._id && !mergedData.id) {
+        mergedData.id = mergedData._id;
+      } else if (mergedData.id && !mergedData._id) {
+        mergedData._id = mergedData.id;
+      }
+      
+      this.userData = mergedData;
+      localStorage.setItem('userData', JSON.stringify(mergedData));
     }
   }
 });

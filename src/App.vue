@@ -26,12 +26,12 @@ html, body {
 
 /* Header is always fixed now */
 .router-view {
-  padding-top: 120px; /* Space for fixed header */
+  padding-top: 90px; /* Space for fixed header */
 }
 
 @media (max-width: 768px) {
   .router-view {
-    padding-top: 200px; /* More space for mobile vertical layout */
+    padding-top: 140px; /* More space for mobile vertical layout */
   }
 }
 </style>
