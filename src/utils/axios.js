@@ -15,7 +15,6 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
  */
 export const apiClient = axios.create({
   baseURL: BACKEND_URL,
-  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -67,7 +66,6 @@ const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
  */
 export const tmdbClient = axios.create({
   baseURL: TMDB_BASE_URL,
-  timeout: 10000,
   params: {
     language: 'en-US',
   },
@@ -98,7 +96,6 @@ tmdbClient.interceptors.request.use(
  * Basic axios instance without specific configurations
  */
 export const httpClient = axios.create({
-  timeout: 10000,
 });
 
 export default apiClient; 

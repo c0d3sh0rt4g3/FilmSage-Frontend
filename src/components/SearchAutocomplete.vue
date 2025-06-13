@@ -234,6 +234,14 @@ export default {
       this.showSuggestions = false;
       this.selectedIndex = -1;
     }
+  },
+
+  beforeUnmount() {
+    // Cleanup debounce timeout to prevent memory leaks
+    if (this.debounceTimeout) {
+      clearTimeout(this.debounceTimeout);
+      this.debounceTimeout = null;
+    }
   }
 }
 </script>
