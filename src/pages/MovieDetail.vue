@@ -242,17 +242,51 @@ export default {
         if (this.movie) {
           const [reviewsError, reviewsData] = await reviewAPI.getByContent(movieId, 'movie');
           if (!reviewsError && reviewsData?.reviews) {
-            // Transform the reviews data to ensure consistent user data structure
-            this.reviews = reviewsData.reviews.map(review => ({
-              ...review,
-              user: {
-                username: review.user?.username || review.username || 'Anonymous User',
-                avatar: review.user?.avatar || review.avatar || this.defaultAvatar
+            // Transform reviews to include user information
+            const reviewsWithUserData = reviewsData.reviews.map(review => {
+              // Check if user_id is an object containing user data
+              if (review.user_id && typeof review.user_id === 'object' && review.user_id.username) {
+                return {
+                  ...review,
+                  user: {
+                    username: review.user_id.username,
+                    avatar: review.user_id.avatar || this.defaultAvatar
+                  }
+                };
               }
-            }));
+              
+              // Check if user data is already present in a separate user field
+              if (review.user?.username) {
+                return {
+                  ...review,
+                  user: {
+                    username: review.user.username,
+                    avatar: review.user.avatar || this.defaultAvatar
+                  }
+                };
+              }
+              
+              // Fallback for reviews without user data
+              return {
+                ...review,
+                user: {
+                  username: 'Anonymous User',
+                  avatar: this.defaultAvatar
+                }
+              };
+            });
+            
+            this.reviews = reviewsWithUserData;
+            
             // Find user's review using the correct id field
             const authStore = useAuthStore();
-            this.userReview = this.reviews.find(review => review.user_id === authStore.userData?.id);
+            this.userReview = this.reviews.find(review => {
+              // Handle different user_id formats
+              if (typeof review.user_id === 'object' && review.user_id !== null) {
+                return review.user_id._id === authStore.userData?.id || review.user_id.id === authStore.userData?.id;
+              }
+              return review.user_id === authStore.userData?.id;
+            });
           }
           
           // Initialize favorites state from localStorage now that movie data is available

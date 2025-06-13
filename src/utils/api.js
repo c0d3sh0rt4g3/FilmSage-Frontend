@@ -140,7 +140,14 @@ export const userAPI = {
       return [error, null];
     }
     return apiRequest(`/users/${currentUser.id}/stats`);
-  }
+  },
+
+  /**
+   * Get user information by ID
+   * @param {number} userId - User ID to fetch
+   * @returns {Promise<Array>} User information
+   */
+  getUserById: (userId) => apiRequest(`/users/${userId}`)
 };
 
 /**
