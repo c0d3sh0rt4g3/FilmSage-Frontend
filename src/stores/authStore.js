@@ -1,3 +1,7 @@
+/**
+ * Authentication store using Pinia
+ * Manages user authentication state, login, registration, and profile updates
+ */
 import { defineStore } from 'pinia';
 import { userAPI } from '@/utils/api';
 
@@ -9,12 +13,33 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
+    /**
+     * Check if user is authenticated
+     * @returns {boolean} Authentication status
+     */
     isAuthenticated: (state) => state.logged,
+    
+    /**
+     * Get current user data
+     * @returns {object|null} User data or null if not logged in
+     */
     getUser: (state) => state.userData,
+    
+    /**
+     * Get current error messages
+     * @returns {object} Error messages object
+     */
     getErrors: (state) => state.errors
   },
 
   actions: {
+    /**
+     * Authenticate user with credentials
+     * @param {object} credentials - User login credentials
+     * @param {string} credentials.email - User email
+     * @param {string} credentials.password - User password
+     * @returns {Promise<boolean>} Success status
+     */
     async login(credentials) {
       try {
         const [error, data] = await userAPI.login(credentials);
@@ -41,6 +66,14 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    /**
+     * Register new user account
+     * @param {object} userData - User registration data
+     * @param {string} userData.email - User email
+     * @param {string} userData.password - User password
+     * @param {string} userData.name - User name
+     * @returns {Promise<boolean>} Success status
+     */
     async register(userData) {
       try {
         const [error, data] = await userAPI.register(userData);
@@ -67,6 +100,10 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    /**
+     * Logout user and clear all stored data
+     * Removes authentication tokens and user data from localStorage
+     */
     logout() {
       this.userData = null;
       this.logged = false;
@@ -77,6 +114,10 @@ export const useAuthStore = defineStore('auth', {
       this.errors = {};
     },
 
+    /**
+     * Check localStorage for existing authentication data
+     * Restores user session if valid data is found
+     */
     checkLocalStorage() {
       const token = localStorage.getItem('token');
       const userData = localStorage.getItem('userData');
@@ -92,6 +133,11 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    /**
+     * Update user profile information
+     * @param {object} profileData - Updated profile data
+     * @returns {Promise<boolean>} Success status
+     */
     async updateProfile(profileData) {
       try {
         const [error, data] = await userAPI.updateProfile(profileData);
@@ -116,7 +162,11 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    // Utility method to update userData and sync with localStorage
+    /**
+     * Update user data in store and localStorage
+     * Utility method to keep data synchronized
+     * @param {object} newUserData - New user data to merge
+     */
     updateUserData(newUserData) {
       this.userData = { ...this.userData, ...newUserData };
       localStorage.setItem('userData', JSON.stringify(this.userData));

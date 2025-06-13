@@ -184,7 +184,6 @@ export default {
         
         if (error) {
           console.error('Error removing from favorites:', error)
-          alert('Error removing from favorites. Please try again.')
           return
         }
         
@@ -196,7 +195,6 @@ export default {
         
       } catch (err) {
         console.error('Unexpected error removing from favorites:', err)
-        alert('An unexpected error occurred. Please try again.')
       } finally {
         removingFavorite.value = null
       }

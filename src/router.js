@@ -18,13 +18,13 @@ import { apiRequest } from '@/utils/api';
 
 /**
  * Application routes configuration array
- * @type {import('vue-router').RouteRecordRaw[]}
+ * @type {Array}
  */
 const routes = [
     /**
      * Home page route
      * Directly imports the Home component for immediate loading
-     * @type {import('vue-router').RouteRecordRaw}
+     * @type {Object}
      */
     {
         path: '/',
@@ -96,7 +96,7 @@ const routes = [
 
 /**
  * Creates and configures the Vue Router instance with HTML5 history mode
- * @type {import('vue-router').Router}
+ * @type {Object}
  */
 const router = createRouter({
     history: createWebHistory(),

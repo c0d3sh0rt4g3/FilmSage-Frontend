@@ -115,6 +115,68 @@ src/
 - `npm run dev` - Start development server with hot reload
 - `npm run build` - Build for production with optimizations
 - `npm run preview` - Preview production build locally
+- `npm run docs` - Generate JSDoc documentation
+- `npm run docs:serve` - Serve documentation on localhost:8080
+
+## 📖 Documentation
+
+### Code Documentation
+
+This project includes comprehensive JSDoc documentation for all JavaScript utilities, stores, and router configurations. The documentation is automatically generated from inline comments in the code.
+
+#### Generate Documentation
+```bash
+npm run docs
+```
+
+#### View Documentation
+```bash
+npm run docs:serve
+```
+
+Or use the Windows batch script:
+```bash
+generate-docs.bat
+```
+
+The documentation will be available at: **http://localhost:8080**
+
+#### Documentation Structure
+
+The generated documentation includes:
+
+- **🛠️ Utils Modules**
+  - `api.js` - Backend API communication layer
+  - `tmdb.js` - TMDB API integration
+  - `axios.js` - HTTP client configuration  
+  - `favorites.js` - Local storage management
+  - `validation.js` - Form validation utilities
+
+- **🏪 Stores (Pinia)**
+  - `authStore.js` - Authentication and user session management
+  - `reviewStore.js` - Review creation and management
+
+- **🛣️ Router**
+  - `router/index.js` - Main routing configuration with guards
+  - `router.js` - Alternative router setup
+
+- **🎯 Main Entry**
+  - `main.js` - Application entry point
+
+#### Documentation Features
+
+- **🔍 Search Functionality** - Find any function or module quickly
+- **📱 Responsive Design** - Works on desktop and mobile
+- **🔗 Cross-References** - Links between related functions
+- **📄 Source Links** - Direct links to source code
+- **📊 Module Organization** - Logical grouping of functionality
+
+#### Maintenance
+
+When adding new JavaScript files or functions:
+1. Add JSDoc comments following the established patterns
+2. Run `npm run docs` to regenerate documentation
+3. Test locally with `npm run docs:serve`
 
 ## 🔒 Authentication & Security
 

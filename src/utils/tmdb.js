@@ -1,7 +1,17 @@
+/**
+ * TMDB (The Movie Database) API utility functions
+ * Provides interface for movie search, details, and discovery
+ */
 import { tmdbClient } from './axios';
 
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
+/**
+ * Generic function to fetch data from TMDB API
+ * @param {string} endpoint - API endpoint to call
+ * @param {object} params - Query parameters
+ * @returns {Promise<object>} API response data
+ */
 async function fetchFromTMDB(endpoint, params = {}) {
   try {
     const response = await tmdbClient.get(endpoint, {
@@ -24,16 +34,36 @@ async function fetchFromTMDB(endpoint, params = {}) {
   }
 }
 
+/**
+ * TMDB API functions for movie and person searches
+ */
 export const tmdbAPI = {
+  /**
+   * Search for movies by title
+   * @param {string} query - Search query
+   * @param {number} page - Page number (default: 1)
+   * @returns {Promise<object>} Search results
+   */
   async searchMovies(query, page = 1) {
     return await fetchFromTMDB('/search/movie', { query, page });
   },
 
-  // Advanced search functionality
+  /**
+   * Search for people (actors, directors, etc.)
+   * @param {string} query - Search query
+   * @param {number} page - Page number (default: 1)
+   * @returns {Promise<object>} Search results
+   */
   async searchPerson(query, page = 1) {
     return await fetchFromTMDB('/search/person', { query, page });
   },
 
+  /**
+   * Multi-search across movies, TV shows, and people
+   * @param {string} query - Search query
+   * @param {number} page - Page number (default: 1)
+   * @returns {Promise<object>} Search results
+   */
   async searchMulti(query, page = 1) {
     return await fetchFromTMDB('/search/multi', { query, page });
   },

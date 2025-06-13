@@ -1,0 +1,31 @@
+{
+  "source": {
+    "include": [
+      "./src/"
+    ],
+    "includePattern": "\\.js$",
+    "exclude": [
+      "./node_modules/",
+      "./dist/",
+      "./src/assets/",
+      "./src/pages/",
+      "./src/components/"
+    ]
+  },
+  "opts": {
+    "destination": "./docs/",
+    "recurse": true,
+    "readme": "./README.md"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  },
+  "metadata": {
+    "title": "FilmSage Frontend Documentation",
+    "description": "Complete API documentation for the FilmSage movie recommendation frontend application"
+  }
+} 

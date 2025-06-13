@@ -403,7 +403,6 @@ export default {
               poster_path: this.movie?.poster_path
             });
             this.isInFavorites = true;
-            alert('Error removing from favorites. Please try again.');
           }
         } else {
           // Update localStorage immediately for instant UI feedback
@@ -425,15 +424,12 @@ export default {
             
             // Check if error is 409 (Conflict) - movie already in favorites
             if (error.status === 409 || error.message?.includes('409') || error.message?.includes('Conflict')) {
-              console.log('🎯 Movie already in favorites on server, updating localStorage and UI');
               // Movie already exists on server, keep it in localStorage and update UI
               this.isInFavorites = true;
-              alert('This movie is already in your favorites!');
             } else {
               // Other error, revert localStorage change
               removeFromFavoritesStorage(movieId);
               this.isInFavorites = false;
-              alert('Error adding to favorites. Please try again.');
             }
           }
         }
@@ -442,7 +438,6 @@ export default {
         console.error('Unexpected error in toggleFavorite:', error);
         // Revert to localStorage state on unexpected error
         this.isInFavorites = isMovieInFavorites(movieId);
-        alert('An unexpected error occurred. Please try again.');
       } finally {
         this.isToggling = false;
       }

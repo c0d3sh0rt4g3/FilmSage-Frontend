@@ -1,9 +1,18 @@
+/**
+ * Axios HTTP client configurations for different APIs
+ * Provides pre-configured axios instances for backend and TMDB APIs
+ */
 import axios from 'axios';
 
-// Backend API configuration
+/**
+ * Backend API base URL configuration
+ */
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
-// Create axios instance for backend API
+/**
+ * Axios instance for backend API communication
+ * Includes authentication token handling and error management
+ */
 export const apiClient = axios.create({
   baseURL: BACKEND_URL,
   timeout: 10000,
@@ -12,7 +21,9 @@ export const apiClient = axios.create({
   },
 });
 
-// Request interceptor to add auth token
+/**
+ * Request interceptor to automatically add authentication token
+ */
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -26,7 +37,10 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor for error handling
+/**
+ * Response interceptor for error handling and authentication
+ * Automatically redirects to login on 401 unauthorized responses
+ */
 apiClient.interceptors.response.use(
   (response) => {
     return response;
@@ -42,9 +56,15 @@ apiClient.interceptors.response.use(
   }
 );
 
-// TMDB API configuration
+/**
+ * TMDB API base URL
+ */
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 
+/**
+ * Axios instance for TMDB API communication
+ * Pre-configured with API key and language settings
+ */
 export const tmdbClient = axios.create({
   baseURL: TMDB_BASE_URL,
   timeout: 10000,
@@ -53,7 +73,9 @@ export const tmdbClient = axios.create({
   },
 });
 
-// TMDB request interceptor to add API key
+/**
+ * Request interceptor to add TMDB API key to all requests
+ */
 tmdbClient.interceptors.request.use(
   (config) => {
     const apiKey = import.meta.env.VITE_MOVIEDB_API_KEY;
@@ -71,7 +93,10 @@ tmdbClient.interceptors.request.use(
   }
 );
 
-// Generic HTTP client for other APIs
+/**
+ * Generic HTTP client for other external APIs
+ * Basic axios instance without specific configurations
+ */
 export const httpClient = axios.create({
   timeout: 10000,
 });

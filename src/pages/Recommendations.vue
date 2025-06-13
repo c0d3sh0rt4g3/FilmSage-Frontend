@@ -210,19 +210,7 @@ export default {
 
         this.analyzedReviewsCount = formattedReviews.length;
 
-        // Log the request data being sent to the API
-        console.log('Sending to AI API:', {
-          reviewsCount: formattedReviews.length,
-          userId: userId,
-          favoriteGenres: favoriteGenres,
-          reviews: formattedReviews
-        });
-
         const [error, data] = await recommendationAPI.getAIRecommendations(formattedReviews, userId, favoriteGenres);
-
-        // Log the API response for debugging
-        console.log('AI Recommendations API Response:', data);
-        console.log('API Error (if any):', error);
 
         if (error) {
           console.error('Error details:', error);
@@ -231,11 +219,8 @@ export default {
         }
 
         if (data?.recommendations) {
-          console.log('Successfully received recommendations:', data.recommendations.length);
-          console.log('Recommendations data:', data.recommendations);
           this.aiRecommendations = data.recommendations;
         } else {
-          console.warn('No recommendations in response data:', data);
           this.error = 'No recommendations were generated. Please try again.';
         }
 
@@ -260,10 +245,12 @@ export default {
       }
     },
 
+    /**
+     * Navigate to movie details page
+     * @param {number} tmdbId - TMDB movie ID
+     */
     viewMovieDetails(tmdbId) {
-      // Navigate directly to movie details page using tmdb_id
       if (tmdbId) {
-        console.log('Navigating to movie details for TMDB ID:', tmdbId);
         this.navigateToMovie(tmdbId);
       } else {
         console.error('No TMDB ID provided for movie details navigation');

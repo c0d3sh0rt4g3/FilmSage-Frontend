@@ -1,7 +1,14 @@
+/**
+ * Vue Router configuration for FilmSage application
+ * Handles routing, navigation guards, and lazy loading of components
+ */
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 
-// Lazy-loaded components
+/**
+ * Lazy-loaded components for better performance
+ * Components are loaded only when needed
+ */
 const Home = () => import('@/pages/Home.vue');
 const Login = () => import('@/pages/Login.vue');
 const Register = () => import('@/pages/Register.vue');
@@ -11,18 +18,15 @@ const Favorites = () => import('@/pages/Favorites.vue');
 const MovieDetail = () => import('@/pages/MovieDetail.vue');
 const Recommendations = () => import('@/pages/Recommendations.vue');
 const AdminDashboard = () => import('@/pages/AdminDashboard.vue');
-const NotFound = () => {
-  console.log('🔵 Loading NotFound component...');
-  return import('@/pages/NotFound.vue').then(module => {
-    console.log('🔵 NotFound component loaded successfully:', module);
-    return module;
-  }).catch(error => {
-    console.error('🔴 Error loading NotFound component:', error);
-    throw error;
-  });
-};
+const NotFound = () => import('@/pages/NotFound.vue');
 
-// Navigation guards
+/**
+ * Navigation guard that requires user authentication
+ * Redirects to login page if user is not authenticated
+ * @param {object} to - Target route
+ * @param {object} from - Current route
+ * @param {function} next - Navigation callback
+ */
 function requireAuth(to, from, next) {
   const authStore = useAuthStore();
   if (!authStore.isAuthenticated) {
@@ -35,6 +39,13 @@ function requireAuth(to, from, next) {
   }
 }
 
+/**
+ * Navigation guard that requires admin privileges
+ * Redirects to home page if user is not admin
+ * @param {object} to - Target route
+ * @param {object} from - Current route
+ * @param {function} next - Navigation callback
+ */
 function requireAdmin(to, from, next) {
   const authStore = useAuthStore();
   if (!authStore.isAuthenticated || authStore.userData?.role !== 'admin') {
@@ -44,6 +55,13 @@ function requireAdmin(to, from, next) {
   }
 }
 
+/**
+ * Navigation guard that redirects authenticated users
+ * Used for login/register pages to prevent access when already logged in
+ * @param {object} to - Target route
+ * @param {object} from - Current route
+ * @param {function} next - Navigation callback
+ */
 function redirectIfLoggedIn(to, from, next) {
   const authStore = useAuthStore();
   if (authStore.isAuthenticated) {
@@ -53,6 +71,10 @@ function redirectIfLoggedIn(to, from, next) {
   }
 }
 
+/**
+ * Application routes configuration
+ * Defines all available routes with their components and guards
+ */
 const routes = [
   {
     path: '/',
@@ -115,6 +137,10 @@ const routes = [
   }
 ];
 
+/**
+ * Create Vue Router instance with configuration
+ * Sets up routing with web history and scroll behavior
+ */
 const router = createRouter({
   history: createWebHistory(),
   routes,
@@ -127,24 +153,14 @@ const router = createRouter({
   }
 });
 
-// Global navigation guard for auth state
+/**
+ * Global navigation guard to ensure authentication state is current
+ * Checks localStorage for user data before each route navigation
+ */
 router.beforeEach((to, from, next) => {
-  console.log('🟡 ROUTER beforeEach triggered');
-  console.log('🟡 Navigating TO:', to);
-  console.log('🟡 Coming FROM:', from);
-  console.log('🟡 Route matched:', to.matched);
-  
   const authStore = useAuthStore();
   authStore.checkLocalStorage();
   next();
-});
-
-// Add afterEach to see what happens after navigation
-router.afterEach((to, from) => {
-  console.log('🟢 ROUTER afterEach triggered');
-  console.log('🟢 Successfully navigated TO:', to);
-  console.log('🟢 Route name:', to.name);
-  console.log('🟢 Route component:', to.matched[0]?.components);
 });
 
 export default router; 

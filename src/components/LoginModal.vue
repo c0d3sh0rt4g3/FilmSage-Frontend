@@ -164,8 +164,13 @@ export default {
       this.$emit('switch-to-register');
     },
 
+    /**
+     * Handle forgot password action
+     * TODO: Implement password recovery functionality
+     */
     forgotPassword() {
-      alert('Password recovery feature coming soon');
+      // Password recovery feature will be implemented in future updates
+      console.log('Password recovery feature requested');
     }
   },
   watch: {

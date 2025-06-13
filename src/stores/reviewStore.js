@@ -1,3 +1,7 @@
+/**
+ * Review store using Pinia
+ * Manages review creation and related operations
+ */
 import { defineStore } from 'pinia';
 import { useAuthStore } from './authStore';
 import { apiClient } from '@/utils/axios';
@@ -9,6 +13,15 @@ export const useReviewStore = defineStore('review', {
   }),
 
   actions: {
+    /**
+     * Create a new movie review
+     * @param {object} reviewData - Review data
+     * @param {number} reviewData.movieId - TMDB movie ID
+     * @param {string} reviewData.title - Movie title
+     * @param {string} reviewData.content - Review content
+     * @param {number} reviewData.rating - Rating (1-10)
+     * @returns {Promise<Array>} Review creation result
+     */
     async createReview(reviewData) {
       this.loading = true;
       this.error = null;
@@ -42,6 +55,9 @@ export const useReviewStore = defineStore('review', {
       }
     },
 
+    /**
+     * Clear any existing error messages
+     */
     clearError() {
       this.error = null;
     }

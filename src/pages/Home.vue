@@ -195,7 +195,6 @@ export default {
         this.handleRegistrationSuccess(data);
         this.resetForm();
         this.closeRegisterModal();
-        alert('Account created successfully! Welcome to FilmSage.');
       } catch (error) {
         console.error('Registration error:', error);
         this.generalError = 'Connection error. Please try again.';

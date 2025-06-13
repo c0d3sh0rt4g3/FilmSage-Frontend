@@ -394,7 +394,6 @@ export default {
           this.userStats.favorites = favoritesData.items.length;
         } else {
           // Server failed or returned undefined, keep localStorage count
-          console.log('Using localStorage favorites count:', localCount);
           // Keep the localStorage count that was already set
         }
       } catch (error) {
