@@ -70,15 +70,6 @@
                 <span v-if="confirmPasswordError" class="modal-error-message">{{ confirmPasswordError }}</span>
               </div>
 
-              <div class="modal-checkbox-group">
-                <label class="modal-checkbox-label">
-                  <input v-model="terms" type="checkbox" required />
-                  <span class="checkmark"></span>
-                  I accept the <a href="#" @click.prevent>terms and conditions</a>
-                </label>
-                <span v-if="termsError" class="modal-error-message">{{ termsError }}</span>
-              </div>
-
               <div v-if="registerError" class="modal-general-error">
                 {{ registerError }}
               </div>
@@ -87,11 +78,11 @@
                 <span v-if="loading" class="modal-spinner"></span>
                 {{ loading ? 'Creating account...' : 'Start my journey' }}
               </button>
-            </form>
 
-            <div class="modal-link-section">
-              Already have an account? <a href="#" @click.prevent="switchToLogin">Sign in</a>
-            </div>
+              <div class="modal-link-section">
+                Already have an account? <a href="#" @click.prevent="switchToLogin">Sign in</a>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -118,12 +109,10 @@ export default {
       email: '',
       password: '',
       confirmPassword: '',
-      terms: false,
       usernameError: '',
       emailError: '',
       passwordError: '',
       confirmPasswordError: '',
-      termsError: '',
       registerError: '',
       loading: false
     }
@@ -161,13 +150,6 @@ export default {
       }
     },
 
-    validateTerms() {
-      this.termsError = '';
-      if (!this.terms) {
-        this.termsError = 'You must accept the terms and conditions.';
-      }
-    },
-
     async registerUser() {
       this.registerError = '';
 
@@ -175,9 +157,8 @@ export default {
       this.validateEmail();
       this.validatePassword();
       this.validateConfirmPassword();
-      this.validateTerms();
 
-      if (this.usernameError || this.emailError || this.passwordError || this.confirmPasswordError || this.termsError) {
+      if (this.usernameError || this.emailError || this.passwordError || this.confirmPasswordError) {
         return;
       }
 
@@ -209,7 +190,6 @@ export default {
       this.email = '';
       this.password = '';
       this.confirmPassword = '';
-      this.terms = false;
       this.clearErrors();
     },
 
@@ -218,7 +198,6 @@ export default {
       this.emailError = '';
       this.passwordError = '';
       this.confirmPasswordError = '';
-      this.termsError = '';
       this.registerError = '';
     },
 

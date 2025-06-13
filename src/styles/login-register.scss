@@ -6,6 +6,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
 }
 
 .modal-container {
@@ -14,8 +20,12 @@
   border: 1px solid $white-20;
   border-radius: 20px;
   width: 35vw;
+  max-width: 450px;
+  min-width: 320px;
   box-shadow: $shadow-modal;
   color: $white;
+  margin: 0 auto;
+  display: block !important;
 }
 
 .modal-header {
@@ -60,10 +70,21 @@
 
 .modal-body {
   padding: 24px;
+  text-align: center;
+  display: block !important;
+  
+  form {
+    text-align: left;
+    display: block !important;
+    width: 100%;
+  }
 }
 
 .modal-form-group {
   margin-bottom: 25px;
+  text-align: left;
+  display: block !important;
+  width: 100%;
 }
 
 .modal-form-label {
@@ -116,6 +137,7 @@
 
 .modal-checkbox-group {
   margin-bottom: 20px;
+  text-align: left;
 }
 
 .modal-checkbox-label {
@@ -152,6 +174,7 @@
   font-size: 0.9rem;
   border: 1px solid $error-border-40;
   backdrop-filter: $blur-light;
+  text-align: center;
 }
 
 .modal-submit-btn {

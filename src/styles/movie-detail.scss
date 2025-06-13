@@ -16,6 +16,17 @@
   background: rgba($primary-purple, 0.3);
   backdrop-filter: $blur-medium;
   width: 100%;
+  position: relative;
+  
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba($black, 0.3);
+    z-index: 1;
+  }
 
   .container {
     max-width: 1200px;
@@ -28,6 +39,8 @@
     grid-template-columns: 300px 1fr;
     gap: 40px;
     align-items: start;
+    position: relative;
+    z-index: 2;
   }
 
   .movie-poster {

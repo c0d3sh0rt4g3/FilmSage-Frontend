@@ -1,0 +1,744 @@
+@import 'variables';
+
+// Dark theme overrides - using black/gray instead of purple
+.dark-theme {
+  // Dark background gradients (replacing purple gradients)
+  body {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%) !important;
+  }
+  
+  // Header styling
+  .site-header {
+    background: rgba(0, 0, 0, 0.3) !important;
+    
+    &.scrolled {
+      background: rgba(10, 10, 10, 0.95) !important;
+    }
+  }
+  
+  // Navigation links
+  .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    
+    &:hover, &.router-link-active {
+      background: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+  
+  // Logo gradient override
+  .logo .gradient-text {
+    background: linear-gradient(45deg, #ffffff, #cccccc) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+  }
+  
+  // User menu and dropdown
+  .dropdown-menu {
+    background: rgba(20, 20, 20, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .menu-item {
+    color: rgba(255, 255, 255, 0.9) !important;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+  
+  // Buttons - maintain accent colors but adjust backgrounds
+  .btn-login {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+  
+  .btn-secondary {
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+  
+  // HOME PAGE STYLES
+  .home-page {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%) !important;
+  }
+  
+  .hero-title, .section-title {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+  
+  .hero-subtitle {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  .gradient-text {
+    background: linear-gradient(45deg, #ffffff, #cccccc) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+  }
+  
+  .features {
+    background: rgba(255, 255, 255, 0.02) !important;
+  }
+  
+  .feature-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  // Cards and content areas
+  .card, .movie-card, .review-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  .movie-info h4, .movie-info p {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+  
+  // SEARCH PAGE STYLES
+  .movies-page {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%) !important;
+  }
+  
+  .search-hero {
+    background: rgba(255, 255, 255, 0.02) !important;
+  }
+  
+  .search-title {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+  
+  .search-subtitle {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  .search-input {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 2px solid rgba(255, 255, 255, 0.15) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5) !important;
+    }
+    
+    &:focus {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border-color: #ff6b6b !important;
+    }
+  }
+  
+  .results-title {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+  
+  .results-header-info {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  .results-count {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  .view-toggle {
+    .view-btn {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      color: rgba(255, 255, 255, 0.8) !important;
+      
+      &.active {
+        background: rgba(255, 107, 107, 0.2) !important;
+        border-color: #ff6b6b !important;
+        color: rgba(255, 255, 255, 0.95) !important;
+      }
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+      }
+    }
+  }
+  
+  .movies-grid {
+    .movie-card {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5) !important;
+      }
+    }
+  }
+  
+  .movie-info {
+    background: rgba(255, 255, 255, 0.03) !important;
+    
+    h4 {
+      color: rgba(255, 255, 255, 0.95) !important;
+    }
+    
+    p {
+      color: rgba(255, 255, 255, 0.8) !important;
+    }
+  }
+  
+  .movie-overview {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  .movie-year {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+  
+  // Filter container - make transparent
+  .filters-container {
+    background: transparent !important;
+  }
+  
+  // Loading, error, and no results states
+  .loading-state, .error-state, .no-results, .welcome-state {
+    h3 {
+      color: rgba(255, 255, 255, 0.95) !important;
+    }
+    
+    p {
+      color: rgba(255, 255, 255, 0.8) !important;
+    }
+  }
+  
+  .no-results-suggestions {
+    background: rgba(255, 107, 107, 0.05) !important;
+    border: 1px solid rgba(255, 107, 107, 0.15) !important;
+    
+    h4 {
+      color: #ff6b6b !important;
+    }
+    
+    ul li {
+      color: rgba(255, 255, 255, 0.9) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+      
+      &:before {
+        color: #ff6b6b !important;
+      }
+    }
+  }
+  
+  // Spinner
+  .spinner {
+    border: 4px solid rgba(255, 255, 255, 0.1) !important;
+    border-top: 4px solid #ff6b6b !important;
+  }
+  
+  // Modal styles
+  .modal-content {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #2c2c2c 100%) !important;
+  }
+  
+  .modal-close {
+    background: rgba(0, 0, 0, 0.6) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.8) !important;
+    }
+  }
+  
+  .modal-details h2 {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+  
+  .movie-meta {
+    .year, .rating {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+    }
+  }
+  
+  .overview {
+    color: rgba(255, 255, 255, 0.85) !important;
+  }
+  
+  // Genre tags in search results
+  .genres {
+    .genre-tag {
+      // Keep the gradient but ensure good visibility in dark mode
+      background: linear-gradient(45deg, #ff6b6b, #feca57) !important;
+      color: rgba(255, 255, 255, 0.95) !important;
+    }
+  }
+  
+  // List view specific styles
+  .list-view {
+    .movie-card.list-card {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.08) !important;
+      }
+    }
+  }
+  
+  // Search results metadata
+  .results-meta-info {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  // PROFILE PAGE STYLES
+  .profile-page {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%) !important;
+  }
+  
+  .profile-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .stats-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  // FAVORITES PAGE STYLES
+  .favorites-page {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%) !important;
+  }
+  
+  .favorites-grid {
+    .favorite-item {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+  
+  // MOVIE DETAIL PAGE STYLES
+  .movie-detail-page {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%) !important;
+  }
+  
+  .movie-hero {
+    // Don't override the background - preserve the backdrop image
+    // The background is set via inline styles in the component
+  }
+  
+  .hero-overlay {
+    // Make the overlay darker in dark mode for better text contrast against backdrop image
+    background: rgba(0, 0, 0, 0.6) !important;
+  }
+  
+  .movie-info-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .reviews-section {
+    background: rgba(255, 255, 255, 0.02) !important;
+  }
+  
+  // RECOMMENDATIONS PAGE STYLES
+  .recommendations-page {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%) !important;
+  }
+  
+  .recommendation-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  // ADMIN DASHBOARD STYLES
+  .admin-dashboard {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%) !important;
+  }
+  
+  .dashboard-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  // Form inputs
+  input, textarea, select {
+    background: rgba(20, 20, 20, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5) !important;
+    }
+  }
+  
+  // Modals
+  .modal, .modal-content {
+    background: rgba(15, 15, 15, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  // Text elements
+  h1, h2, h3, h4, h5, h6 {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+  
+  p, span, div {
+    color: rgba(255, 255, 255, 0.85);
+  }
+  
+  // Secondary text
+  .text-secondary, .text-muted {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  
+  // General containers and sections
+  .container, .section, .content-area {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  // Tables
+  table {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  th, td {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  // Advanced Filters - Make completely transparent
+  .advanced-filters {
+    background: transparent !important;
+    border: none !important;
+    backdrop-filter: none !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  .filters-header {
+    h3 {
+      color: rgba(255, 255, 255, 0.95) !important;
+    }
+    
+    .toggle-btn {
+      // Keep the gradient but ensure visibility
+      background: linear-gradient(45deg, #ff6b6b, #feca57) !important;
+      color: rgba(255, 255, 255, 0.95) !important;
+    }
+  }
+  
+  .filter-group {
+    .filter-label {
+      color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    .filter-input, .filter-select {
+      background: rgba(255, 255, 255, 0.03) !important;
+      border: 2px solid rgba(255, 255, 255, 0.08) !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+      
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+      }
+      
+      &:focus {
+        background: rgba(255, 255, 255, 0.06) !important;
+        border-color: #ff6b6b !important;
+      }
+      
+      option {
+        background: #1a1a1a !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+      }
+    }
+    
+    .rating-container {
+      .rating-value {
+        color: #feca57 !important;
+      }
+      
+      .rating-slider {
+        background: rgba(255, 255, 255, 0.1) !important;
+      }
+    }
+    
+    .search-type-tabs {
+      .search-type-tab {
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 2px solid rgba(255, 255, 255, 0.08) !important;
+        color: rgba(255, 255, 255, 0.8) !important;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.06) !important;
+          color: rgba(255, 255, 255, 0.95) !important;
+        }
+        
+        &.active {
+          background: linear-gradient(45deg, #ff6b6b, #feca57) !important;
+          color: rgba(255, 255, 255, 0.95) !important;
+          border-color: transparent !important;
+        }
+      }
+    }
+  }
+  
+  .filter-actions {
+    .btn-apply {
+      // Keep the gradient
+      background: linear-gradient(45deg, #ff6b6b, #feca57) !important;
+      color: rgba(255, 255, 255, 0.95) !important;
+    }
+    
+    .btn-clear {
+      background: rgba(255, 255, 255, 0.03) !important;
+      border: 2px solid rgba(255, 255, 255, 0.08) !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.06) !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+      }
+    }
+  }
+  
+  .active-filters {
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    
+    .active-filters-title {
+      color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    .filter-tags {
+      .filter-tag {
+        background: linear-gradient(45deg, #ff6b6b, #feca57) !important;
+        color: rgba(255, 255, 255, 0.95) !important;
+        
+        .remove-filter-btn {
+          color: rgba(255, 255, 255, 0.8) !important;
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: rgba(255, 255, 255, 0.95) !important;
+          }
+        }
+      }
+    }
+  }
+  
+  .pagination {
+    .page-link {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+    }
+  }
+  
+  .alert {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  .dropdown {
+    background: rgba(20, 20, 20, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .tooltip {
+    background: rgba(20, 20, 20, 0.95) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  .badge {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  
+  // Search autocomplete and similar components
+  .autocomplete, .suggestions {
+    background: rgba(20, 20, 20, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    
+    .suggestion-item {
+      color: rgba(255, 255, 255, 0.9) !important;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+      }
+    }
+  }
+  
+  // Specific overrides for any remaining purple elements
+  .btn-primary {
+    // Keep the gradient but ensure it works well in dark mode
+    &:hover {
+      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3) !important;
+    }
+  }
+  
+  // Scrollbar styling for dark theme
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2) !important;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+  }
+}
+
+// Ensure light theme maintains current styling (default)
+.light-theme {
+  // This ensures the current purple theme is preserved in light mode
+  // No overrides needed as current styles are already the light theme
+}
+
+  // LOGIN AND REGISTER MODALS - Dark mode styling
+  .modal-overlay {
+    background: rgba(0, 0, 0, 0.85) !important;
+    backdrop-filter: blur(10px) !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  .modal-container {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #2c2c2c 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    display: block !important;
+    margin: 0 auto !important;
+  }
+
+.modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  
+  h2 {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+}
+
+.modal-close-btn {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+.modal-form-label {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.modal-form-input {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+  
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+  
+  &:focus {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: #ff6b6b !important;
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2) !important;
+  }
+  
+  &.error {
+    border-color: #ff4757 !important;
+    box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.2) !important;
+  }
+}
+
+.modal-checkbox-label {
+  color: rgba(255, 255, 255, 0.9) !important;
+  
+  input[type="checkbox"] {
+    accent-color: #ff6b6b !important;
+  }
+  
+  a {
+    color: #feca57 !important;
+  }
+}
+
+.modal-error-message {
+  background: rgba(255, 71, 87, 0.1) !important;
+  border: 1px solid rgba(255, 71, 87, 0.3) !important;
+  color: #ff6b6b !important;
+}
+
+.modal-general-error {
+  background: rgba(255, 71, 87, 0.1) !important;
+  border: 1px solid rgba(255, 71, 87, 0.3) !important;
+  color: #ff6b6b !important;
+}
+
+.modal-forgot-password {
+  text-align: center;
+  margin-top: 1rem;
+  
+  a {
+    color: rgba(255, 255, 255, 0.7) !important;
+    text-decoration: none;
+    font-size: 0.9rem;
+    
+    &:hover {
+      color: #feca57 !important;
+      text-decoration: underline;
+    }
+  }
+}
+
+  .modal-link-section {
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-align: center;
+    margin-top: 1rem;
+    display: block !important;
+    width: 100% !important;
+    
+    a {
+      color: #feca57 !important;
+      font-weight: 600;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  
+  // Force all modal elements to not use grid
+  .modal-container * {
+    display: block !important;
+  }
+  
+  .modal-container .modal-header {
+    display: flex !important;
+  }
+  
+  .modal-container .modal-close-btn {
+    display: flex !important;
+  }
+  
+  .modal-container .modal-submit-btn {
+    display: flex !important;
+  }
+  
+  .modal-container .modal-checkbox-label {
+    display: flex !important;
+  } 

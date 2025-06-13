@@ -56,15 +56,15 @@
                 <span v-if="loading" class="modal-spinner"></span>
                 {{ loading ? 'Signing in...' : 'Sign in' }}
               </button>
+
+              <div class="modal-forgot-password">
+                <a href="#" @click.prevent="forgotPassword">Forgot your password?</a>
+              </div>
+
+              <div class="modal-link-section">
+                Don't have an account? <a href="#" @click.prevent="switchToRegister">Create account</a>
+              </div>
             </form>
-
-            <div class="modal-forgot-password">
-              <a href="#" @click.prevent="forgotPassword">Forgot your password?</a>
-            </div>
-
-            <div class="modal-link-section">
-              Don't have an account? <a href="#" @click.prevent="switchToRegister">Create account</a>
-            </div>
           </div>
         </div>
       </div>

@@ -1,13 +1,16 @@
 <script>
 import { useAuthStore } from '@/stores/authStore';
+import { useTheme } from '@/composables/useTheme';
 import LoginModal from './LoginModal.vue';
 import RegisterModal from './RegisterModal.vue';
+import ThemeToggle from './ThemeToggle.vue';
 
 export default {
   name: 'Header',
   components: {
     LoginModal,
-    RegisterModal
+    RegisterModal,
+    ThemeToggle
   },
   data() {
     return {
@@ -62,10 +65,17 @@ export default {
       this.showUserMenu = false;
     }
   },
+  setup() {
+    const { loadFromStorage } = useTheme();
+    return { loadFromStorage };
+  },
   mounted() {
     // Check localStorage for authentication on app start
     const authStore = useAuthStore();
     authStore.checkLocalStorage();
+    
+    // Initialize theme
+    this.loadFromStorage();
     
     window.addEventListener('scroll', this.handleScroll);
     document.addEventListener('click', (e) => {
@@ -96,6 +106,9 @@ export default {
       </nav>
 
       <div class="auth-section">
+        <!-- Theme Toggle -->
+        <ThemeToggle />
+        
         <template v-if="isAuthenticated">
           <div class="user-menu">
             <div class="user-menu-container" ref="userMenu">

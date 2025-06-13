@@ -1,12 +1,12 @@
 @import 'variables';
 
 .advanced-filters {
-  background: $white-10;
-  backdrop-filter: $blur-medium;
+  background: var(--color-surface-bg, $white-10);
+  backdrop-filter: var(--blur-surface, $blur-medium);
   border-radius: $border-radius-xxl;
   padding: 1.5rem;
   margin-bottom: 2rem;
-  border: 2px solid $white-20;
+  border: var(--border-surface, 2px solid $white-20);
 }
 
 .filters-header {
