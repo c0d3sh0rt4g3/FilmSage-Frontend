@@ -16,7 +16,8 @@ export default {
     return {
       showLoginModal: false,
       showRegisterModal: false,
-      showUserMenu: false
+      showUserMenu: false,
+      userMenuPosition: { top: 0, right: 0 }
     };
   },
   computed: {
@@ -54,6 +55,17 @@ export default {
       this.$router.push('/');
     },
     toggleUserMenu() {
+      if (!this.showUserMenu) {
+        // Calcular posición antes de mostrar el menú
+        const userSection = this.$refs.userSection;
+        if (userSection) {
+          const rect = userSection.getBoundingClientRect();
+          this.userMenuPosition = {
+            top: rect.bottom + 8, // 8px de margen
+            right: window.innerWidth - rect.right
+          };
+        }
+      }
       this.showUserMenu = !this.showUserMenu;
     },
     closeUserMenu() {
@@ -119,20 +131,6 @@ export default {
             >
               {{ user?.username || 'User' }}
             </span>
-            <div v-if="showUserMenu" class="user-menu">
-              <router-link to="/profile" class="menu-item" @click="closeUserMenu">
-                Profile
-              </router-link>
-              <router-link to="/favorites" class="menu-item" @click="closeUserMenu">
-                Favorites
-              </router-link>
-              <router-link v-if="isAdmin" to="/admin" class="menu-item" @click="closeUserMenu">
-                Admin Dashboard
-              </router-link>
-              <button @click="logout" class="menu-item">
-                Sign Out
-              </button>
-            </div>
           </div>
           
           <!-- Auth Buttons -->
@@ -159,6 +157,31 @@ export default {
       @switch-to-login="showLogin"
       @success="handleRegisterSuccess"
     />
+
+    <!-- User Menu Portal (positioned outside header for maximum z-index) -->
+    <div 
+      v-if="isAuthenticated && showUserMenu" 
+      class="user-menu-portal"
+      :style="{
+        top: userMenuPosition.top + 'px',
+        right: userMenuPosition.right + 'px'
+      }"
+    >
+      <div class="user-menu">
+        <router-link to="/profile" class="menu-item" @click="closeUserMenu">
+          Profile
+        </router-link>
+        <router-link to="/favorites" class="menu-item" @click="closeUserMenu">
+          Favorites
+        </router-link>
+        <router-link v-if="isAdmin" to="/admin" class="menu-item" @click="closeUserMenu">
+          Admin Dashboard
+        </router-link>
+        <button @click="logout" class="menu-item">
+          Sign Out
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 

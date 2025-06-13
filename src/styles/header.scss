@@ -141,9 +141,17 @@
   }
 }
 
+// Portal for user menu (positioned outside header)
+.user-menu-portal {
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  pointer-events: auto !important;
+  isolation: isolate !important;
+}
+
 .user-menu {
-  position: absolute !important;
-  top: calc(100% + 0.5rem) !important;
+  position: relative !important;
+  top: 0 !important;
   right: 0 !important;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
@@ -151,12 +159,16 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   min-width: 200px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  z-index: 99999 !important;
+  z-index: 2147483647 !important;
   overflow: hidden;
   
   opacity: 1 !important;
   transform: translateY(0) scale(1) !important;
   visibility: visible !important;
+  
+  /* Ensure maximum stacking context */
+  isolation: isolate !important;
+  will-change: transform, opacity !important;
   
   .menu-item {
     display: block;

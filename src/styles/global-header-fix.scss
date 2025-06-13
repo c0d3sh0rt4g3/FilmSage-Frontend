@@ -28,8 +28,10 @@ header.site-header,
 /* Preserve absolute positioning for dropdowns and overlays */
 .site-header .user-menu {
   position: absolute !important;
-  z-index: 99999 !important;
+  z-index: 999999 !important;
   display: block !important;
+  isolation: isolate !important;
+  will-change: transform, opacity !important;
 }
 
 /* Override any scroll-related positioning */
@@ -137,4 +139,26 @@ body {
 .site-header * {
   backface-visibility: hidden !important;
   perspective: 1000px !important;
+}
+
+/* CRITICAL: Ensure user dropdown always appears on top */
+.user-menu,
+.site-header .user-menu,
+header .user-menu,
+[class*="user-menu"],
+.user-menu-portal {
+  z-index: 2147483647 !important; /* Máximo valor posible de z-index */
+  position: absolute !important;
+  isolation: isolate !important;
+  transform-style: preserve-3d !important;
+  contain: layout style paint !important;
+  pointer-events: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: block !important;
+}
+
+/* Ensure portal has fixed positioning */
+.user-menu-portal {
+  position: fixed !important;
 } 
