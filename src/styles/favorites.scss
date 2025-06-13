@@ -275,6 +275,21 @@
   padding: 4rem 2rem;
 }
 
+// Loading, Error, and State Styles
+.loading-state, .error-state, .no-results {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.no-results {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  padding: 4rem 2rem;
+  justify-content: center;
+  align-items: center;
+}
+
 .spinner {
   width: 50px;
   height: 50px;
@@ -310,28 +325,41 @@
 }
 
 .no-results-suggestions {
-  margin: 2rem 0;
+  margin: 2rem auto;
+  max-width: 500px;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: $border-radius-large;
+  backdrop-filter: $blur-medium;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: left;
   
   h4 {
     margin-bottom: 1rem;
     color: $white-90;
+    font-size: 1.2rem;
+    font-weight: 600;
   }
   
   ul {
     list-style: none;
     padding: 0;
+    margin: 0;
     
     li {
-      margin: 0.5rem 0;
+      margin: 0.75rem 0;
       color: $white-80;
+      font-size: 1rem;
+      padding-left: 1.5rem;
+      position: relative;
       
       &:before {
         content: "•";
         color: $accent-orange;
         font-weight: bold;
-        display: inline-block;
-        width: 1em;
-        margin-left: -1em;
+        position: absolute;
+        left: 0;
+        top: 0;
       }
     }
   }

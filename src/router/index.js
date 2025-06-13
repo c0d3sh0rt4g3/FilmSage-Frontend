@@ -6,10 +6,21 @@ const Home = () => import('@/pages/Home.vue');
 const Login = () => import('@/pages/Login.vue');
 const Register = () => import('@/pages/Register.vue');
 const Profile = () => import('@/pages/Profile.vue');
+const Search = () => import('@/pages/Search.vue');
+const Favorites = () => import('@/pages/Favorites.vue');
 const MovieDetail = () => import('@/pages/MovieDetail.vue');
 const Recommendations = () => import('@/pages/Recommendations.vue');
 const AdminDashboard = () => import('@/pages/AdminDashboard.vue');
-const NotFound = () => import('@/pages/NotFound.vue');
+const NotFound = () => {
+  console.log('🔵 Loading NotFound component...');
+  return import('@/pages/NotFound.vue').then(module => {
+    console.log('🔵 NotFound component loaded successfully:', module);
+    return module;
+  }).catch(error => {
+    console.error('🔴 Error loading NotFound component:', error);
+    throw error;
+  });
+};
 
 // Navigation guards
 function requireAuth(to, from, next) {
@@ -67,6 +78,18 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
+    path: '/search',
+    name: 'search',
+    component: Search,
+    beforeEnter: requireAuth
+  },
+  {
+    path: '/favorites',
+    name: 'favorites',
+    component: Favorites,
+    beforeEnter: requireAuth
+  },
+  {
     path: '/movie/:id',
     name: 'movie-detail',
     component: MovieDetail,
@@ -106,9 +129,22 @@ const router = createRouter({
 
 // Global navigation guard for auth state
 router.beforeEach((to, from, next) => {
+  console.log('🟡 ROUTER beforeEach triggered');
+  console.log('🟡 Navigating TO:', to);
+  console.log('🟡 Coming FROM:', from);
+  console.log('🟡 Route matched:', to.matched);
+  
   const authStore = useAuthStore();
   authStore.checkLocalStorage();
   next();
+});
+
+// Add afterEach to see what happens after navigation
+router.afterEach((to, from) => {
+  console.log('🟢 ROUTER afterEach triggered');
+  console.log('🟢 Successfully navigated TO:', to);
+  console.log('🟢 Route name:', to.name);
+  console.log('🟢 Route component:', to.matched[0]?.components);
 });
 
 export default router; 

@@ -12,6 +12,7 @@ import MovieDetail from "@/pages/MovieDetail.vue";
 import Recommendations from "@/pages/Recommendations.vue";
 import AdminDashboard from "@/pages/AdminDashboard.vue";
 import Favorites from "@/pages/Favorites.vue";
+import NotFound from "@/pages/NotFound.vue";
 import { useAuthStore } from '@/stores/authStore';
 import { apiRequest } from '@/utils/api';
 
@@ -84,6 +85,12 @@ const routes = [
             requiresAuth: true,
             requiresAdmin: true
         }
+    },
+    {
+        // 404 Not Found - debe ir al final
+        path: '/:pathMatch(.*)*',
+        name: 'not-found',
+        component: NotFound
     }
 ]
 

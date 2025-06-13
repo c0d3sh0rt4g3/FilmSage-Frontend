@@ -5,6 +5,9 @@ import App from './App.vue'
 import router from "@/router.js";
 import {createPinia} from "pinia";
 
+console.log('🚀 Router loaded:', router);
+console.log('🚀 Router routes:', router.getRoutes());
+
 const pinia = createPinia()
 
 // Initialize theme on app start

@@ -24,8 +24,8 @@ html, body {
   padding: 0;
 }
 
-/* Add padding for the fixed header */
+/* Remove the padding-top since header is now initially static */
 .router-view {
-  padding-top: 80px;
+  /* padding-top removed */
 }
 </style>
