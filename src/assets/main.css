@@ -1,5 +1,6 @@
 @import '../styles/theme.scss';
 @import '../styles/typography.scss';
+@import '../styles/global-header-fix.scss';
 
 /* Global styles */
 :root {
@@ -107,5 +108,4 @@ a {
   background: rgba(255, 255, 255, 0.4);
 }
 
-/* Import header fix LAST to override any conflicting styles */
-@import '../styles/global-header-fix.scss'; 
+/* Header fix styles imported at the top to ensure proper cascade */ 

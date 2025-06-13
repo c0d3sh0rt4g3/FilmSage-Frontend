@@ -208,11 +208,49 @@
   gap: 20px;
 }
 
+.reviews-header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+
+  h2 {
+    margin: 0;
+  }
+
+  .btn-view-all-reviews {
+    background: $accent-gradient;
+    color: $white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: $border-radius-small;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: $transition-base;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-light;
+    }
+  }
+}
+
 .review-card {
   background: $white-10;
   backdrop-filter: $blur-medium;
   border-radius: $border-radius-small;
   padding: 20px;
+  cursor: pointer;
+  transition: $transition-base;
+
+  &:hover {
+    background: $white-15;
+    transform: translateY(-2px);
+    box-shadow: $shadow-light;
+  }
 
   .review-header {
     display: flex;
@@ -252,6 +290,45 @@
   .review-content {
     color: $white-90;
     line-height: 1.6;
+  }
+}
+
+.more-reviews-indicator {
+  background: $white-05;
+  border: 2px dashed $white-20;
+  border-radius: $border-radius-small;
+  padding: 20px;
+  text-align: center;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: $transition-base;
+
+  &:hover {
+    background: $white-10;
+    border-color: $white-30;
+  }
+
+  p {
+    color: $white-60;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+  }
+
+  .btn-see-more {
+    background: transparent;
+    color: $accent-orange;
+    border: 1px solid $accent-orange;
+    padding: 8px 16px;
+    border-radius: $border-radius-small;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: $transition-base;
+
+    &:hover {
+      background: $accent-orange;
+      color: $white;
+    }
   }
 }
 

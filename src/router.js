@@ -12,6 +12,7 @@ import MovieDetail from "@/pages/MovieDetail.vue";
 import Recommendations from "@/pages/Recommendations.vue";
 import AdminDashboard from "@/pages/AdminDashboard.vue";
 import Favorites from "@/pages/Favorites.vue";
+import Reviews from "@/pages/Reviews.vue";
 import NotFound from "@/pages/NotFound.vue";
 import { useAuthStore } from '@/stores/authStore';
 import { apiRequest } from '@/utils/api';
@@ -73,6 +74,21 @@ const routes = [
         path: '/favorites',
         name: 'favorites',
         component: Favorites,
+        meta: {
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/reviews/:movieId',
+        name: 'reviews',
+        component: Reviews,
+        props: true
+    },
+    {
+        path: '/user/:userId/reviews',
+        name: 'user-reviews',
+        component: Reviews,
+        props: true,
         meta: {
             requiresAuth: true
         }

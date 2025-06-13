@@ -57,7 +57,7 @@
         <div class="profile-card">
           <h2>Your Activity</h2>
           <div class="activity-stats">
-            <div class="stat-item">
+            <div class="stat-item clickable" @click="goToMyReviews">
               <span class="stat-number">{{ userStats.reviews || 0 }}</span>
               <span class="stat-label">Reviews Written</span>
             </div>
@@ -413,6 +413,13 @@ export default {
      },
      goToFavorites() {
        this.$router.push('/favorites');
+     },
+     goToMyReviews() {
+       this.$router.push({
+         name: 'user-reviews',
+         params: { userId: this.userData.id },
+         query: { username: encodeURIComponent(this.userData.username) }
+       });
      }
    }
  }

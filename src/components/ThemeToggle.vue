@@ -65,15 +65,17 @@ export default {
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
       
       .icon {
-        position: absolute;
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) scale(0.5) rotate(180deg) !important;
         font-size: 16px;
         transition: all 0.3s ease;
         opacity: 0;
-        transform: scale(0.5) rotate(180deg);
         
         &.visible {
           opacity: 1;
-          transform: scale(1) rotate(0deg);
+          transform: translate(-50%, -50%) scale(1) rotate(0deg) !important;
         }
         
         &.light-icon {

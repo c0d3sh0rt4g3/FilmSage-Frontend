@@ -69,13 +69,27 @@
 
           <!-- Reviews -->
           <div class="detail-card">
-            <h2>Reviews</h2>
+            <div class="reviews-header-section">
+              <h2>Reviews</h2>
+              <button 
+                v-if="reviews.length > 0" 
+                @click="viewAllReviews" 
+                class="btn-view-all-reviews"
+              >
+                View All {{ reviews.length }} Reviews →
+              </button>
+            </div>
             <div class="reviews-section">
               <div v-if="!reviews.length" class="no-reviews">
                 <p>No reviews yet. Be the first to write one!</p>
               </div>
               <div v-else class="reviews-grid">
-                <div v-for="review in reviews" :key="review.id" class="review-card">
+                <div 
+                  v-for="review in reviews.slice(0, 3)" 
+                  :key="review.id" 
+                  class="review-card"
+                  @click="viewAllReviews"
+                >
                   <div class="review-header">
                     <img 
                       :src="review.user.avatar" 
@@ -89,6 +103,10 @@
                     <div class="review-rating">⭐ {{ review.rating }}/5</div>
                   </div>
                   <p class="review-content">{{ review.content }}</p>
+                </div>
+                <div v-if="reviews.length > 3" class="more-reviews-indicator">
+                  <p>{{ reviews.length - 3 }} more review{{ reviews.length - 3 !== 1 ? 's' : '' }}...</p>
+                  <button @click="viewAllReviews" class="btn-see-more">Click to see all</button>
                 </div>
               </div>
             </div>
@@ -548,6 +566,13 @@ export default {
     },
     navigateToMovie(id) {
       this.$router.push(`/movie/${id}`);
+    },
+    viewAllReviews() {
+      this.$router.push({
+        name: 'reviews',
+        params: { movieId: this.movieId },
+        query: { title: encodeURIComponent(this.movie.title) }
+      });
     },
     openReviewModal() {
       const authStore = useAuthStore();
