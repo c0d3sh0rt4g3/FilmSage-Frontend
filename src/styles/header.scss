@@ -28,9 +28,24 @@
   font-weight: 800;
   text-decoration: none;
   transition: $transition-base;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   
   &:hover {
     transform: scale(1.05);
+  }
+  
+  .logo-image {
+    height: 2.5rem;
+    width: auto;
+    border-radius: $border-radius-small;
+    transition: $transition-base;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+    
+    &:hover {
+      filter: drop-shadow(0 4px 12px rgba(255, 107, 107, 0.4));
+    }
   }
   
   .gradient-text {
@@ -235,6 +250,16 @@
     gap: 1rem;
     text-align: center;
     padding: 0 1rem;
+  }
+  
+  .logo {
+    .logo-image {
+      height: 2rem;
+    }
+    
+    .gradient-text {
+      font-size: 1.5rem;
+    }
   }
 
   .main-nav {

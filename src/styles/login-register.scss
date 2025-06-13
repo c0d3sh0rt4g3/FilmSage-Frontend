@@ -11,7 +11,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 10000;
+  z-index: 100000;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-container {
@@ -182,7 +184,7 @@
 
 .modal-submit-btn {
   width: 100%;
-  height: 5vh;
+  min-height: 50px;
   padding: 14px 24px;
   background: $accent-gradient;
   color: $white;
@@ -285,10 +287,17 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .modal-overlay {
+    padding: 20px;
+    align-items: flex-start;
+    padding-top: 120px;
+  }
+  
   .modal-container {
-    width: 95vw;
+    width: 100%;
     max-width: 400px;
-    margin: 20px auto;
+    margin: 0 auto;
+    min-height: auto;
   }
 
   .modal-header {
@@ -311,11 +320,18 @@
 }
 
 @media (max-width: 480px) {
+  .modal-overlay {
+    padding: 15px;
+    align-items: flex-start;
+    padding-top: 100px;
+  }
+  
   .modal-container {
-    width: 95vw;
+    width: 100%;
     max-width: none;
-    margin: 10px;
+    margin: 0;
     border-radius: 16px;
+    min-height: auto;
   }
 
   .modal-header {
@@ -338,6 +354,8 @@
   .modal-submit-btn {
     padding: 12px 20px;
     font-size: 0.95rem;
+    height: auto;
+    min-height: 48px;
   }
 
   .modal-form-group {

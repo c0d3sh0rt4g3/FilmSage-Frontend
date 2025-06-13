@@ -10,8 +10,12 @@ export default {
 </script>
 
 <template>
-  <Header />
-  <router-view/>
+  <div id="app">
+    <Header />
+    <main class="main-content">
+      <router-view/>
+    </main>
+  </div>
 </template>
 
 <style>
@@ -22,16 +26,5 @@ html, body {
 #app {
   margin: 0;
   padding: 0;
-}
-
-/* Header is always fixed now */
-.router-view {
-  padding-top: 90px; /* Space for fixed header */
-}
-
-@media (max-width: 768px) {
-  .router-view {
-    padding-top: 140px; /* More space for mobile vertical layout */
-  }
 }
 </style>

@@ -159,6 +159,27 @@
   border-radius: $border-radius-small;
   background: $error-bg-10;
   font-size: clamp(0.8rem, 0.9vw, 1.1rem);
+  
+  .error-actions {
+    margin-top: 1.5vh;
+    
+    .btn-view-existing {
+      padding: 1vh 2vw;
+      background: $accent-orange;
+      color: $white;
+      border: none;
+      border-radius: $border-radius-small;
+      font-size: clamp(0.8rem, 0.9vw, 1rem);
+      font-weight: 600;
+      cursor: pointer;
+      transition: $transition-base;
+      
+      &:hover {
+        background: darken($accent-orange, 10%);
+        transform: translateY(-1px);
+      }
+    }
+  }
 }
 
 .form-actions {

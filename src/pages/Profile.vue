@@ -379,22 +379,35 @@ export default {
     },
     async loadFavoritesCount() {
       try {
-        // Get initial count from localStorage
+        // Get initial count from localStorage as fallback
         const localCount = getFavoritesCount();
-        this.userStats.favorites = localCount;
         
-        // Try to sync with server favorites and update count
+        // Try to get server favorites first
         const [favoritesError, favoritesData] = await interactionAPI.getFavorites();
         
-        if (!favoritesError && favoritesData?.items && Array.isArray(favoritesData.items)) {
-          // Server returned favorites successfully, sync with localStorage
-          syncFavoritesWithServer(favoritesData.items);
+        if (!favoritesError && favoritesData) {
+          // Handle different possible response structures
+          let serverFavorites = [];
           
-          // Update count with server data
-          this.userStats.favorites = favoritesData.items.length;
+          if (Array.isArray(favoritesData)) {
+            serverFavorites = favoritesData;
+          } else if (favoritesData.items && Array.isArray(favoritesData.items)) {
+            serverFavorites = favoritesData.items;
+          } else if (favoritesData.favorites && Array.isArray(favoritesData.favorites)) {
+            serverFavorites = favoritesData.favorites;
+          }
+          
+          if (serverFavorites.length > 0) {
+            // Server has favorites, sync with localStorage
+            syncFavoritesWithServer(serverFavorites);
+            this.userStats.favorites = serverFavorites.length;
+          } else {
+            // Server has no favorites, use localStorage count
+            this.userStats.favorites = localCount;
+          }
         } else {
-          // Server failed or returned undefined, keep localStorage count
-          // Keep the localStorage count that was already set
+          // Server error, use localStorage count
+          this.userStats.favorites = localCount;
         }
       } catch (error) {
         console.error('Error loading favorites count:', error);
@@ -409,6 +422,9 @@ export default {
          if (currentCount !== this.userStats.favorites) {
            this.userStats.favorites = currentCount;
          }
+         
+         // Also refresh other stats that might have changed
+         this.loadUserReviewsCount();
        }
      },
      goToFavorites() {

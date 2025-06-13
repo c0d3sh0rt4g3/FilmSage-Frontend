@@ -48,7 +48,34 @@ export const useReviewStore = defineStore('review', {
         this.error = null;
         return [null, response.data];
       } catch (error) {
+        // Handle specific HTTP status codes
+        if (error.response) {
+          const status = error.response.status;
+          const serverMessage = error.response.data?.message || error.response.data?.error;
+          
+          switch (status) {
+            case 409:
+              this.error = 'You have already written a review for this movie. You can only submit one review per movie.';
+              break;
+            case 401:
+              this.error = 'You must be logged in to write a review.';
+              break;
+            case 403:
+              this.error = 'You do not have permission to write reviews.';
+              break;
+            case 400:
+              this.error = serverMessage || 'Invalid review data. Please check your input.';
+              break;
+            case 500:
+              this.error = 'Server error. Please try again later.';
+              break;
+            default:
+              this.error = serverMessage || `Error ${status}: ${error.message}`;
+          }
+        } else {
         this.error = error.message || 'Error connecting to the server';
+        }
+        
         return [error, null];
       } finally {
         this.loading = false;

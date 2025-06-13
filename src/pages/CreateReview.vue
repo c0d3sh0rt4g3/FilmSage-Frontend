@@ -51,6 +51,11 @@
 
           <div v-if="error" class="error-message">
             {{ error }}
+            <div v-if="isConflictError" class="error-actions">
+              <button type="button" class="btn-view-existing" @click="goToMovieDetail">
+                View Your Existing Review
+              </button>
+            </div>
           </div>
 
           <div class="form-actions">
@@ -94,7 +99,8 @@ export default {
       },
       decodedMovieData: null,
       loading: false,
-      error: null
+      error: null,
+      isConflictError: false
     }
   },
   computed: {
@@ -141,7 +147,14 @@ export default {
         const [error, data] = await reviewStore.createReview(this.review);
 
         if (error) {
-          this.error = error.message;
+          // Check if it's a 409 conflict (user already has a review)
+          if (error.response && error.response.status === 409) {
+            this.error = 'You have already written a review for this movie. You can only submit one review per movie.';
+            this.isConflictError = true;
+          } else {
+            this.error = error.message || 'Failed to submit review. Please try again.';
+            this.isConflictError = false;
+          }
           return;
         }
 
@@ -181,6 +194,12 @@ export default {
     },
     goBack() {
       this.router.back();
+    },
+    goToMovieDetail() {
+      this.router.push({
+        name: 'movie-detail',
+        params: { id: this.review.movieId }
+      });
     }
   }
 }

@@ -16,6 +16,9 @@ const Favorites = () => import('@/pages/Favorites.vue');
 const MovieDetail = () => import('@/pages/MovieDetail.vue');
 const Recommendations = () => import('@/pages/Recommendations.vue');
 const AdminDashboard = () => import('@/pages/AdminDashboard.vue');
+const Reviews = () => import('@/pages/Reviews.vue');
+const CreateReview = () => import('@/pages/CreateReview.vue');
+const Contact = () => import('@/pages/Contact.vue');
 const NotFound = () => import('@/pages/NotFound.vue');
 const TestScroll = () => import('@/pages/TestScroll.vue');
 
@@ -100,6 +103,25 @@ const routes = [
     name: 'admin-dashboard',
     component: AdminDashboard,
     beforeEnter: requireAdmin
+  },
+  {
+    path: '/user/:userId/reviews',
+    name: 'user-reviews',
+    component: Reviews,
+    props: true,
+    beforeEnter: requireAuth
+  },
+  {
+    path: '/review/create/:movieData',
+    name: 'create-review',
+    component: CreateReview,
+    props: true,
+    beforeEnter: requireAuth
+  },
+  {
+    path: '/contact',
+    name: 'contact',
+    component: Contact
   },
   {
     path: '/test-scroll',

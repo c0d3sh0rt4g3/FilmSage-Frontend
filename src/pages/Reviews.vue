@@ -79,9 +79,12 @@
                     <span class="review-date">{{ formatDate(review.created_at) }}</span>
                   </div>
                 </div>
+                <div class="review-header-right">
                 <div class="review-rating">
                   <span class="stars">{{ getStars(review.rating) }}</span>
                   <span class="rating-text">{{ review.rating }}/5</span>
+                  </div>
+
                 </div>
               </div>
 
@@ -213,22 +216,37 @@ export default {
           this.reviews = reviewsData.reviews.map(review => {
             let transformedReview = { ...review };
             
-            // Handle user information
-            if (review.user_id && typeof review.user_id === 'object' && review.user_id.username) {
+            // Preserve original user_id for permission checking
+            if (review.user_id && typeof review.user_id === 'object') {
+              // If user_id is an object (populated), extract the ID and keep it
+              transformedReview.user_id = review.user_id._id || review.user_id.id;
               transformedReview.user = {
                 username: review.user_id.username,
-                avatar: review.user_id.avatar || this.defaultAvatar
+                avatar: review.user_id.avatar || this.defaultAvatar,
+                id: review.user_id._id || review.user_id.id
               };
             } else if (review.user?.username) {
+              // If user is separate object
               transformedReview.user = {
                 username: review.user.username,
-                avatar: review.user.avatar || this.defaultAvatar
+                avatar: review.user.avatar || this.defaultAvatar,
+                id: review.user.id || review.user._id
+              };
+            } else {
+              // For user reviews page, we know all reviews belong to the current user
+              if (this.userId) {
+                transformedReview.user_id = this.userId;
+                transformedReview.user = {
+                  username: this.username || 'You',
+                  avatar: this.defaultAvatar,
+                  id: this.userId
               };
             } else {
               transformedReview.user = {
                 username: 'Anonymous User',
                 avatar: this.defaultAvatar
               };
+              }
             }
             
             // Ensure movie information is available for user reviews
@@ -387,7 +405,9 @@ export default {
       } else {
         console.error('Movie ID not available for navigation');
       }
-    }
+    },
+
+
   }
 }
 </script>

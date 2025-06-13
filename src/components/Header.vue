@@ -91,10 +91,11 @@ export default {
   <div>
     <header 
       class="site-header" 
-      style="position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; z-index: 9999 !important; transform: none !important;"
+      style="position: static !important;"
     >
       <div class="header-content">
         <router-link to="/" class="logo">
+          <img src="@/assets/logo.png" alt="FilmSage Logo" class="logo-image" />
           <span class="gradient-text">FilmSage</span>
         </router-link>
         
@@ -102,6 +103,7 @@ export default {
           <router-link to="/" class="nav-link">Home</router-link>
           <router-link v-if="isAuthenticated" to="/search" class="nav-link">Search</router-link>
           <router-link v-if="isAuthenticated" to="/recommendations" class="nav-link">Recommendations</router-link>
+          <router-link to="/contact" class="nav-link">Contact</router-link>
         </nav>
 
         <div class="auth-section">
